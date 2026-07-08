@@ -12,6 +12,10 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id String @id
+model Sales {
+  id                String   @id @db.Uuid
+  name              String   @unique
+  currentStock      Int      @default(0) @map("current_stock")
+  lowStockThreshold Int      @default(5) @map("low_stock_threshold")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
 }
