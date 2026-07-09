@@ -31,8 +31,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Items
+ * const items = await prisma.item.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,7 +42,17 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model user
+ * Model Item
  * 
  */
-export type user = Prisma.userModel
+export type Item = Prisma.ItemModel
+/**
+ * Model Sales
+ * 
+ */
+export type Sales = Prisma.SalesModel
+/**
+ * Model Expenses
+ * 
+ */
+export type Expenses = Prisma.ExpensesModel
