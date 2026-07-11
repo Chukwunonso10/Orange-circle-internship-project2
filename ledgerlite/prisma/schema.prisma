@@ -20,7 +20,7 @@ model Item {
   customItem String?
   sales     Sales[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  updatedAt DateTime @updatedAt
 
   @@index([createdAt])
 }
@@ -32,7 +32,7 @@ model Sales {
   totalAmount    Decimal @db.Decimal(10, 2)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  updatedAt DateTime @updatedAt
   itemId    String?
   items     Item?    @relation(fields: [itemId], references: [id])
 
@@ -46,7 +46,7 @@ model Expenses {
   description String? @db.Text()
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  updatedAt DateTime @updatedAt
 
   @@index([createdAt])
 }
