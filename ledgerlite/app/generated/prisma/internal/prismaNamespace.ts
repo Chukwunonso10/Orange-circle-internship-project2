@@ -672,7 +672,6 @@ export const ItemScalarFieldEnum = {
   name: 'name',
   currentStock: 'currentStock',
   lowStock: 'lowStock',
-  customItem: 'customItem',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -685,6 +684,7 @@ export const SalesScalarFieldEnum = {
   quantity: 'quantity',
   unitPrice: 'unitPrice',
   totalAmount: 'totalAmount',
+  customItem: 'customItem',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   itemId: 'itemId'

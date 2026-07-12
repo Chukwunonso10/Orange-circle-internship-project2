@@ -13,28 +13,27 @@ datasource db {
 }
 
 model Item {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  currentStock Int @default(0)
-  lowStock Int @default(5)
-  customItem String?
-  sales     Sales[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String   @unique
+  currentStock Int      @default(0)
+  lowStock     Int      @default(5)
+  sales        Sales[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([createdAt])
 }
 
 model Sales {
-  id        String  @id @default(cuid())
-  quantity  Int     @default(1)
-  unitPrice Decimal @db.Decimal(10, 2)
-  totalAmount    Decimal @db.Decimal(10, 2)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  itemId    String?
-  items     Item?    @relation(fields: [itemId], references: [id])
+  id          String   @id @default(cuid())
+  quantity    Int      @default(1)
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  totalAmount Decimal  @db.Decimal(10, 2)
+  customItem  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  itemId      String?
+  items       Item?    @relation(fields: [itemId], references: [id])
 
   @@index([createdAt])
 }
@@ -44,7 +43,6 @@ model Expenses {
   category    String
   amount      String
   description String? @db.Text()
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
