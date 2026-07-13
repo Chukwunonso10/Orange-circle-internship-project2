@@ -1,0 +1,40 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Item {
+  id String @id @default(cuid())
+  name String @unique
+  lowStock Int @default(5)
+  currentStock Int @default(0)
+  createAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sales Sales[]
+
+}
+
+model Sales{
+  id String @id @default(cuid())
+  unitPrice Decimal @db.Decimal(10,2)
+  quantity Int @default(1)
+  totalAmount Decimal @db.Decimal(10,2)
+  customItemName String?
+  itemId String?
+  createdAt DateTime @default(now())
+  item Item? @relation(fields: [itemId], references: [id], onDelete: SetNull)
+}
+
+model Expenses {
+  id String @id @default(cuid())
+  amount Decimal @db.Decimal(10,2)
+  description String? @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
