@@ -25,7 +25,8 @@ export async function GET() {
 
 
 export async function POST(req: NextRequest) {
-    const { id, unitPrice, quantity, customItemName, itemId, createdAt } = await req.json()
+    try {
+        const { id, unitPrice, quantity, customItemName, itemId, createdAt } = await req.json()
     const price = Number(unitPrice)
     const qty = Number(quantity)
 
@@ -98,5 +99,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
         success: true, message: "item sold successfully!"
     })
+
+    } catch (error) {
+        console.log("Error: sales couldnt be completed", error)
+        return NextResponse.json({
+            success: false, message: "internal server error"
+        }, {status: 500})
+    }
 }
 
