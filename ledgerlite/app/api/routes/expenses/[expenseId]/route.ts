@@ -1,70 +1,143 @@
+import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest, { params }: { params: { expenseId: string } }) {
     try {
-        const { id, amount, description, category } = await req.json()
-        const { expenseId } = await params
-
-        if (id) {
-            const isUpdatedExpenses = await prisma.expense.findUnique({ where: { id } })
-            if (isUpdatedExpenses) {
-                return NextResponse.json({
-                    success: true, message: "conflict: Expenses already updated"
-                }, { status: 409 })
-            }
-        }
-        const updateExpense = await prisma.expense.update({
-            where: { id: expenseId ? expenseId : undefined },
-            data: {
-                amount: amount ? amount : undefined,
-                description: description ? description : undefined,
-                category: category ? category : undefined
-            }
-        })
-
-        if (!updateExpense) {
+        const userId = await getCurrentUserId()
+        if (!userId) {
             return NextResponse.json({
-                success: false, message: "update Error: failed to update Expenses"
+                success: false, message: "Uauthorized!!, pls log in"
             })
         }
+        const { operationId, amount, description, category, createdAt } = await req.json()
+        const { expenseId } = await params
+
+        if (operationId) {
+            const processedUpdate = await prisma.syncOperation.findUnique({ where: { id: operationId } })
+
+            if (processedUpdate) {
+                return NextResponse.json({
+                    success: false, message: "already synced"
+                }, { status: 200 })
+            }
+
+        }
+
+        const targetexpenses = await prisma.expense.findUnique({
+            where: { id: expenseId }
+        })
+
+        if (!targetexpenses) {
+            return NextResponse.json({
+                success: false, message: "Expenses not found!"
+            }, { status: 404 })
+        }
+
+        if (targetexpenses.userId !== userId) {
+            return NextResponse.json({
+                success: false, message: "Forbidden: you do not own this expenses"
+            }, { status: 403 })
+        }
+
+        const updatedExpense = await prisma.$transaction(async (tsx) => {
+            const updated = await tsx.expense.update({
+                where: { id: expenseId },
+                data: {
+                    amount: amount ? Number(amount) : undefined,
+                    description: description ? description : undefined,
+                    category,
+                    createdAt: createdAt ? new Date(createdAt) : undefined,
+                    userId
+                }
+            })
+
+            if (operationId) {
+                await tsx.syncOperation.create({
+                    data: {
+                        id: operationId,
+                        operation: "UPDATE",
+                        resource: "EXPENSE",
+                        resourceId: updated.id,
+                        userId
+                    }
+                })
+            }
+
+            return updated;
+        })
 
         return NextResponse.json({
-            success: true, message: "Expenses successfully updated"
-        }, { status: 200 })
+            success: true, message: "Expenses updated successfully",updatedExpense
+        },{status: 200})
+
+
 
     } catch (error) {
-    console.error("Error updating fields", error)
-    return NextResponse.json({
-        success: false, message: "internal server error"
-    }, { status: 500 })
+        console.error("Error updating fields", error)
+        return NextResponse.json({
+            success: false, message: "internal server error"
+        }, { status: 500 })
+    }
 }
-}
+
+
+
+
+
 
 
 export async function DELETE(req: NextRequest, { params }: { params: { expenseId: string } }) {
     try {
-        const { id } = await req.json()
-        const { expenseId } = await params
-
-        if (id) {
-            const isDeletedExpenses = await prisma.expense.findUnique({ where: { id } })
-            if (isDeletedExpenses) {
-                return NextResponse.json({
-                    success: true, message: "conflict: Expenses already Deleted"
-                }, { status: 409 })
-            }
-        }
-        const deletedExpense = await prisma.expense.delete({
-            where: { id: expenseId }
-        })
-
-        if (!deletedExpense) {
+        const userId = await getCurrentUserId()
+        if (!userId) {
             return NextResponse.json({
-                success: false, message: "Deleting Error...: failed to Delete Expenses"
+                success: false, message: "Uauthorized!!, pls log in"
             })
         }
 
+        const { expenseId } = await params
+        const { operationId } = await req.json()
+
+        if(operationId){
+            const processedDelete = await prisma.syncOperation.findUnique({where:{id:operationId}})
+
+            if(processedDelete){
+                return NextResponse.json({success:true, message:"already synced"}, {status: 200})
+            }
+        }
+
+        const deletedExpense = await prisma.expense.findUnique({
+            where:{id: expenseId}
+        })
+
+        if(!deletedExpense){
+            return NextResponse.json({
+                success: false, message:"This has Aready been deleted"
+            })
+        }
+
+        if(deletedExpense.userId !== userId){
+            return NextResponse.json({
+                success: false, message:"Forbidden: You do not own this expenses"
+            })
+        }
+
+        const deleted = await prisma.$transaction(async (tsx)=>{
+            const deletedRecord = await tsx.expense.delete({where: {id: expenseId}})
+
+            await tsx.syncOperation.create({
+                data:{
+                    id: operationId,
+                    operation:"DELETE",
+                    resource: "EXPENSE",
+                    resourceId:deletedRecord.id,
+                    userId
+                }
+            })
+
+            return deletedRecord
+        })
 
         return NextResponse.json({
             success: true, message: "Expenses Deleted successfully"

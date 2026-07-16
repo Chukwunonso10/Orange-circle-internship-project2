@@ -1,8 +1,15 @@
+import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest, { params }: { params: { salesId: string } }) {
     try {
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({
+                success: false, message: "unauthorized: pls log in"
+            }, { status: 401 })
+        }
         const { salesId } = await params
         const { id, unitPrice, quantity, totalAmount, customItemName } = await req.json()
 
@@ -49,7 +56,7 @@ export async function PUT(req: NextRequest, { params }: { params: { salesId: str
 export async function DELETE(req: NextRequest, { params }: { params: { salesId: string } }) {
     try {
         const { salesId } = await params
-        const { id} = await req.json()
+        const { id } = await req.json()
 
         if (id) {
             const deletedSales = await prisma.sale.findUnique({
