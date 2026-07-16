@@ -77,10 +77,25 @@ export default function SignIn() {
     setMessage("");
 
     try {
+      const res = await fetch("/api/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email: form.email, password: form.password})
+      })
+
+    
+      const data = await res.json()
+      if(!res.ok){
+        throw new Error(data.message)
+      }
+      console.log(data)
       await new Promise((resolve) => setTimeout(resolve, 1200));
       setStatus("success");
       setMessage("Welcome back! Redirecting to your dashboard...");
       // form funtionalities
+      
     } catch (error) {
       setStatus("error");
       setMessage("Unable to sign in right now. Please try again later.");

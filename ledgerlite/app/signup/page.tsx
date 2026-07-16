@@ -13,10 +13,12 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
 export default function SignUp() {
+const router = useRouter()
   const [form, setForm] = useState({
     name: "",
     businessName: "",
@@ -39,7 +41,7 @@ export default function SignUp() {
     if (!form.businessName.trim()) {
       nextErrors.businessName = "Business name is required.";
     }
-
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!form.email.trim()) {
       nextErrors.email = "Email address is required.";
     } else if (!emailPattern.test(form.email.trim())) {
@@ -97,6 +99,20 @@ export default function SignUp() {
     setMessage("");
 
     try {
+      const res = await fetch("/api/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: form.email, password: form.password, buisnessName: form.businessName, name: form.name, confirmPassword: form.confirmPassword })
+      })
+
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.message)
+      }
+      router.push("/dashboard")
       await new Promise((resolve) => setTimeout(resolve, 1200));
       setStatus("success");
       setMessage("Your account has been created successfully. Welcome aboard!");
@@ -213,11 +229,10 @@ export default function SignUp() {
                     onChange={(event) =>
                       handleChange("name", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
-                      errors.name
+                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.name
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
-                    }`}
+                      }`}
                     placeholder="John Doe"
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "name-error" : undefined}
@@ -247,11 +262,10 @@ export default function SignUp() {
                     onChange={(event) =>
                       handleChange("businessName", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
-                      errors.businessName
+                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.businessName
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
-                    }`}
+                      }`}
                     placeholder="Circo Orange Enterprise"
                     aria-invalid={!!errors.businessNameame}
                     aria-describedby={
@@ -286,11 +300,10 @@ export default function SignUp() {
                     onChange={(event) =>
                       handleChange("email", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-10 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
-                      errors.email
+                    className={`w-full rounded-3xl border px-10 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.email
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
-                    }`}
+                      }`}
                     placeholder="you@example.com"
                     aria-invalid={!!errors.email}
                     aria-describedby={errors.email ? "email-error" : undefined}
@@ -326,11 +339,10 @@ export default function SignUp() {
                       onChange={(event) =>
                         handleChange("password", event.target.value)
                       }
-                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
-                        errors.password
+                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.password
                           ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                           : "border-slate-200"
-                      }`}
+                        }`}
                       placeholder="Create password"
                       aria-invalid={!!errors.password}
                       aria-describedby={
@@ -376,11 +388,10 @@ export default function SignUp() {
                       onChange={(event) =>
                         handleChange("confirmPassword", event.target.value)
                       }
-                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
-                        errors.confirmPassword
+                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.confirmPassword
                           ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                           : "border-slate-200"
-                      }`}
+                        }`}
                       placeholder="Confirm password"
                       aria-invalid={!!errors.confirmPassword}
                       aria-describedby={
@@ -455,3 +466,5 @@ export default function SignUp() {
     </div>
   );
 }
+
+

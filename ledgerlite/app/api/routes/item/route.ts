@@ -1,9 +1,18 @@
+import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const allProducts = await prisma.item.findMany()
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({
+                success: false, message: "unauthorized: pls log in to continue"
+            }, { status: 401 })
+        }
+
+
+        const allProducts = await prisma.item.findMany({ where: { userId }, orderBy: { createdAt: "asc" } })
 
         if (allProducts.length === 0) {
             return NextResponse.json({
@@ -26,52 +35,125 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const { id, name, lowStock, currentStock, createdAt } = await req.json()
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({
+                success: false, message: "unauthorized: pls log in to continue"
+            }, { status: 401 })
+        }
+        const { operationId, id, name, lowStock, currentStock, createdAt } = await req.json()
 
         if (!name) {
             return NextResponse.json({
                 success: false, message: "Bad Request: Name is required!"
             }, { status: 400 })
         }
+        if (lowStock <= 0 ||  currentStock <= 0) {
+            return NextResponse.json({
+                success: false, message: "Bad Request: lowStock or currentStock cannot be negative"
+            }, { status: 400 })
+        }
 
-        if (id) {
-            const product = await prisma.item.findUnique({ where: { id } })
-            if (product) {
+        if (operationId) {
+            const processedProduct = await prisma.syncOperation.findUnique({ where: { id: operationId } })
+
+            if (processedProduct) {
                 return NextResponse.json({
-                    success: false, message: "product already created!!"
-                }, { status: 429 })
+                    success: false, message: "product already synced!!"
+                }, { status: 200 })
             }
         }
-        const newProduct = await prisma.item.create({
-            data: {
-                id: id ? id : undefined,
-                name,
-                lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
-                currentStock: currentStock ? Number(currentStock) : undefined,
-                createdAt: createdAt ? new Date(createdAt) : undefined
 
+        const productItem = await prisma.$transaction(async (tsx) => {
+            let operation;
+            let createdOrUpdated;
+
+            if (id) {
+                const existingProduct = await tsx.item.findUnique({ where: { id } })
+                if (existingProduct) {
+                    //checking for ownership
+                    if (existingProduct.userId !== userId) {
+                        throw new Error("Forbidden: You do not own this product")
+                    }
+
+                    createdOrUpdated = await tsx.item.update({
+                        where: { id },
+                        data: {
+                            name,
+                            lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
+                            currentStock: currentStock !== undefined ? Number(currentStock) : undefined,
+                            createdAt: createdAt ? new Date(createdAt) : undefined
+                        }
+                    })
+                    operation = "UPDATE"
+                } else {
+                    createdOrUpdated = await tsx.item.create({
+                        data: {
+                            id,
+                            name,
+                            lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
+                            currentStock: currentStock !== undefined ? Number(currentStock) : undefined,
+                            userId,
+                            createdAt: createdAt ? new Date(createdAt) : undefined
+                        }
+                    })
+
+                    operation = "CREATE"
+                }
+
+            } else {
+                createdOrUpdated = await tsx.item.create({
+                    data: {
+                        name,
+                        lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
+                        currentStock: currentStock !== undefined ? Number(currentStock) : undefined,
+                        userId,
+                        createdAt: createdAt ? new Date(createdAt) : undefined
+                    }
+                })
+                operation = "CREATE"
             }
+
+            //logging the operation
+            if (operationId) {
+                await tsx.syncOperation.create({
+                    data: {
+                        id: operationId,
+                        resource: "ITEM",
+                        resourceId: createdOrUpdated.id,
+                        userId,
+                        operation
+                    }
+                })
+            }
+
+            return createdOrUpdated;
         })
 
-        if (!newProduct) {
-            return NextResponse.json({
-                success: false, message: "failed to create product"
-            })
-        }
-
-
         return NextResponse.json({
-            success: true, message: "product successfully created", newProduct
+            success: true, message: "product created successfully", productItem
         }, { status: 201 })
-
-
-
     } catch (error) {
-        console.log("product creation failed", error)
+        console.error("Failed to create product", error)
         return NextResponse.json({
             success: false, message: "internal server error"
         }, { status: 500 })
     }
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

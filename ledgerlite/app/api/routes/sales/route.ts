@@ -1,3 +1,4 @@
+import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,23 +28,78 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const { id, unitPrice, quantity, customItemName, itemId, createdAt } = await req.json()
+
+        const userId = await getCurrentUserId()
+        if(!userId){
+            return NextResponse.json({
+                success:false, message:"Unauthorized!!, pls log in"
+            })
+        }
+        const { operationId, id, unitPrice, quantity, customItemName, itemId, createdAt } = await req.json()
         const price = Number(unitPrice)
         const qty = Number(quantity)
 
-        if (!quantity) {
+        if (!qty) {
             return NextResponse.json({
                 success: false, message: `quantity is required!`
             }, { status: 400 })
         }
-        if (!unitPrice) {
+        if (qty <= 0) {
+            return NextResponse.json({
+                success: false, message: `Bad request: quantity should be greater than 0!`
+            }, { status: 400 })
+        }
+        if (!price) {
             return NextResponse.json({
                 success: false, message: `unitprice is required!`
             }, { status: 400 })
         }
-        
+
         const totalAmount = qty * price
-        
+
+        if (operationId) {
+            const processedProduct = await prisma.syncOperation.findUnique({ where: { id: operationId } })
+
+            if (processedProduct) {
+                return NextResponse.json({
+                    success: false, message: "sales already synced!!"
+                }, { status: 200 })
+            }
+        }
+
+        if(id){
+            const existingSales = await prisma.sale.findUnique({
+                where: {id}
+            })
+
+            if(existingSales){
+                if(existingSales.userId !== userId)
+                return NextResponse.json({
+                    success: false, message: "Forbidden!!: you do not own this sales"
+                },{status:403})
+
+                return NextResponse.json({
+                    success: false, message: "sales already completed"
+                },{status:200})
+            }
+
+            const createdOrUpdated = await prisma.$transaction(async (tsx)=>{
+                await tsx.sale.create({
+                    data: {
+                        id: id,
+                        unitPrice: price,
+                        totalAmount: totalAmount,
+                        customItemName: customItemName ? customItemName : null,
+                        itemId:itemId,
+                        createdAt: createdAt ? new Date(createdAt) : undefined,
+                        userId:userId
+                    }
+                })
+            })
+
+
+        }
+
         let result;
         if (id) {
             const completedSale = await prisma.sale.findUnique({

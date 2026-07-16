@@ -1,47 +1,85 @@
+import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest, { params }: { params: { itemId: string } }) {
     try {
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({
+                success: false, message: "unauthorized: pls log in"
+            })
+        }
+
         const { itemId } = await params
-        const { id, name, lowStock, currentStock } = await req.json()
+        const { operationId, name, lowStock, currentStock } = await req.json()
 
 
-        if (name === "" || name === "." ) {
+        if (!name) {
             return NextResponse.json({
                 success: false, message: "Bad Request: Update fields cannot be empty"
             }, { status: 400 })
         }
 
-        if (id) {
-            const updatedItem = await prisma.item.findUnique({ where: { id } })
-            if (updatedItem) {
+        if (lowStock <= 0 || currentStock <= 0) {
+            return NextResponse.json({
+                success: false, message: "Bad Request: lowStock or currentStock cannot be negative"
+            }, { status: 400 })
+        }
+
+        if (operationId) {
+            const processedUpdate = await prisma.syncOperation.findUnique({ where: { id: operationId } })
+
+            if (processedUpdate) {
                 return NextResponse.json({
-                    success: true, message: "conflict: Already updated!!!"
-                }, { status: 409 })
+                    success: false, message: "product update already synced!!"
+                }, { status: 200 })
             }
         }
 
-        const updatedItem = await prisma.item.update({
-            where: { id: itemId },
-            data: {
-                name: name !== undefined ? name.trim() : undefined,
-                lowStock: lowStock ? Number(lowStock):  undefined,
-                currentStock: currentStock ? Number(currentStock): undefined,
-            }
-        })
-
+        const updatedItem = await prisma.item.findUnique({ where: { id: itemId } })
         if (!updatedItem) {
             return NextResponse.json({
-                success: false, message: "Error updating the fields"
-            })
+                success: false, message: "Product Not found!"
+            }, { status: 404 })
+        }
+        //check for ownership
+        if (updatedItem.userId !== userId) {
+            return NextResponse.json({
+                success: false, message: "Forbidden: you do not own this product"
+            }, { status: 403 })
         }
 
-        return NextResponse.json({
-            success: true, message: "successfully updated item", updatedItem
-        }, { status: 200 })
+        const updatedProduct = await prisma.$transaction(async (tsx) => {
+            const updated = await tsx.item.update({
+                where: { id: itemId },
+                data: {
+                    name: name !== undefined ? name.trim() : undefined,
+                    lowStock: lowStock ? Number(lowStock) : undefined,
+                    currentStock: currentStock ? Number(currentStock) : undefined,
+                }
+            })
 
-    } catch (error) {
+            if (operationId) {
+                await tsx.syncOperation.create({
+                    data: {
+                        id: operationId,
+                        operation: "UPDATE",
+                        resource: "ITEM",
+                        resourceId: updated.id,
+                        userId
+                    }
+                })
+            }
+
+            return updated;
+        })
+
+        return NextResponse.json({
+            success: true, message: "successfully updated item", updatedProduct
+        }, { status: 200 })
+    }
+    catch (error) {
         console.error("failed to update items")
         return NextResponse.json({
             success: false, message: "internal server error"
@@ -51,30 +89,65 @@ export async function PUT(req: NextRequest, { params }: { params: { itemId: stri
 
 export async function DELETE(req: NextRequest, { params }: { params: { itemId: string } }) {
     try {
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({
+                success: false, message: "unauthorized: pls log in"
+            })
+        }
         const { itemId } = await params
-        const { id } = await req.json()
+        const { operationId } = await req.json()
 
-        if (id) {
-            const deletedItem = await prisma.item.findUnique({ where: { id } })
-            if (deletedItem) {
+        if (operationId) {
+            const alreadyProcessed = await prisma.syncOperation.findUnique({
+                where: { id: operationId }
+            })
+
+            if (alreadyProcessed) {
                 return NextResponse.json({
-                    success: true, message: "conflict: Already deleted!!!"
-                }, { status: 409 })
+                    success: true, message: "Already synced!!"
+                }, { status: 200 })
             }
         }
 
-        const deletedItem = await prisma.item.delete({
-            where: { id: itemId },
+        const itemExist = await prisma.item.findUnique({
+            where: { id: itemId }
         })
 
-        if (!deletedItem) {
+        if (!itemExist) {
             return NextResponse.json({
-                success: false, message: "Error deleting the item"
-            })
+                success: false, message: "product does not exist"
+            }, { status: 404 })
         }
 
+        //check for ownership
+        if (itemExist.userId !== userId) {
+            return NextResponse.json({
+                success: false, message: "Forbidden: you do not own this product"
+            }, { status: 403 })
+        }
+
+        const deleted = await prisma.$transaction(async (tsx) => {
+            const deletedItem = await tsx.item.delete({ where: { id: itemId } })
+
+            if (operationId) {
+                await tsx.syncOperation.create({
+                    data: {
+                        id: operationId,
+                        operation: "DELETE",
+                        resource: "ITEM",
+                        resourceId: deletedItem.id,
+                        userId,
+                    }
+                })
+            }
+
+            return deletedItem;
+
+        })
+
         return NextResponse.json({
-            success: true, message: "successfully deleted item", deletedItem
+            success: true, message: "successfully deleted item", deleted
         }, { status: 200 })
 
     } catch (error) {
