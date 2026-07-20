@@ -5,8 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({
+                success: false, message: "Unauthorize!!: pls log in"
+            })
+        }
         const allSales = await prisma.sale.findMany({
-            include: { item: { select: { name: true } } }
+            where: { userId: userId }, include: { item: { select: { name: true } } }
         })
         if (allSales.length === 0) {
             return NextResponse.json({
@@ -20,7 +26,7 @@ export async function GET() {
     } catch (error) {
         console.log("Error retrieving sales log")
         return NextResponse.json({
-            success: true, message: "internal server error"
+            success: false, message: "internal server error"
         }, { status: 500 })
     }
 }
@@ -30,9 +36,9 @@ export async function POST(req: NextRequest) {
     try {
 
         const userId = await getCurrentUserId()
-        if(!userId){
+        if (!userId) {
             return NextResponse.json({
-                success:false, message:"Unauthorized!!, pls log in"
+                success: false, message: "Unauthorized!!, pls log in"
             })
         }
         const { operationId, id, unitPrice, quantity, customItemName, itemId, createdAt } = await req.json()
@@ -67,71 +73,31 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        if(id){
-            const existingSales = await prisma.sale.findUnique({
-                where: {id}
-            })
+        const cleanedItemId = (itemId && itemId !== "null" && itemId !== "undefined" && String(itemId).trim() !== "") ? itemId : null;
+        const cleanedCustomItemName = (customItemName && String(customItemName).trim() !== "") ? customItemName : null;
+        const cleanedId = (id && id !== "null" && id !== "undefined" && String(id).trim() !== "") ? id : undefined;
 
-            if(existingSales){
-                if(existingSales.userId !== userId)
-                return NextResponse.json({
-                    success: false, message: "Forbidden!!: you do not own this sales"
-                },{status:403})
+        const parsedDate = (createdAt && !isNaN(Date.parse(createdAt))) ? new Date(createdAt) : undefined;
 
-                return NextResponse.json({
-                    success: false, message: "sales already completed"
-                },{status:200})
-            }
+        const sales = await prisma.$transaction(async (tsx) => {
+            //for items that are tracked
+            if (cleanedItemId) {
+                const isProductExist = await tsx.item.findUnique({ where: { id: cleanedItemId } })
 
-            const createdOrUpdated = await prisma.$transaction(async (tsx)=>{
-                await tsx.sale.create({
-                    data: {
-                        id: id,
-                        unitPrice: price,
-                        totalAmount: totalAmount,
-                        customItemName: customItemName ? customItemName : null,
-                        itemId:itemId,
-                        createdAt: createdAt ? new Date(createdAt) : undefined,
-                        userId:userId
-                    }
-                })
-            })
-
-
-        }
-
-        let result;
-        if (id) {
-            const completedSale = await prisma.sale.findUnique({
-                where: { id }
-            })
-
-            if (completedSale) {
-                return NextResponse.json({
-                    success: true, message: "sales already completed!"
-                }, { status: 200 })
-            }
-        }
-
-        result = await prisma.$transaction(async (tsx) => {
-            if (itemId) {
-                const productIsExist = await tsx.item.findUnique({
-                    where: { id: itemId }
-                })
-
-                if (!productIsExist) {
-                    throw new Error("Product does not exist; create a product before you can record a sale")
+                if (!isProductExist) {
+                    throw new Error("product does not exist, create a product first before you can record a sale")
                 }
 
-                if (productIsExist.currentStock < qty) {
-                    throw new Error(`insufficient stock!!: available stock is ${productIsExist.currentStock}`)
+                if (isProductExist.userId !== userId) {
+                    throw new Error("Forbidden: you do not own this product!!")
                 }
-                if (qty <= 0) {
-                    throw new Error(`Bad request: quantity should be greater than 0`)
+
+                if (isProductExist.currentStock < qty) {
+                    throw new Error(`insufficient stock!!!, Available stock in inventory is ${isProductExist.currentStock}`)
                 }
 
                 await tsx.item.update({
-                    where: { id: itemId },
+                    where: { id: cleanedItemId },
                     data: {
                         currentStock: {
                             decrement: qty
@@ -139,24 +105,40 @@ export async function POST(req: NextRequest) {
                     }
                 })
             }
-
+            //for items not tracked
+            //sell off the item
             const soldItem = await tsx.sale.create({
                 data: {
-                    id: id || undefined,
+                    id: cleanedId ? cleanedId : undefined,
                     unitPrice: price,
                     quantity: qty,
                     totalAmount,
-                    customItemName: customItemName ? customItemName : null,
-                    itemId: itemId ? itemId : undefined,
-                    createdAt: createdAt ? new Date(createdAt) : undefined
+                    customItemName: cleanedCustomItemName,
+                    itemId: itemId ? itemId : null,
+                    createdAt: parsedDate,
+                    userId
                 }
             })
+
+            //log the sync transaction
+            if (operationId) {
+                await tsx.syncOperation.create({
+                    data: {
+                        id: operationId,
+                        operation: "CREATE",
+                        resource: "SALE",
+                        resourceId: soldItem.id,
+                        userId,
+                    }
+                })
+            }
             return soldItem;
         })
-        console.log("result is..", result)
+
         return NextResponse.json({
-            success: true, message: "item sold successfully!", result
-        }, { status: 200 })
+            success: true, message: "item sold successfully"
+        }, { status: 201 })
+
 
     } catch (error) {
         console.log("Error: sales couldnt be completed", error)

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
         }
 
         const lowerEmail = email.toLowerCase().trim()
-        if (password < 8) {
+        if (password.length < 8) {
             return NextResponse.json({
                 success: false, message: "password must be a minimum of 8 characters"
             }, { status: 400 })
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         if (!user) {
             return NextResponse.json({
                 success: false, message: "Account Not Found"
-            })
+            },{status: 404})
         }
 
         const isPassword = await Verifypassword(password, user.passwordHash)
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         if (!isPassword) {
             return NextResponse.json({
                 success: false, message: "password is incorrect"
-            }, { status: 409 })
+            }, { status: 400 })
         }
 
         if (!user.isVerified) {
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         const cookiesStore = await cookies()
         const isProduction = process.env.NODE_ENV === "production"
 
-        const session = await prisma.session.create({
+        await prisma.session.create({
             data: {
                 sessionToken,
                 userId: user.id,
@@ -66,14 +66,16 @@ export async function POST(req: NextRequest) {
             secure: isProduction,
             sameSite: "lax",
             path: "/",
-            maxAge: 3600
+            maxAge: 60*60*24
         })
 
         return NextResponse.json({
             success: true, message: "user successfully signed in", user: {
                 userId: user.id,
                 email: user.email,
-                name: user.firstName + ' ' + user.lastName
+                buisnessName: user.buisnessName,
+                name: user.name
+                
             }
         }, { status: 200 })
 

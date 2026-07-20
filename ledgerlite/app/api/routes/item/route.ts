@@ -16,7 +16,7 @@ export async function GET() {
 
         if (allProducts.length === 0) {
             return NextResponse.json({
-                success: true, message: "No products found in the database!"
+                success: false, message: "No products found in the database!"
             }, { status: 404 })
         }
 

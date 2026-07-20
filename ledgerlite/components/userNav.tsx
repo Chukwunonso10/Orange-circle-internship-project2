@@ -1,7 +1,13 @@
 import Image from "next/image";
 import { Bell } from "lucide-react";
+import prisma from "@/app/lib/prisma";
+import { NextResponse } from "next/server";
 
-export default function UserNav() {
+
+
+export default async function UserNav({id, name, buisnessName}: {id: string, name: string, buisnessName: string}) {
+ 
+  
   return (
     <div>
       <section>
@@ -21,10 +27,10 @@ export default function UserNav() {
                 <div className="w-0.5 h-10 bg-gray-300"></div>
                 <div className="flex flex-col">
                   <span className="hidden md:block text-sm font-medium text-gray-900">
-                    Business name
+                    Business name:{buisnessName}
                   </span>
                   <span className="hidden md:block text-xs text-gray-500">
-                    Username
+                    Username: {name}
                   </span>
                 </div>
                 <div className="w-10 h-10 rounded-full overflow-hidden">

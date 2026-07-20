@@ -1,8 +1,48 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
-import { TrendingUp,TrendingDown,ShoppingBag,Banknote } from "lucide-react";
+import { TrendingUp, TrendingDown, ShoppingBag, Banknote } from "lucide-react";
+import { NextResponse } from "next/server";
+import prisma from "../lib/prisma";
+import { getCurrentUserId } from "../lib/authhelper";
+import { redirect } from "next/navigation";
+import { Metrics } from "../lib/metrics";
 
-export default function Dashboard() {
+interface Profile {
+  id: string
+  name: string
+  buisnessName: string
+
+}
+export default async function Dashboard() {
+  const userId = await getCurrentUserId()
+  if (!userId) redirect("/signin")
+  let profile: any;
+
+  profile = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, name: true, buisnessName: true } })
+  const { id, name, buisnessName } = profile
+
+  if (!profile) {
+    throw new Error("profile not found")
+  }
+  const [revenue, expenses] = await Promise.all([
+
+    prisma.sale.aggregate
+      ({
+        where: { userId: userId },
+        _sum: { totalAmount: true }
+      }),
+
+    prisma.expense.aggregate({
+      where: {userId},
+      _sum: {amount: true}
+    })
+  ])
+
+  const totalRevenue = Number(revenue._sum.totalAmount) ?? 0.00;
+  const totalExpenses = Number(expenses._sum.amount) ?? 0.00;
+  console.log(totalRevenue)
+  console.log(totalExpenses)
+  Metrics()
   return (
     <div>
       {/* imported side navigation routes bar */}
@@ -10,7 +50,7 @@ export default function Dashboard() {
         <SideNav />
       </div>
       <div className="ml-0 md:ml-70 sm:ml-0">
-        <UserNav />
+        <UserNav id={id} name={name} buisnessName={buisnessName} />
       </div>
       <main className="ml-10 md:ml-72 sm:ml-10  p-6">
         {/* heading */}
@@ -39,7 +79,7 @@ export default function Dashboard() {
 
               <p className="text-[14-x]">MONEY IN</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦0000 </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{totalRevenue}</h3>
 
               <p className="text-xs">yesterday:₦0000</p>
             </div>
@@ -53,7 +93,7 @@ export default function Dashboard() {
 
               <p className="text-[14-x]">MONEY OUT</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦0000 </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{totalExpenses} </h3>
 
               <p className="text-xs">yesterday:₦0000</p>
             </div>

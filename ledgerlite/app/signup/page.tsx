@@ -113,7 +113,6 @@ const router = useRouter()
         throw new Error(data.message)
       }
       router.push("/dashboard")
-      await new Promise((resolve) => setTimeout(resolve, 1200));
       setStatus("success");
       setMessage("Your account has been created successfully. Welcome aboard!");
       // form input functionalities should be here

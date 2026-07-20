@@ -118,7 +118,7 @@ export default function SideNav() {
           <ul className="space-y-4 ">
             {navItems.map((item) => (
               <li key={item.href} className="hover:text-[#0b7a75]">
-                <Link
+                <Link 
                   href={item.href}
                   className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75] dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
                   onClick={() => setIsOpen(false)}

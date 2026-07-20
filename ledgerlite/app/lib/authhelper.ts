@@ -29,3 +29,16 @@ export async function getCurrentUserId(){
     return null
   }
 }
+
+export async function getCurrentUser(){
+  const sessionToken = (await cookies()).get("sessionToken")?.value
+  if(!sessionToken) return null
+
+  const session = await prisma.session.findUnique({where: {sessionToken}, include: {user: true}})
+
+  if(!session) return null
+
+  const user = session.user
+  return user;
+
+}

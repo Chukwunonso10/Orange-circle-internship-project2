@@ -14,10 +14,12 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignIn() {
+  const router = useRouter()
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -77,7 +79,7 @@ export default function SignIn() {
     setMessage("");
 
     try {
-      const res = await fetch("/api/sign-up", {
+      const res = await fetch("/api/sign-in", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -85,18 +87,19 @@ export default function SignIn() {
         body: JSON.stringify({email: form.email, password: form.password})
       })
 
-    
       const data = await res.json()
       if(!res.ok){
         throw new Error(data.message)
       }
-      console.log(data)
-      await new Promise((resolve) => setTimeout(resolve, 1200));
       setStatus("success");
       setMessage("Welcome back! Redirecting to your dashboard...");
+      router.push("/dashboard")
+      console.log(data)
+      
       // form funtionalities
       
     } catch (error) {
+      console.error(error)
       setStatus("error");
       setMessage("Unable to sign in right now. Please try again later.");
     }

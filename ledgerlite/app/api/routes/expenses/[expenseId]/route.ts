@@ -113,7 +113,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { expenseId
 
         if(!deletedExpense){
             return NextResponse.json({
-                success: false, message:"This has Aready been deleted"
+                success: false, message:"This Expenses has Aready been deleted"
             })
         }
 
@@ -140,7 +140,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { expenseId
         })
 
         return NextResponse.json({
-            success: true, message: "Expenses Deleted successfully"
+            success: true, message: "Expenses Deleted successfully",deleted
         }, { status: 200 })
 
     } catch (error) {

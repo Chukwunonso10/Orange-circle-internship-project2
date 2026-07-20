@@ -153,7 +153,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { itemId: s
     } catch (error) {
         console.error("failed to deleted items")
         return NextResponse.json({
-            success: true, message: "internal server error"
+            success: false, message: "internal server error"
         }, { status: 500 })
     }
 }

@@ -14,7 +14,7 @@ export async function GET() {
 
         if (allExpenses.length === 0) {
             return NextResponse.json({
-                success: false, message: "No expenses recorded currently"
+                success: true, message: "No expenses recorded currently"
             }, { status: 200 })
         }
 
@@ -44,13 +44,13 @@ export async function POST(req: NextRequest) {
 
         if (!amount || !category) {
             return NextResponse.json({
-                success: true, message: "Enter an expense amount or category"
+                success: false, message: "Enter an expense amount or category"
             }, { status: 400 })
         }
 
         if (amount <= 1) {
             return NextResponse.json({
-                success: true, message: "Enter a valid expense amount"
+                success: false, message: "Enter a valid expense amount"
             }, { status: 400 })
         }
 
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
             let createdOrUpdated;
             let operation;
             if (id) {
-                const completedExpense = await prisma.item.findUnique({ where: { id } })
+                const completedExpense = await prisma.expense.findUnique({ where: { id } })
 
                 if (completedExpense) {
                     if (completedExpense.userId !== userId) {
