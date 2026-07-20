@@ -39,7 +39,7 @@ export default function SideNav() {
       {/* Navigation button */}
       <button
         type="button"
-        className="fixed top-22 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900 md:hidden cursor-pointer"
+        className="fixed top-22 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
         onClick={() => setIsOpen(true)}
         aria-label="Open navigation"
       >
@@ -54,7 +54,7 @@ export default function SideNav() {
       />
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-70 transform overflow-y-auto border-r border-slate-200 bg-white px-5 py-6 shadow-xl transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-950 md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-70 transform overflow-y-auto border-r border-slate-200 bg-white px-5 py-6 shadow-xl transition-transform duration-300 ease-in-out md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -106,7 +106,7 @@ export default function SideNav() {
           {/* Close button */}
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 md:hidden cursor-pointer"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 md:hidden cursor-pointer"
             onClick={() => setIsOpen(false)}
             aria-label="Close navigation"
           >
@@ -120,7 +120,7 @@ export default function SideNav() {
               <li key={item.href} className="hover:text-[#0b7a75]">
                 <Link 
                   href={item.href}
-                  className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75] dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
+                  className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75]"
                   onClick={() => setIsOpen(false)}
                 >
                   <span className="text-slate-500 dark:text-slate-400 ">
@@ -138,7 +138,7 @@ export default function SideNav() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75] dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
+                    className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75]"
                     onClick={() => setIsOpen(false)}
                   >
                     <span className="text-slate-500 dark:text-slate-400">

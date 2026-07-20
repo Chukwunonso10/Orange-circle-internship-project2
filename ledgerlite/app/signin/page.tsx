@@ -3,6 +3,7 @@
 import { useState } from "react";
 import HomeNav from "@/components/homeNav";
 import Footer from "@/components/footer";
+import Image from "next/image";
 
 import Link from "next/link";
 import {
@@ -82,10 +83,10 @@ export default function SignIn() {
       const res = await fetch("/api/sign-in", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({email: form.email, password: form.password})
-      })
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
 
       const data = await res.json()
       if(!res.ok){
@@ -97,7 +98,6 @@ export default function SignIn() {
       console.log(data)
       
       // form funtionalities
-      
     } catch (error) {
       console.error(error)
       setStatus("error");
@@ -127,6 +127,17 @@ export default function SignIn() {
                   expenses, and stay on top of your cash flow.
                 </p>
               </div>
+              <div className="relative h-50 w-full sm:h-60">
+                <Image
+                  src="/signinImg.jpg"
+                  alt="Dashboard preview"
+                  fill
+                  loading="eager"
+                  className="object-cover py-4"
+                  sizes="(max-width: 568px) 100vw, 50vw"
+                />
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-[28px] border bg-slate-100  p-5">
                   <p className="text-sm uppercase tracking-[0.24em] text-slate-700">
@@ -148,23 +159,23 @@ export default function SignIn() {
             </div>
           </section>
 
-          <section className="w-full max-w-xl rounded-4xl bg-white p-8 shadow-2xl  dark:bg-slate-950 dark:text-slate-100 lg:w-1/2 lg:p-10">
+          <section className="w-full max-w-xl rounded-4xl bg-white p-8 shadow-2xl   lg:w-1/2 lg:p-10">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
+                <p className="text-sm uppercase tracking-[0.24em] text-slate-500 ">
                   Sign in
                 </p>
-                <h2 className="mt-2 text-3xl font-semibold text-slate-900 dark:text-white">
+                <h2 className="mt-2 text-3xl font-semibold text-slate-900 ">
                   Access your account
                 </h2>
               </div>
-              <div className="rounded-3xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              <div className="rounded-3xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 ">
                 User
               </div>
             </div>
 
             {status === "error" && (
-              <div className="mb-6 rounded-3xl border border-rose-200/80 bg-rose-50/80 p-4 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-200">
+              <div className="mb-6 rounded-3xl border border-rose-200/80 bg-rose-50/80 p-4 text-rose-700 ">
                 <p className="font-semibold">Sign in failed</p>
                 <p className="mt-1 text-sm">
                   {message || "Please correct the errors and try again."}
@@ -173,9 +184,9 @@ export default function SignIn() {
             )}
 
             {status === "success" && (
-              <div className="mb-6 rounded-3xl border border-emerald-200/80 bg-emerald-50/80 p-4 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200">
+              <div className="mb-6 rounded-3xl border border-emerald-200/80 bg-emerald-50/80 p-4 text-emerald-700 ">
                 <div className="flex items-start gap-3">
-                  <span className="mt-1 inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-700/10 dark:text-emerald-200">
+                  <span className="mt-1 inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 ">
                     <CheckCircle2 size={18} />
                   </span>
                   <div>
@@ -189,7 +200,7 @@ export default function SignIn() {
             <form className="space-y-5" onSubmit={handleSubmit} noValidate>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                className="block text-sm font-medium text-slate-700 "
               >
                 Email address
                 <div className="mt-2 relative">
@@ -204,7 +215,7 @@ export default function SignIn() {
                     onChange={(event) =>
                       handleChange("email", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
+                    className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200   ${
                       errors.email
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
@@ -215,10 +226,7 @@ export default function SignIn() {
                   />
                 </div>
                 {errors.email && (
-                  <p
-                    className="mt-2 text-sm text-rose-600 dark:text-rose-300"
-                    id="email-error"
-                  >
+                  <p className="mt-2 text-sm text-rose-600 " id="email-error">
                     {errors.email}
                   </p>
                 )}
@@ -226,7 +234,7 @@ export default function SignIn() {
 
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                className="block text-sm font-medium text-slate-700 "
               >
                 Password
                 <div className="mt-2 relative">
@@ -242,7 +250,7 @@ export default function SignIn() {
                       handleChange("password", event.target.value)
                     }
                     autoComplete="Yes"
-                    className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${
+                    className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200  ${
                       errors.password
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
@@ -268,7 +276,7 @@ export default function SignIn() {
                 </div>
                 {errors.password && (
                   <p
-                    className="mt-2 text-sm text-rose-600 dark:text-rose-300"
+                    className="mt-2 text-sm text-rose-600 "
                     id="password-error"
                   >
                     {errors.password}
@@ -277,7 +285,7 @@ export default function SignIn() {
               </label>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <label className="inline-flex items-center gap-2 text-sm text-slate-600 ">
                   <input
                     type="checkbox"
                     checked={form.remember}
@@ -290,7 +298,7 @@ export default function SignIn() {
                 </label>
                 <button
                   type="button"
-                  className="text-sm font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  className="text-sm font-medium text-slate-500 transition hover:text-slate-900 "
                 >
                   Forgot password?
                 </button>
@@ -299,7 +307,7 @@ export default function SignIn() {
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-[#0B7A75] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-400 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200 cursor-pointer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-[#0B7A75] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-400 "
               >
                 {status === "loading" ? (
                   <>
@@ -312,10 +320,10 @@ export default function SignIn() {
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-6 text-center text-sm text-slate-500 ">
               Don’t have an account?{" "}
               <Link href="/signup">
-                <span className="font-semibold text-[#0B7A75] dark:text-slate-100">
+                <span className="font-semibold text-[#0B7A75] ">
                   Create one now
                 </span>
                 .
@@ -325,7 +333,7 @@ export default function SignIn() {
         </div>
       </main>
       <div>
-        <Footer/>
+        <Footer />
       </div>
     </div>
   );

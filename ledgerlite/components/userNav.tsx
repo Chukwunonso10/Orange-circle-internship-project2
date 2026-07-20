@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { Bell } from "lucide-react";
+<<<<<<< HEAD
 import prisma from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
+=======
+import Logout from "@/components/logout";
+
+>>>>>>> aea6b4ce62f971d2dcfbd2d482ba93084597ab69
 
 
 
@@ -12,7 +17,7 @@ export default async function UserNav({id, name, buisnessName}: {id: string, nam
     <div>
       <section>
         {/* userNav user navigation profile details */}
-        <div className="w-full  border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+        <div className="w-full  border-b border-gray-200 shadow-sm">
           {/* user profile */}
           <div className="p-2">
             <div className="flex justify-between items-center px-4 py-2">
@@ -41,6 +46,9 @@ export default async function UserNav({id, name, buisnessName}: {id: string, nam
                     width={40}
                     height={40}
                   />
+                </div>
+                <div> 
+                  <Logout />
                 </div>
               </div>
             </div>

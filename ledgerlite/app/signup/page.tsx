@@ -4,6 +4,8 @@ import { useState } from "react";
 import HomeNav from "@/components/homeNav";
 import Footer from "@/components/footer";
 import Link from "next/link";
+import Image from "next/image";
+
 import {
   CheckCircle2,
   Loader2,
@@ -15,10 +17,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-
-
 export default function SignUp() {
-const router = useRouter()
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     businessName: "",
@@ -102,15 +102,20 @@ const router = useRouter()
       const res = await fetch("/api/sign-up", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: form.email, password: form.password, buisnessName: form.businessName, name: form.name, confirmPassword: form.confirmPassword })
-      })
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+          buisnessName: form.businessName,
+          name: form.name,
+          confirmPassword: form.confirmPassword,
+        }),
+      });
 
-
-      const data = await res.json()
+      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message)
+        throw new Error(data.message);
       }
       router.push("/dashboard")
       setStatus("success");
@@ -136,13 +141,13 @@ const router = useRouter()
         {" "}
         <HomeNav />
       </nav>
-      <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900 dark:bg-slate-950 dark:text-slate-100 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900  sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:items-center">
           {/* header */}
-          <section className="rounded-4xl border border-slate-200/80 bg-white/95 p-8 shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/95 dark:shadow-black/10 lg:w-1/2">
+          <section className="rounded-4xl border border-slate-200/80 bg-white/95 p-8 shadow-xl shadow-slate-200/50 backdrop-blur-sm  lg:w-1/2">
             <div className="mb-8">
-              <p className="inline-flex items-center gap-2 rounded-full bg-[#e4f5ed] px-4 py-2 text-sm font-medium text-[#02ad5e] dark:bg-sky-900/20 dark:text-sky-200">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#b6edd3] text-[#028d5e] dark:bg-sky-700 dark:text-slate-950">
+              <p className="inline-flex items-center gap-2 rounded-full bg-[#e4f5ed] px-4 py-2 text-sm font-medium text-[#02ad5e]">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#b6edd3] text-[#028d5e] ">
                   <ShieldCheck size={16} />
                 </span>
                 Secure account setup
@@ -150,24 +155,35 @@ const router = useRouter()
               <h1 className="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl">
                 Create your LedgerLite account
               </h1>
-              <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 dark:text-slate-400">
+              <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 ">
                 Start managing your finances with a modern, secure dashboard.
                 Complete the form and get instant access to your free signup
                 experience.
               </p>
             </div>
 
+            <div className="relative h-50 w-full sm:h-60">
+              <Image
+                src="/signupImg.jpg"
+                alt="Dashboard preview"
+                fill
+                loading="eager"
+                className="object-cover py-4"
+                sizes="(max-width: 568px) 100vw, 50vw"
+              />
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl bg-slate-100 p-5 dark:bg-slate-800">
+              <div className="rounded-3xl bg-slate-100 p-5 ">
                 <p className="text-lg font-semibold">Fast activation</p>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                <p className="mt-2 text-sm text-slate-600 ">
                   Get started quickly with an intuitive setup flow and instant
                   account creation.
                 </p>
               </div>
-              <div className="rounded-3xl bg-slate-100 p-5 dark:bg-slate-800">
+              <div className="rounded-3xl bg-slate-100 p-5 ">
                 <p className="text-lg font-semibold">Trusted security</p>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                <p className="mt-2 text-sm text-slate-600 ">
                   Your data is protected by modern validation and strong
                   password policies.
                 </p>
@@ -175,7 +191,7 @@ const router = useRouter()
             </div>
           </section>
 
-          <section className="relative mx-auto w-full max-w-xl rounded-4xl border border-slate-200/80 bg-white/95 p-8 shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/95 dark:shadow-black/10 lg:w-1/2">
+          <section className="relative mx-auto w-full max-w-xl rounded-4xl border border-slate-200/80 bg-white/95 p-8 shadow-xl shadow-slate-200/50 backdrop-blur-sm   lg:w-1/2">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
@@ -185,13 +201,13 @@ const router = useRouter()
                   Create your account
                 </h2>
               </div>
-              <div className="rounded-3xl text-center bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              <div className="rounded-3xl text-center bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 ">
                 3 mins setup
               </div>
             </div>
             {/* error state handling */}
             {status === "error" && (
-              <div className="mb-6 rounded-3xl border border-rose-200/70 bg-rose-50/80 p-4 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-200">
+              <div className="mb-6 rounded-3xl border border-rose-200/70 bg-rose-50/80 p-4 text-rose-700  ">
                 <p className="font-semibold">Unable to submit</p>
                 <p className="mt-1 text-sm">
                   {message || "Please correct the highlighted fields."}
@@ -200,9 +216,9 @@ const router = useRouter()
             )}
             {/* success state handling */}
             {status === "success" && (
-              <div className="mb-6 rounded-3xl border border-emerald-200/70 bg-emerald-50/80 p-4 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200">
+              <div className="mb-6 rounded-3xl border border-emerald-200/70 bg-emerald-50/80 p-4 text-emerald-700 ">
                 <div className="flex items-start gap-3">
-                  <span className="mt-1 inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-700/10 dark:text-emerald-200">
+                  <span className="mt-1 inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 ">
                     <CheckCircle2 size={18} />
                   </span>
                   <div>
@@ -216,7 +232,7 @@ const router = useRouter()
             <form className="space-y-5" onSubmit={handleSubmit} noValidate>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                className="block text-sm font-medium text-slate-700 "
               >
                 User name
                 <div className="mt-2">
@@ -228,19 +244,17 @@ const router = useRouter()
                     onChange={(event) =>
                       handleChange("name", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.name
+                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 ${
+                      errors.name
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
-                      }`}
+                    }`}
                     placeholder="John Doe"
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "name-error" : undefined}
                   />
                   {errors.name && (
-                    <p
-                      className="mt-2 text-sm text-rose-600 dark:text-rose-300"
-                      id="name-error"
-                    >
+                    <p className="mt-2 text-sm text-rose-600 " id="name-error">
                       {errors.name}
                     </p>
                   )}
@@ -249,7 +263,7 @@ const router = useRouter()
 
               <label
                 htmlFor="businessName"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                className="block text-sm font-medium text-slate-700 "
               >
                 Business name
                 <div className="mt-2">
@@ -261,10 +275,11 @@ const router = useRouter()
                     onChange={(event) =>
                       handleChange("businessName", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.businessName
+                    className={`w-full rounded-3xl border px-4 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200   ${
+                      errors.businessName
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
-                      }`}
+                    }`}
                     placeholder="Circo Orange Enterprise"
                     aria-invalid={!!errors.businessNameame}
                     aria-describedby={
@@ -284,7 +299,7 @@ const router = useRouter()
 
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                className="block text-sm font-medium text-slate-700 "
               >
                 Email address
                 <div className="mt-2 flex relative">
@@ -299,10 +314,11 @@ const router = useRouter()
                     onChange={(event) =>
                       handleChange("email", event.target.value)
                     }
-                    className={`w-full rounded-3xl border px-10 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.email
+                    className={`w-full rounded-3xl border px-10 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 ${
+                      errors.email
                         ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                         : "border-slate-200"
-                      }`}
+                    }`}
                     placeholder="you@example.com"
                     aria-invalid={!!errors.email}
                     aria-describedby={errors.email ? "email-error" : undefined}
@@ -310,10 +326,7 @@ const router = useRouter()
                 </div>
                 <div>
                   {errors.email && (
-                    <p
-                      className="mt-2 text-sm text-rose-600 dark:text-rose-300"
-                      id="email-error"
-                    >
+                    <p className="mt-2 text-sm text-rose-600 " id="email-error">
                       {errors.email}
                     </p>
                   )}
@@ -323,7 +336,7 @@ const router = useRouter()
               <div className="grid gap-5 sm:grid-cols-2">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                  className="block text-sm font-medium text-slate-700 "
                 >
                   Password
                   <div className="mt-2 relative">
@@ -338,10 +351,11 @@ const router = useRouter()
                       onChange={(event) =>
                         handleChange("password", event.target.value)
                       }
-                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.password
+                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 ${
+                        errors.password
                           ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                           : "border-slate-200"
-                        }`}
+                      }`}
                       placeholder="Create password"
                       aria-invalid={!!errors.password}
                       aria-describedby={
@@ -362,7 +376,7 @@ const router = useRouter()
                   </div>
                   {errors.password && (
                     <p
-                      className="mt-2 text-sm text-rose-600 dark:text-rose-300"
+                      className="mt-2 text-sm text-rose-600 "
                       id="password-error"
                     >
                       {errors.password}
@@ -372,7 +386,7 @@ const router = useRouter()
 
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                  className="block text-sm font-medium text-slate-700 "
                 >
                   Confirm password
                   <div className="mt-2 relative">
@@ -387,10 +401,11 @@ const router = useRouter()
                       onChange={(event) =>
                         handleChange("confirmPassword", event.target.value)
                       }
-                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/20 ${errors.confirmPassword
+                      className={`w-full rounded-3xl border px-12 py-3 text-slate-900 outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-sky-200  ${
+                        errors.confirmPassword
                           ? "border-rose-400 ring-rose-200 focus:border-rose-500 focus:ring-rose-200"
                           : "border-slate-200"
-                        }`}
+                      }`}
                       placeholder="Confirm password"
                       aria-invalid={!!errors.confirmPassword}
                       aria-describedby={
@@ -414,7 +429,7 @@ const router = useRouter()
                   </div>
                   {errors.confirmPassword && (
                     <p
-                      className="mt-2 text-sm text-rose-600 dark:text-rose-300"
+                      className="mt-2 text-sm text-rose-600 "
                       id="confirmPassword-error"
                     >
                       {errors.confirmPassword}
@@ -426,7 +441,7 @@ const router = useRouter()
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-[#0b7a75] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-400 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200 cursor-pointer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-[#0b7a75] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-400   cursor-pointer"
               >
                 {status === "loading" ? (
                   <>
@@ -439,20 +454,20 @@ const router = useRouter()
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-6 text-center text-sm text-slate-500 ">
               By signing up, you agree to our{" "}
-              <span className="font-medium px-1 text-slate-900 dark:text-slate-100">
+              <span className="font-medium px-1 text-slate-900 ">
                 Terms of Service
               </span>
               and
-              <span className="font-medium px-1 text-slate-900 dark:text-slate-100">
+              <span className="font-medium px-1 text-slate-900 ">
                 Privacy Policy
               </span>
             </p>
 
-            <p className=" text-center text-sm text-slate-500 dark:text-slate-400">
+            <p className=" text-center text-sm text-slate-500 ">
               Already have an account?
-              <span className="font-bold text-[#0B7A75] px-1 dark:text-slate-100">
+              <span className="font-bold text-[#0B7A75] px-1 ">
                 <Link href="/signin">Sign In</Link>
               </span>
             </p>
@@ -465,5 +480,3 @@ const router = useRouter()
     </div>
   );
 }
-
-
