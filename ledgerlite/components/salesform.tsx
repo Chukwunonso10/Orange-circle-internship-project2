@@ -7,6 +7,8 @@ export default function SalesForm() {
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [amount, setAmount] = useState(0);
+  // const [updateError, setUpdateError] = useState<string | null>(null);
+  // const [updateSuccess, setUpdateSuccess] = useState<string | null>(null);
 
   function resetForm() {
     setItem("");
@@ -18,23 +20,26 @@ export default function SalesForm() {
     event.preventDefault();
     const sale = { item, quantity, amount };
     console.log("Save sales", sale);
+    // setUpdateSuccess("items added successsfully");
     setOpen(false);
     resetForm();
   }
 
   return (
     <div className="px-4 py-6">
-      <div >
+      <div>
         <button
           type="button"
           onClick={() => setOpen(true)}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0b7a75] px-3 py-3 md:px-5 md:py-3 text-sm font-semibold text-white shadow-lg shadow-[#0b7a75]/20 transition duration-200 hover:bg-[#09615e] hover:shadow-xl hover:shadow-[#0b7a75]/30 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/50 cursor-pointer"
         >
-          <Plus size={18} className="transition-transform duration-300 group-hover:rotate-90" />
+          <Plus
+            size={18}
+            className="transition-transform duration-300 group-hover:rotate-90"
+          />
           <span>Add</span>
           Sales
         </button>
-       
       </div>
 
       {open && (
@@ -48,7 +53,8 @@ export default function SalesForm() {
           <div
             className="relative z-10 w-full max-w-lg overflow-hidden rounded-3xl bg-white text-slate-900 shadow-2xl ring-1 ring-black/10 dark:bg-slate-900 dark:ring-white/10"
             style={{
-              animation: "modal-slide-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              animation:
+                "modal-slide-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
             }}
           >
             <div className="transform rounded-3xl transition duration-300 ease-out scale-100 opacity-100">
@@ -70,7 +76,20 @@ export default function SalesForm() {
               </div>
               {/* sales form */}
               <form onSubmit={handleSave} className="space-y-5 px-6 py-6">
-                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 fill-mode-both" style={{ animationDelay: "50ms" }}>
+                {/* {updateError && (
+                  <div className="bg-red-100 text-red-700 p-2 rounded-md mb-3 text-sm">
+                    {updateError}
+                  </div>
+                )} */}
+                {/* { {updateSuccess && (
+                  <div className="bg-green-100 text-green-700 p-2 rounded-md mb-3 text-sm">
+                    {updateSuccess}
+                  </div>
+                )} */}
+                <div
+                  className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 fill-mode-both"
+                  style={{ animationDelay: "50ms" }}
+                >
                   <label
                     htmlFor="item"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300"
@@ -88,7 +107,10 @@ export default function SalesForm() {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 fill-mode-both" style={{ animationDelay: "100ms" }}>
+                  <div
+                    className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 fill-mode-both"
+                    style={{ animationDelay: "100ms" }}
+                  >
                     <label
                       htmlFor="quantity"
                       className="block text-sm font-medium text-slate-700 dark:text-slate-300"
@@ -106,7 +128,10 @@ export default function SalesForm() {
                     />
                   </div>
 
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 fill-mode-both" style={{ animationDelay: "150ms" }}>
+                  <div
+                    className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 fill-mode-both"
+                    style={{ animationDelay: "150ms" }}
+                  >
                     <label
                       htmlFor="amount"
                       className="block text-sm font-medium text-slate-700 dark:text-slate-300"
@@ -126,7 +151,10 @@ export default function SalesForm() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-col gap-3 pt-4 border-t border-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both dark:border-zinc-800" style={{ animationDelay: "200ms" }}>
+                <div
+                  className="mt-6 flex flex-col gap-3 pt-4 border-t border-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both dark:border-zinc-800"
+                  style={{ animationDelay: "200ms" }}
+                >
                   <div className="flex sm:flex-row sm:justify-end gap-3">
                     <button
                       type="button"
