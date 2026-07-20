@@ -1,12 +1,14 @@
 import Image from "next/image";
 import { Bell } from "lucide-react";
+import Logout from "@/components/logout";
+
 
 export default function UserNav() {
   return (
     <div>
       <section>
         {/* userNav user navigation profile details */}
-        <div className="w-full  border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+        <div className="w-full  border-b border-gray-200 shadow-sm">
           {/* user profile */}
           <div className="p-2">
             <div className="flex justify-between items-center px-4 py-2">
@@ -35,6 +37,9 @@ export default function UserNav() {
                     width={40}
                     height={40}
                   />
+                </div>
+                <div> 
+                  <Logout />
                 </div>
               </div>
             </div>
