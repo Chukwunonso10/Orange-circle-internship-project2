@@ -2,7 +2,7 @@ import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(req: NextRequest, { params }: { params: { itemId: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ itemId: string }> }) {
     try {
         const userId = await getCurrentUserId()
         if (!userId) {
@@ -87,7 +87,7 @@ export async function PUT(req: NextRequest, { params }: { params: { itemId: stri
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { itemId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ itemId: string }> }) {
     try {
         const userId = await getCurrentUserId()
         if (!userId) {

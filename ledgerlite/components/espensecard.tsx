@@ -59,7 +59,7 @@ export default function EspenseCard({ espense = [] }: EspenseCardProps) {
     },
   ];
 
-  const displayEspense = espense.length > 0 ? espense : sampleEspense;
+  const displayEspense = espense;
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">

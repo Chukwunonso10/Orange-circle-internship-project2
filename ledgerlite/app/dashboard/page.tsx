@@ -62,11 +62,11 @@ export default async function Dashboard() {
                 <TrendingUp size={18} />
               </div>
 
-              <p className="text-[14-x]">MONEY IN</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">MONEY IN</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{metrics?.TotalMoneyIn}</h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{Number(metrics?.TotalMoneyIn || 0).toLocaleString()}</h3>
 
-              <p className="text-xs">yesterday:₦{metrics?.moneyInYesterday}</p>
+              <p className="text-xs text-slate-500 mt-2">yesterday: ₦{Number(metrics?.moneyInYesterday || 0).toLocaleString()}</p>
             </div>
 
             {/* box 2 money out*/}
@@ -76,11 +76,11 @@ export default async function Dashboard() {
                 <TrendingDown size={18} />
               </div>
 
-              <p className="text-[14-x]">MONEY OUT</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">MONEY OUT</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{metrics?.totalMoneyOut}</h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{Number(metrics?.totalMoneyOut || 0).toLocaleString()}</h3>
 
-              <p className="text-xs">yesterday:₦{metrics?.moneyOutYesterday}</p>
+              <p className="text-xs text-slate-500 mt-2">yesterday: ₦{Number(metrics?.moneyOutYesterday || 0).toLocaleString()}</p>
             </div>
 
             {/* box 3 today's profit */}
@@ -90,11 +90,11 @@ export default async function Dashboard() {
                 <Banknote size={18} />
               </div>
 
-              <p className="text-[14-x]">TODAY'S PROFIT</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">TODAY'S PROFIT</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{metrics?.profitToday} </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{Number(metrics?.profitToday || 0).toLocaleString()} </h3>
 
-              <p className="text-xs">yesterday:₦{metrics?.profitYesterday}</p>
+              <p className="text-xs text-slate-500 mt-2">yesterday: ₦{Number(metrics?.profitYesterday || 0).toLocaleString()}</p>
             </div>
 
             {/* box 4 total sales today */}
@@ -104,11 +104,11 @@ export default async function Dashboard() {
                 <ShoppingBag size={18} />
               </div>
 
-              <p className="text-[14-x]">TOTAL SALES TODAY</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">TOTAL SALES TODAY</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">{metrics?.totalsalescountToday} </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">{Number(metrics?.totalsalescountToday || 0).toLocaleString()} </h3>
 
-              <p className="text-xs">yesterday:{metrics?.totalSalesCountyesterday}</p>
+              <p className="text-xs text-slate-500 mt-2">yesterday: {Number(metrics?.totalSalesCountyesterday || 0).toLocaleString()}</p>
             </div>
           </div>
         </section>

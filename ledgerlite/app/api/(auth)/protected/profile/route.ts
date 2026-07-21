@@ -8,6 +8,7 @@ type update = {
     buisnessName?: string
     passwordHash?: string
     newPassword?: string
+    image?: string | null
 }
 export async function GET() {
     try {
@@ -27,6 +28,7 @@ export async function GET() {
                 buisnessName: user.buisnessName,
                 email: user.email,
                 isVerified: user.isVerified,
+                image: user.image,
                 createdAt: user.createdAt
             }
         }, { status: 200 })
@@ -47,7 +49,7 @@ export async function PATCH(req: NextRequest) {
             }, { status: 403 })
         }
 
-        const { name, buisnessName, password, newPassword } = await req.json()
+        const { name, buisnessName, password, newPassword, image } = await req.json()
         let needRevocation = false
         const updateData: update = {}
 
@@ -57,6 +59,10 @@ export async function PATCH(req: NextRequest) {
 
         if (buisnessName !== undefined) {
             updateData.buisnessName = buisnessName
+        }
+
+        if (image !== undefined) {
+            updateData.image = image
         }
         //only verify password if their is a password field
         if (newPassword) {

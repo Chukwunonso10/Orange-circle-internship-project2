@@ -3,7 +3,7 @@ import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function PUT(req: NextRequest, { params }: { params: { salesId: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ salesId: string }> }) {
     try {
         const userId = await getCurrentUserId()
         if (!userId) {
@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: { params: { salesId: str
         }
 
         const { operationId, unitPrice, quantity, customItemName, itemId } = await req.json()
-        const { salesId } = params
+        const { salesId } = await params
 
 
         if (operationId) {
@@ -156,7 +156,7 @@ export async function PUT(req: NextRequest, { params }: { params: { salesId: str
 
 
 
-export async function DELETE(req: NextRequest, { params }: { params: { salesId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ salesId: string }> }) {
     try {
         const userId = await getCurrentUserId()
         if (!userId) {

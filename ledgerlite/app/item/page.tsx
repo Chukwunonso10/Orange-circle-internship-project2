@@ -11,7 +11,7 @@ export default async function Item() {
         redirect("/signin")
     }
     const user = await prisma.user.findUnique({where: {id: userId}})
-    const myname = user?.firstName
+    const myname = user?.name
     const allItems = await prisma.item.findMany({
         where: { userId },
         take: 1

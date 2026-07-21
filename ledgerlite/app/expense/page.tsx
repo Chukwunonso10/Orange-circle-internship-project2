@@ -38,7 +38,7 @@ export default function Expense() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search item"
-                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/6 "
+                  className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/6 "
                 />
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">

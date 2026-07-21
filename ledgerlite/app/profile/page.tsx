@@ -1,7 +1,29 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
+import { getCurrentUserId } from "../lib/authhelper";
+import prisma from "../lib/prisma";
+import ProfileClient from "@/components/profileClient";
 
-export default function Profile() {
+export default async function ProfilePage() {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("authentication error");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      name: true,
+      buisnessName: true,
+      email: true,
+      image: true,
+      createdAt: true,
+    },
+  });
+  if (!user) {
+    throw new Error("user not found");
+  }
+
   return (
     <div>
       <div>
@@ -9,19 +31,16 @@ export default function Profile() {
           <SideNav />
         </div>
         <div className="ml-0 md:ml-70 sm:ml-0">
-          <UserNav />
+          <UserNav name={user.name} buisnessName={user.buisnessName} />
         </div>
-        <main className="ml-10 md:ml-72 sm:ml-10  p-6">
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-                Profile Page
-              </h1>
-              <p className="mt-2 text-slate-600 dark:text-slate-400">
-                This is the dashboard page. You can manage your dashboard here.
-              </p>
-            </div>
-          </div>
+        <main className="ml-0 md:ml-72 sm:ml-10 p-6">
+          <ProfileClient
+            initialName={user.name}
+            initialEmail={user.email}
+            initialBuisnessName={user.buisnessName}
+            initialImage={user.image || ""}
+            createdAt={user.createdAt.toISOString()}
+          />
         </main>
       </div>
     </div>

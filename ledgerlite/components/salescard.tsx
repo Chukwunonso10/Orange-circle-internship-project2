@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Eye, X, Loader2 } from "lucide-react";
+import Pagination from "./pagination";
 
 interface SalesItem {
   id: string;
@@ -12,49 +13,34 @@ interface SalesItem {
   quantity: number;
   amount?: number;
   totalAmount?: any;
-  createdAt: string | Date;
+  createdAt?: string | Date;
+  timestamp?: string;
 }
 
 interface SalesCardProps {
-  sales?: SalesItem[];
+  sales?: any[];
+  currentPage?: number;
+  totalPages?: number;
+  totalSales?: number;
 }
 
-export default function SalesCard({ sales = [] }: SalesCardProps) {
+export default function SalesCard({
+  sales = [],
+  currentPage = 1,
+  totalPages = 1,
+  totalSales = 0,
+}: SalesCardProps) {
   const router = useRouter();
   
   // Details Modal State
-  const [selectedSale, setSelectedSale] = useState<SalesItem | null>(null);
+  const [selectedSale, setSelectedSale] = useState<any | null>(null);
   
-  // Deleting State
+  // Deleting Loading State
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Sample data if none provided
-  const sampleSales: SalesItem[] = [
-    {
-      id: "1",
-      itemName: "Laptop",
-      quantity: 2,
-      amount: 2400,
-      createdAt: "2025-01-15 10:30 AM",
-    },
-    {
-      id: "2",
-      itemName: "Mouse",
-      quantity: 5,
-      amount: 125,
-      createdAt: "2025-01-15 11:15 AM",
-    },
-    {
-      id: "3",
-      itemName: "Keyboard",
-      quantity: 3,
-      amount: 225,
-      createdAt: "2025-01-15 02:45 PM",
-    },
-  ];
+  const displaySales = sales;
 
-  const displaySales = sales.length > 0 ? sales : sampleSales;
-
+  // Handle Delete Action
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this sale? This will restore inventory stock counts for tracked items.")) {
       return;
@@ -113,13 +99,14 @@ export default function SalesCard({ sales = [] }: SalesCardProps) {
               const name = item.itemName || item.item?.name || item.customItemName || "Untracked Item";
               const amountValue = item.amount !== undefined ? item.amount : (item.totalAmount !== undefined ? Number(item.totalAmount) : 0);
               
-              // Safely format Date
-              let formattedDate = String(item.createdAt);
+              let formattedDate = "";
               if (item.createdAt && !isNaN(Date.parse(String(item.createdAt)))) {
                 formattedDate = new Date(item.createdAt).toLocaleString(undefined, {
                   dateStyle: "medium",
-                  timeStyle: "short"
+                  timeStyle: "short",
                 });
+              } else if (item.timestamp) {
+                formattedDate = item.timestamp;
               }
 
               const isDeleting = deletingId === item.id;
@@ -183,28 +170,30 @@ export default function SalesCard({ sales = [] }: SalesCardProps) {
         </div>
       )}
 
-      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4">
+      {/* Footer Page Indicators */}
+      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4 flex items-center justify-between">
         <p className="text-xs text-slate-600">
-          Total records:{" "}
-          <span className="font-semibold text-slate-900">
-            {displaySales.length}
-          </span>
+          Showing <span className="font-semibold text-slate-900">{displaySales.length}</span> of{" "}
+          <span className="font-semibold text-slate-900">{totalSales}</span> records
         </p>
+        <Pagination currentPage={currentPage} totalPages={totalPages} />
       </div>
 
-      {/* Sale Details Modal */}
+      {/* Dynamic View Transaction Details Modal */}
       {selectedSale && (() => {
         const name = selectedSale.itemName || selectedSale.item?.name || selectedSale.customItemName || "Untracked Item";
         const total = selectedSale.amount !== undefined ? selectedSale.amount : (selectedSale.totalAmount !== undefined ? Number(selectedSale.totalAmount) : 0);
         const qty = selectedSale.quantity;
         const unit = qty > 0 ? (total / qty) : 0;
         
-        let formattedDate = String(selectedSale.createdAt);
+        let formattedDate = "";
         if (selectedSale.createdAt && !isNaN(Date.parse(String(selectedSale.createdAt)))) {
           formattedDate = new Date(selectedSale.createdAt).toLocaleString(undefined, {
             dateStyle: "long",
-            timeStyle: "medium"
+            timeStyle: "medium",
           });
+        } else if (selectedSale.timestamp) {
+          formattedDate = selectedSale.timestamp;
         }
 
         return (
@@ -216,22 +205,22 @@ export default function SalesCard({ sales = [] }: SalesCardProps) {
             />
 
             <div
-              className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl bg-white text-slate-900 shadow-2xl ring-1 ring-black/10 dark:bg-slate-900 dark:ring-white/10"
+              className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl bg-white text-slate-900 shadow-2xl ring-1 ring-black/10"
               style={{
                 animation: "modal-slide-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
               }}
             >
-              <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5 dark:border-zinc-800">
+              <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
                 <div>
-                  <h2 className="text-xl font-semibold">Sale Transaction Details</h2>
-                  <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                  <h2 className="text-xl font-semibold text-slate-900">Sale Transaction Details</h2>
+                  <p className="mt-1 text-xs text-slate-500">
                     ID: {selectedSale.id}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedSale(null)}
-                  className="rounded-full p-2 text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-slate-900 hover:rotate-90 dark:hover:bg-zinc-800 dark:hover:text-slate-100 cursor-pointer"
+                  className="rounded-full p-2 text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-slate-900 hover:rotate-90 cursor-pointer"
                   aria-label="Close"
                 >
                   <X size={18} />
@@ -239,32 +228,34 @@ export default function SalesCard({ sales = [] }: SalesCardProps) {
               </div>
 
               <div className="px-6 py-6 space-y-4">
-                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-zinc-800">
+                <div className="flex justify-between py-2 border-b border-slate-100">
                   <span className="text-sm text-slate-500">Item Name</span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">{name}</span>
+                  <span className="text-sm font-semibold text-slate-900">{name}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-zinc-800">
+                <div className="flex justify-between py-2 border-b border-slate-100">
                   <span className="text-sm text-slate-500">Quantity Sold</span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">{qty}</span>
+                  <span className="text-sm font-semibold text-slate-900">{qty}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-zinc-800">
+                <div className="flex justify-between py-2 border-b border-slate-100">
                   <span className="text-sm text-slate-500">Unit Price</span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">₦{unit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="text-sm font-semibold text-slate-900">
+                    ₦{unit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-zinc-800">
+                <div className="flex justify-between py-2 border-b border-slate-100">
                   <span className="text-sm text-slate-500 font-medium">Total Amount</span>
                   <span className="text-base font-bold text-[#0b7a75]">₦{total.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-sm text-slate-500">Time Logged</span>
-                  <span className="text-xs text-slate-700 dark:text-slate-300">{formattedDate}</span>
+                  <span className="text-xs text-slate-700">{formattedDate}</span>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-zinc-800 flex justify-end">
+                <div className="mt-6 pt-4 border-t border-slate-200 flex justify-end">
                   <button
                     type="button"
                     onClick={() => setSelectedSale(null)}
-                    className="rounded-2xl bg-slate-100 text-slate-700 hover:bg-slate-200 px-5 py-3 text-sm font-semibold transition active:scale-95 cursor-pointer dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                    className="rounded-2xl bg-slate-100 text-slate-700 hover:bg-slate-200 px-5 py-3 text-sm font-semibold transition active:scale-95 cursor-pointer"
                   >
                     Close
                   </button>

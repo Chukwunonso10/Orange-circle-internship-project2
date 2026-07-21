@@ -24,8 +24,11 @@ export async function getCurrentUserId(){
 
     const userId = session.userId
     return userId;
-  } catch (error) {
-    console.error("authentication error: unable to validate session")
+  } catch (error: any) {
+    if (error && (error.digest === 'DYNAMIC_SERVER_USAGE' || String(error.message).includes('Dynamic server usage'))) {
+      throw error;
+    }
+    console.error("authentication error: unable to validate session", error)
     return null
   }
 }

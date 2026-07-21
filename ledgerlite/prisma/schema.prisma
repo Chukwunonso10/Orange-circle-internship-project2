@@ -58,6 +58,7 @@ model User {
   email             String          @unique
   passwordHash      String
   isVerified        Boolean         @default(false)
+  image             String?
   verificationToken String?
   expiresAt         DateTime?
   createdAt         DateTime        @default(now())
