@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Home,
   ShoppingBag,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 export default function SideNav() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   // navigation items for the sidebar
   const navItems = [
@@ -27,7 +29,7 @@ export default function SideNav() {
       icon: <Download size={18} />,
     },
   ];
-//  navigation items for the utility section
+  //  navigation items for the utility section
   const utilityItems = [
     { href: "/settings", label: "Settings", icon: <Settings size={18} /> },
     { href: "/profile", label: "Profile", icon: <User2 size={18} /> },
@@ -61,7 +63,6 @@ export default function SideNav() {
         <div className="flex items-center justify-between gap-3">
           {/* Logo */}
           <div>
-           
             <div>
               <svg
                 width="167"
@@ -116,38 +117,56 @@ export default function SideNav() {
         {/* Navigation */}
         <nav className="mt-10">
           <ul className="space-y-4 ">
-            {navItems.map((item) => (
-              <li key={item.href} className="hover:text-[#0b7a75]">
-                <Link
-                  href={item.href}
-                  className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75]"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="text-slate-500 dark:text-slate-400 ">
-                    {item.icon}
-                  </span>
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              </li>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-3 rounded-2xl px-3 py-3 font-medium transition ${
+                      isActive
+                        ? "bg-[#0b7a75]/15 text-[#0b7a75]"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-[#0b7a75]"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span
+                      className={`${isActive ? "text-[#0b7a75]" : "text-slate-500"}`}
+                    >
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
           {/* Utility Items */}
           <div className="mt-10 border-t border-slate-200 pt-6 dark:border-slate-800">
             <ul className="space-y-4">
-              {utilityItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center gap-3 rounded-2xl px-3 py-3 text-slate-700 transition hover:bg-slate-100 hover:text-[#0b7a75]"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <span className="text-slate-500 dark:text-slate-400">
-                      {item.icon}
-                    </span>
-                    <span className="font-medium">{item.label}</span>
-                  </Link>
-                </li>
-              ))}
+              {utilityItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`flex items-center gap-3 rounded-2xl px-3 py-3 font-medium transition ${
+                        isActive
+                          ? "bg-[#0b7a75]/15 text-[#0b7a75]"
+                          : "text-slate-700 hover:bg-slate-100 hover:text-[#0b7a75]"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span
+                        className={`${isActive ? "text-[#0b7a75]" : "text-slate-500"}`}
+                      >
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </nav>

@@ -3,6 +3,8 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import SalesForm from "@/components/salesform";
+import SalesCard from "@/components/salescard";
+
 import { Search, Banknote, ReceiptText } from "lucide-react";
 import { useState } from "react";
 
@@ -18,9 +20,9 @@ export default function Sales() {
         <div className="ml-0 md:ml-70 sm:ml-0">
           <UserNav />
         </div>
-        <main className="ml-10 md:ml-72 sm:ml-10 p-6">
+        <main className="ml-0 md:ml-72 sm:ml-10 p-6">
           <div className="border border-gray-300 my-5 rounded-4xl p-5 shadow-sm">
-            <div >
+            <div>
               <h2 className="text-[#032523] text-2xl font-bold">Sales</h2>
 
               <p className="py-2 text-sm text-gray-700">
@@ -85,7 +87,7 @@ export default function Sales() {
               </div>
 
               <div
-                className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
+                className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
                 style={{ animationFillMode: "both", animationDelay: "100ms" }}
               >
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75] transition-transform duration-300 hover:scale-110">
@@ -103,7 +105,7 @@ export default function Sales() {
               </div>
 
               <div
-                className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
+                className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
                 style={{ animationFillMode: "both", animationDelay: "100ms" }}
               >
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75] transition-transform duration-300 hover:scale-110">
@@ -120,7 +122,7 @@ export default function Sales() {
                 </p>
               </div>
             </div>
-
+            {/* sales. history */}
             <aside
               className="rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg transition-all  hover:shadow-xl hover:border-[#0b7a75] animate-in fade-in slide-in-from-bottom duration-500"
               style={{ animationFillMode: "both", animationDelay: "200ms" }}
@@ -129,14 +131,14 @@ export default function Sales() {
                 Sales history
               </h2>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                Your sales appear here once they are saved.
+                Your sales appears here once they are saved.
               </p>
               <div className="flex flex-col items-center mt-6 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-[#0b7a75]/10 text-[#0b7a75]">
                   <ReceiptText size={22} />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900 ">
-                  No sales records yet
+                  Sales records will appear below
                 </h3>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                   When you save a sale, it will appear in this section for quick
@@ -146,6 +148,9 @@ export default function Sales() {
                 <div>
                   <SalesForm />
                 </div>
+              </div>
+              <div className="py-5">
+                <SalesCard />
               </div>
             </aside>
           </div>

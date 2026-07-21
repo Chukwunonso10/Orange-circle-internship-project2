@@ -2,6 +2,8 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import ExpenseForm from "@/components/expenseform";
+import EspenseCard from "@/components/espensecard";
+
 import { ShoppingBag, Search } from "lucide-react";
 import { useState } from "react";
 
@@ -17,7 +19,7 @@ export default function Expense() {
         <div className="ml-0 md:ml-70 sm:ml-0">
           <UserNav />
         </div>
-        <main className="ml-10 md:ml-72 sm:ml-10  p-6">
+        <main className="ml-0 md:ml-72 sm:ml-10  p-6">
           <div className="border border-gray-300 my-5 shadow-sm p-6 rounded-4xl">
             <div>
               <h2 className="text-[#032523] text-2xl font-bold">Expense</h2>
@@ -76,7 +78,7 @@ export default function Expense() {
                 </p>
               </div>
 
-              <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
+              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
                   <ShoppingBag size={20} />
                 </div>
@@ -91,7 +93,7 @@ export default function Expense() {
                 </p>
               </div>
 
-              <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
+              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
                   <ShoppingBag size={20} />
                 </div>
@@ -119,15 +121,18 @@ export default function Expense() {
                   <ShoppingBag size={22} />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  No expense records yet
+                  Espense records will appear below
                 </h3>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  When you save expense, it will appear in this section for
+                  When you save an expense, it will appear in this section for
                   quick review.
                 </p>
                 <div>
                   <ExpenseForm />
                 </div>
+              </div>
+              <div className="py-5">
+                <EspenseCard />
               </div>
             </aside>
           </div>
