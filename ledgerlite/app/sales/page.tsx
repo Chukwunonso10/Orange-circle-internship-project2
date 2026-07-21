@@ -51,6 +51,15 @@ export default async function Sales({ searchParams }: { searchParams: Promise<{ 
     orderBy: { createdAt: "desc" }
   })
 
+  // Serialize Prisma Decimal and Date objects to plain serializable JS types
+  const serializedSales = sales.map(sale => ({
+    ...sale,
+    unitPrice: Number(sale.unitPrice),
+    totalAmount: Number(sale.totalAmount),
+    createdAt: sale.createdAt.toISOString(),
+    updatedAt: sale.updatedAt.toISOString()
+  }))
+
   const moneyInToday = Number(metrics.moneyinToday)
   const moneyInYesterday = Number(metrics.moneyInYesterday)
 
@@ -59,7 +68,7 @@ export default async function Sales({ searchParams }: { searchParams: Promise<{ 
       <SalesClient 
         moneyinToday={moneyInToday} 
         moneyInYesterday={moneyInYesterday} 
-        sales={sales} 
+        sales={serializedSales} 
       />
     </div>
   )
