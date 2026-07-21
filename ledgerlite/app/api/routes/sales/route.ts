@@ -1,3 +1,4 @@
+import { Prisma } from "@/app/generated/prisma/client";
 import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,8 +12,20 @@ export async function GET() {
                 success: false, message: "Unauthorize!!: pls log in"
             })
         }
+        // const {page, ...queryParams} = searchParams
+        // let query: Prisma.SaleWhereInput = {}
+
+        // for( const [key, value] of Object.entries(queryParams)){
+        //     switch(key){
+        //         case "search":
+        //             query.item = {name: {contains: value, mode: "insensitive"}} 
+        //     }
+        // }
+
+
+
         const allSales = await prisma.sale.findMany({
-            where: { userId: userId }, include: { item: { select: { name: true } } }
+            where: { userId: userId },
         })
         if (allSales.length === 0) {
             return NextResponse.json({

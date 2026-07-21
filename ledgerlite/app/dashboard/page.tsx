@@ -1,11 +1,10 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import { TrendingUp, TrendingDown, ShoppingBag, Banknote } from "lucide-react";
-import { NextResponse } from "next/server";
 import prisma from "../lib/prisma";
 import { getCurrentUserId } from "../lib/authhelper";
 import { redirect } from "next/navigation";
-import { Metrics } from "../lib/metrics";
+import { getMetrics} from "../lib/metrics";
 
 interface Profile {
   id: string
@@ -13,36 +12,22 @@ interface Profile {
   buisnessName: string
 
 }
+
 export default async function Dashboard() {
   const userId = await getCurrentUserId()
   if (!userId) redirect("/signin")
+
   let profile: any;
 
-  profile = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, name: true, buisnessName: true } })
-  const { id, name, buisnessName } = profile
+  profile = await prisma.user.findUnique({ where: { id: userId }, select: { name: true, buisnessName: true } })
+  const { name, buisnessName } = profile
 
   if (!profile) {
     throw new Error("profile not found")
   }
-  const [revenue, expenses] = await Promise.all([
+  const metrics = await getMetrics()
+  console.log(metrics)
 
-    prisma.sale.aggregate
-      ({
-        where: { userId: userId },
-        _sum: { totalAmount: true }
-      }),
-
-    prisma.expense.aggregate({
-      where: {userId},
-      _sum: {amount: true}
-    })
-  ])
-
-  const totalRevenue = Number(revenue._sum.totalAmount) ?? 0.00;
-  const totalExpenses = Number(expenses._sum.amount) ?? 0.00;
-  console.log(totalRevenue)
-  console.log(totalExpenses)
-  Metrics()
   return (
     <div>
       {/* imported side navigation routes bar */}
@@ -50,7 +35,7 @@ export default async function Dashboard() {
         <SideNav />
       </div>
       <div className="ml-0 md:ml-70 sm:ml-0">
-        <UserNav id={id} name={name} buisnessName={buisnessName} />
+        <UserNav name={name} buisnessName={buisnessName} />
       </div>
       <main className="ml-10 md:ml-72 sm:ml-10  p-6">
         {/* heading */}
@@ -79,9 +64,9 @@ export default async function Dashboard() {
 
               <p className="text-[14-x]">MONEY IN</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{totalRevenue}</h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{metrics?.TotalMoneyIn}</h3>
 
-              <p className="text-xs">yesterday:₦0000</p>
+              <p className="text-xs">yesterday:₦{metrics?.moneyInYesterday}</p>
             </div>
 
             {/* box 2 money out*/}
@@ -93,9 +78,9 @@ export default async function Dashboard() {
 
               <p className="text-[14-x]">MONEY OUT</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{totalExpenses} </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{metrics?.totalMoneyOut}</h3>
 
-              <p className="text-xs">yesterday:₦0000</p>
+              <p className="text-xs">yesterday:₦{metrics?.moneyOutYesterday}</p>
             </div>
 
             {/* box 3 today's profit */}
@@ -107,9 +92,9 @@ export default async function Dashboard() {
 
               <p className="text-[14-x]">TODAY'S PROFIT</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦0000 </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">₦{metrics?.profitToday} </h3>
 
-              <p className="text-xs">yesterday:₦0000</p>
+              <p className="text-xs">yesterday:₦{metrics?.profitYesterday}</p>
             </div>
 
             {/* box 4 total sales today */}
@@ -121,9 +106,9 @@ export default async function Dashboard() {
 
               <p className="text-[14-x]">TOTAL SALES TODAY</p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">0000 </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">{metrics?.totalsalescountToday} </h3>
 
-              <p className="text-xs">yesterday:0000</p>
+              <p className="text-xs">yesterday:{metrics?.totalSalesCountyesterday}</p>
             </div>
           </div>
         </section>

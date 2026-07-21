@@ -1,7 +1,7 @@
 import { getCurrentUserId } from "./authhelper"
 import prisma from "./prisma"
 
-export async function Metrics() {
+export async function getMetrics() {
     const userId = await getCurrentUserId()
     if (!userId) return null
 
@@ -17,7 +17,8 @@ export async function Metrics() {
     const yesterdayEnd = new Date(todayEnd)
     yesterdayEnd.setDate(yesterdayEnd.getDate() - 1)
 
-    const [TodayTotalRevenue, TodayTotalExpenses, todayTotalRevenue, todayTotalExpenses, todayTotalSales, yesterdaytotalSales] = await Promise.all([
+    const [TotalRevenue, TotalExpenses, todayTotalRevenue, todayTotalExpenses, todayTotalSales, yesterdaytotalSales, yesterdaytotalRevenue, yesterdaytotalExpenses] = await Promise.all([
+
         prisma.sale.aggregate({
             where: { userId },
             _sum: { totalAmount: true },
@@ -50,9 +51,44 @@ export async function Metrics() {
             _count: { id: true }
         }),
 
+        prisma.sale.aggregate({
+            where: {userId, createdAt: {gt: yesterdayStart, lt: yesterdayEnd}},
+            _sum: {totalAmount: true}
+        }),
 
-
-
-
+        prisma.expense.aggregate({
+            where: {userId, createdAt: {gt: yesterdayStart, lt: yesterdayEnd}},
+            _sum: {amount: true}
+        })
     ])
+
+    const TotalMoneyIn = Number(TotalRevenue._sum.totalAmount) ?? 0
+    const totalMoneyOut = Number(TotalExpenses._sum.amount) ?? 0
+
+    const moneyinToday = Number(todayTotalRevenue._sum.totalAmount) ?? 0
+    const moneyOutToday = Number(todayTotalExpenses._sum.amount) ?? 0
+
+    const moneyInYesterday = Number(yesterdaytotalRevenue._sum.totalAmount) ?? 0
+    const moneyOutYesterday = Number(yesterdaytotalExpenses._sum.amount) ?? 0
+
+    const totalsalescountToday = Number(todayTotalSales._count.id) ?? 0
+    const totalSalesCountyesterday = Number(yesterdaytotalSales._count.id) ?? 0
+
+    const profitToday = moneyinToday - moneyOutToday
+    const profitYesterday = moneyInYesterday - moneyOutYesterday
+
+    return {
+        TotalMoneyIn,
+        totalMoneyOut,
+        moneyinToday,
+        moneyOutToday,
+        moneyInYesterday,
+        moneyOutYesterday,
+        totalsalescountToday,
+        totalSalesCountyesterday,
+        profitToday,
+        profitYesterday,
+
+
+    }
 }
