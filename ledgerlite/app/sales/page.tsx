@@ -65,7 +65,7 @@ export default async function Sales({ searchParams }: { searchParams: { [key: st
   }
 
   const page = Number(params?.page ?? 1);
-  const pageSize = 5;
+  const pageSize = 2;
 
   const [totalSales, sales, user ] = await Promise.all([
 
@@ -126,6 +126,7 @@ export default async function Sales({ searchParams }: { searchParams: { [key: st
         currentPage={page}
         totalPages={totalPages}
         totalSales={totalSales}
+        pageSize={pageSize}
       />
     </div>
   )

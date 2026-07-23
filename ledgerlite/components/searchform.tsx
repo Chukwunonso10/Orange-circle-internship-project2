@@ -22,7 +22,7 @@ export default function SearchForm() {
         // Go back to page 1 whenever a new search is performed
         params.set("page", "1");
         router.replace(`${pathname}?${params.toString()}`);
-    }, 500);
+    }, 200);
 
     return (
         <div>
@@ -30,7 +30,7 @@ export default function SearchForm() {
                 <input
                     id="search"
                     defaultValue={searchParams.get("search") ?? ""}
-                    onChange={(e) => handleSearch(e.target.value)}
+                    onChange={(e) => handleSearch(e.target.defaultValue)}
                     placeholder="Search item"
                     className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition duration-300 focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/20 focus:shadow-md text-slate-950"
                 />

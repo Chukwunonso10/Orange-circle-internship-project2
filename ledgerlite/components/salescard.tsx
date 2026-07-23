@@ -22,6 +22,7 @@ interface SalesCardProps {
   currentPage?: number;
   totalPages?: number;
   totalSales?: number;
+  pageSize: number
 }
 
 export default function SalesCard({
@@ -29,6 +30,7 @@ export default function SalesCard({
   currentPage = 1,
   totalPages = 1,
   totalSales = 0,
+  pageSize,
 }: SalesCardProps) {
   const router = useRouter();
   
@@ -176,7 +178,7 @@ export default function SalesCard({
           Showing <span className="font-semibold text-slate-900">{displaySales.length}</span> of{" "}
           <span className="font-semibold text-slate-900">{totalSales}</span> records
         </p>
-        <Pagination currentPage={currentPage} totalPages={totalPages} />
+        <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} />
       </div>
 
       {/* Dynamic View Transaction Details Modal */}

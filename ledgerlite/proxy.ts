@@ -5,8 +5,13 @@ export async function proxy(req: NextRequest){
     const pathname = req.nextUrl.pathname
     const protectedRoute = pathname.startsWith("/api/protected")
     const dashboardRoute = pathname.startsWith("/dashboard")
+    const expenseRoute = pathname.startsWith("/expense")
+    const summeryRoute = pathname.startsWith("/export-summery")
+    const itemRoute = pathname.startsWith("/item")
+    const profileRoute = pathname.startsWith("/profile")
+    const salesRoute = pathname.startsWith("/sales")
 
-    if(!protectedRoute && !dashboardRoute){
+    if(!protectedRoute && !dashboardRoute && !expenseRoute && !summeryRoute && !itemRoute && !profileRoute && !salesRoute ){
         return NextResponse.next()
     }
 
