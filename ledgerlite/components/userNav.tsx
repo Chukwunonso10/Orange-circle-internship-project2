@@ -54,28 +54,30 @@ export default function UserNav({
     <div>
       <section>
         {/* userNav user navigation profile details */}
-        <div className="w-full border-b border-gray-200 shadow-sm">
+        <div className="w-full border-b border-gray-100 ">
           {/* user profile */}
           <div className="p-2">
             <div className="flex justify-between items-center px-4 py-2">
-              <div>
-                <span>Dashboard</span>
+              <div className="relative">
+                <span className="hidden md:block">Dashboard</span>
               </div>
 
               <div className="flex items-end gap-2">
-                <div className="bg-gray-100 p-2 rounded-full mx-6">
-                  <Bell className="h-5 w-5 text-[#0b7a75] dark:text-gray-400" />
+                <div className="bg-gray-100 p-2 rounded-full ">
+                  <Bell className="h-5 w-5 text-brand-primary-[#0b7a75] dark:text-gray-400" />
                 </div>
-                <div className="w-0.5 h-10 bg-gray-300"></div>
+                <div className=""></div>
                 <div className="flex flex-col">
+                  {/* business name */}
                   <span className="hidden md:block text-sm font-medium text-gray-900">
-                    Business name: {bizName}
+                     {bizName}  
                   </span>
+                  {/* username */}
                   <span className="hidden md:block text-xs text-gray-500">
-                    Username: {userName}
+                     {userName}
                   </span>
                 </div>
-                <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
                   <Image
                     className="rounded-full object-cover w-10 h-10"
                     src={avatar}
@@ -85,9 +87,9 @@ export default function UserNav({
                     unoptimized
                   />
                 </div>
-                <div>
+                {/* <div>
                   <Logout user={profile} />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

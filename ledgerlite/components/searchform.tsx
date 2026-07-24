@@ -32,7 +32,7 @@ export default function SearchForm() {
                     defaultValue={searchParams.get("search") ?? ""}
                     onChange={(e) => handleSearch(e.target.defaultValue)}
                     placeholder="Search item"
-                    className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition duration-300 focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/20 focus:shadow-md text-slate-950"
+                    className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-950 shadow-sm outline-none transition duration-300 focus:border-brand-primary-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/20 focus:shadow-md text-slate-950"
                 />
         </div>
     )

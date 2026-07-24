@@ -3,8 +3,10 @@ import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import InventoryForm from "@/components/inventoryform";
 import InventoryCard from "@/components/inventorycard";
+import InventoryDisplay from "@/components/inventorydisplay";
 
-import { Package, Search } from "lucide-react";
+
+import { Package, Search,TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 export default function Inventory() {
@@ -25,7 +27,7 @@ export default function Inventory() {
               <h2 className="text-[#032523] text-2xl font-bold">Inventory</h2>
 
               <p className="py-2 text-sm text-gray-700">
-                Manage your Inventory and Inventory to your dashboard and view
+                Manage your Inventory in your dashboard and view
                 it anytime
               </p>
             </div>
@@ -38,7 +40,7 @@ export default function Inventory() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search item"
-                  className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/6 "
+                  className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-[#6DAFAC]/6 "
                 />
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -48,9 +50,24 @@ export default function Inventory() {
           </div>
 
           <div className="">
-            <div className="grid  gap-10 px-4 md:grid-cols-2 lg:grid-cols-4">
-              <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
+            <div className="">
+              <div className="flex flex-col  max-w-sm rounded-3xl border border-[#6DAFAC] p-6 shadow-sm">
+                <div className=" flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-red-200 text-brand-primary">
+                    <TriangleAlert className="text-red-500" size={20} />
+                  </div>
+                  <p className=" text-sm font-semibold text-slate-950 ">Low stock alert</p>
+                </div>
+                <p className="mt-3 text-lg font-semibold text-slate-900 ">
+                  No low stocks
+                </p>
+                <span>
+                  <InventoryDisplay />
+                </span>
+              </div>
+
+              {/* <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
                   <Package size={20} />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
@@ -64,8 +81,8 @@ export default function Inventory() {
                 </p>
               </div>
 
-              <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
+              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
                   <Package size={20} />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
@@ -92,22 +109,7 @@ export default function Inventory() {
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                   Yesterday: 0
                 </p>
-              </div>
-
-              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
-                  <Package size={20} />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-                  Total invetory today
-                </p>
-                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  0
-                </p>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  Yesterday: 0
-                </p>
-              </div>
+              </div> */}
             </div>
 
             <aside className=" rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg">
@@ -118,7 +120,7 @@ export default function Inventory() {
                 Your Invetory will appear here once they are saved.
               </p>
               <div className="flex flex-col items-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-[#0b7a75]/10 text-[#0b7a75]">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-brand-primary/10 text-brand-primary">
                   <Package size={22} />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900 dark:text-slate-100">
