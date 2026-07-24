@@ -1,25 +1,39 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { X, Plus} from "lucide-react";
 
 export default function ExpenseForm() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [item, setItem] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [description, setDescription] = useState("");
+  const [category, setcategory] = useState("");
   const [amount, setAmount] = useState(0);
 
   function resetForm() {
-    setItem("");
-    setQuantity(1);
+    setDescription("");
+    setcategory("");
     setAmount(0);
   }
 
-  function handleSave(event: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSave(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    const sale = { item, quantity, amount };
+    const sale = { description, category, amount };
+    const res = await fetch("api/routes/expenses", {
+      method: "POST",
+      headers: {
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify(sale)
+    })
+    const data = await res.json()
+    if(!res.ok){
+      throw new Error(`${data.message} || failed to save expenses`)
+    }
     console.log("Save sales", sale);
     setOpen(false);
     resetForm();
+    router.refresh();
   }
 
   return (
@@ -50,11 +64,11 @@ export default function ExpenseForm() {
             style={{ animation: "modal-enter 240ms ease-out forwards" }}
           >
             <div className="transform rounded-3xl transition duration-300 ease-out scale-100 opacity-100">
-              <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5 dark:border-zinc-800">
+              <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
                 <div>
-                  <h2 className="text-xl font-semibold">Add Expense</h2>
-                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    Fill item, quantity, and amount to save an expense.
+                  <h2 className="text-xl font-semibold text-slate-900">Add Expense</h2>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Fill description, category, and amount to save an expense.
                   </p>
                 </div>
                 <button
@@ -70,17 +84,17 @@ export default function ExpenseForm() {
               <form onSubmit={handleSave} className="space-y-5 px-6 py-6">
                 <div className="space-y-2">
                   <label
-                    htmlFor="item"
-                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                    htmlFor="description"
+                    className="block text-sm font-medium text-slate-700"
                   >
-                    Item
+                    Description
                   </label>
                   <input
-                    id="item"
-                    value={item}
-                    onChange={(e) => setItem(e.target.value)}
-                    placeholder="Enter item name"
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20"
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter description"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
                     required
                   />
                 </div>
@@ -88,18 +102,18 @@ export default function ExpenseForm() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label
-                      htmlFor="quantity"
-                      className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                      htmlFor="category"
+                      className="block text-sm font-medium text-slate-700"
                     >
-                      Quantity
+                      category
                     </label>
                     <input
-                      id="quantity"
-                      type="number"
-                      min={1}
-                      value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20"
+                      id="category"
+                      type="text"
+                      value={category}
+                      placeholder="category"
+                      onChange={(e) => setcategory(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
                       required
                     />
                   </div>
@@ -107,7 +121,7 @@ export default function ExpenseForm() {
                   <div className="space-y-2">
                     <label
                       htmlFor="amount"
-                      className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                      className="block text-sm font-medium text-slate-700"
                     >
                       Amount
                     </label>
@@ -117,8 +131,9 @@ export default function ExpenseForm() {
                       min={0}
                       step={0.01}
                       value={amount}
+                      placeholder="amount"
                       onChange={(e) => setAmount(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
                       required
                     />
                   </div>

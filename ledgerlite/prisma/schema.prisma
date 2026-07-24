@@ -52,22 +52,33 @@ model Expense {
 }
 
 model User {
-  id                String          @id @default(cuid())
+  id                String    @id @default(cuid())
   name              String
   buisnessName      String
-  email             String          @unique
+  email             String    @unique
   passwordHash      String
-  isVerified        Boolean         @default(false)
+  isVerified        Boolean   @default(false)
   image             String?
   verificationToken String?
   expiresAt         DateTime?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  session           Session[]
-  expense           Expense[]
-  sale              Sale[]
-  item              Item[]
-  syncOperations    SyncOperation[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  phoneNumber                   String?   @unique
+  phoneNumberIsVerified         Boolean   @default(false)
+  phoneNumberVerificationToken  String?
+  phoneNumberVerifiesExpiresAt  DateTime?
+  phoneNumberVerificatonAttemps Int       @default(0)
+  lastPhoneSmsSent              DateTime?
+  dailySmsCount                 Int       @default(0)
+  dailyPhoneSmsSent             DateTime?
+  dailyPhoneSmsReset DateTime?
+
+  session        Session[]
+  expense        Expense[]
+  sale           Sale[]
+  item           Item[]
+  syncOperations SyncOperation[]
 }
 
 model Session {

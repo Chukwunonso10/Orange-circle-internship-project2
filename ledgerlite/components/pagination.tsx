@@ -19,7 +19,6 @@ export default function Pagination({ currentPage, totalPages, pageSize }: Pagina
         if (pageNumber < 1 || pageNumber > totalPages) return;
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", String(pageNumber));
-        //router.push(`?${params.toString()}`);
         router.replace(`${pathname}?${params.toString()}`);
     }
 
