@@ -68,10 +68,10 @@ export default function EspenseCard({ espense = [] }: EspenseCardProps) {
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50">
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Item Name
+                Espense
               </th>
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Quantity
+                Category
               </th>
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                 Amount
@@ -93,13 +93,13 @@ export default function EspenseCard({ espense = [] }: EspenseCardProps) {
                   </p>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center justify-center rounded-lg bg-[#0b7a75]/10 px-3 py-1 text-sm font-semibold text-[#0b7a75]">
+                  <span className="inline-flex items-center justify-center rounded-lg bg-brand-primary/10 px-3 py-1 text-sm font-semibold text-brand-primary">
                     {item.quantity}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-semibold text-slate-900">
-                    ${item.amount.toLocaleString()}
+                    ₦{item.amount.toLocaleString()}
                   </p>
                 </td>
                 <td className="px-0 py-4">
@@ -109,7 +109,7 @@ export default function EspenseCard({ espense = [] }: EspenseCardProps) {
                   <div className="flex items-center justify-center gap-2">
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-[#0b7a75]/5 hover:text-[#0b7a75]"
+                      className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-brand-primary/5 hover:text-brand-primary"
                       title="View details"
                     >
                       <Eye className="h-4 w-4" />
@@ -131,7 +131,7 @@ export default function EspenseCard({ espense = [] }: EspenseCardProps) {
 
       {displayEspense.length === 0 && (
         <div className="flex items-center justify-center px-6 py-12">
-          <p className="text-sm text-slate-500">No sales records found.</p>
+          <p className="text-sm text-slate-500">No espense records found.</p>
         </div>
       )}
 

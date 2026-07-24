@@ -12,8 +12,8 @@ export default function SalesForm() {
   const [itemType, setItemType] = useState<"tracked" | "custom">("tracked");
   const [selectedItemId, setSelectedItemId] = useState("");
   const [customItemName, setCustomItemName] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [unitPrice, setUnitPrice] = useState(0);
+  const [quantity, setQuantity] = useState("");
+  const [unitPrice, setUnitPrice] = useState("");
 
   // UX states
   const [products, setProducts] = useState<any[]>([]);
@@ -54,8 +54,8 @@ export default function SalesForm() {
     setItemType("tracked");
     setSelectedItemId(products[0]?.id || "");
     setCustomItemName("");
-    setQuantity(1);
-    setUnitPrice(0);
+    setQuantity("");
+    setUnitPrice("");
     setErrorMsg(null);
   }
 
@@ -116,7 +116,7 @@ export default function SalesForm() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0b7a75] px-3 py-3 md:px-5 md:py-3 text-sm font-semibold text-white shadow-lg shadow-[#0b7a75]/20 transition duration-200 hover:bg-[#09615e] hover:shadow-xl hover:shadow-[#0b7a75]/30 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/50 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-primary px-3 py-3 md:px-5 md:py-3 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 transition duration-200 hover:bg-brand-primary hover:shadow-xl hover:shadow-brand-primary/30 active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 cursor-pointer"
         >
           <Plus
             size={18}
@@ -219,7 +219,7 @@ export default function SalesForm() {
                       id="item"
                       value={selectedItemId}
                       onChange={(e) => setSelectedItemId(e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition duration-200 focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition duration-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
                       disabled={loadingProducts || submitting}
                     >
                       {products.map((p) => (
@@ -235,7 +235,7 @@ export default function SalesForm() {
                       value={customItemName}
                       onChange={(e) => setCustomItemName(e.target.value)}
                       placeholder="Enter custom item name"
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition duration-200 focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition duration-200 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
                       disabled={submitting}
                       required
                     />
@@ -257,10 +257,11 @@ export default function SalesForm() {
                     <input
                       id="quantity"
                       type="number"
-                      min={1}
+                      placeholder="0"
+                      // min={1}
                       value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition duration-200 focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
+                      onChange={(e) => setQuantity((e.target.value))}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition duration-200 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
                       disabled={submitting}
                       required
                     />
@@ -280,11 +281,12 @@ export default function SalesForm() {
                     <input
                       id="unitPrice"
                       type="number"
-                      min={0}
-                      step={0.01}
+                      placeholder="0"
+                      // min={0}
+                      // step={0.01}
                       value={unitPrice}
-                      onChange={(e) => setUnitPrice(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition duration-200 focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
+                      onChange={(e) => setUnitPrice((e.target.value))}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition duration-200 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:shadow-md dark:border-zinc-700 dark:bg-slate-800 dark:text-slate-100"
                       disabled={submitting}
                       required
                     />
@@ -311,7 +313,7 @@ export default function SalesForm() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="inline-flex justify-center items-center gap-2 rounded-2xl bg-[#0b7a75] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#0b7a75]/20 transition duration-200 hover:bg-[#09615e] hover:shadow-xl hover:shadow-[#0b7a75]/30 active:scale-95 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                      className="inline-flex justify-center items-center gap-2 rounded-2xl bg-[#0b7a75] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#0b7a75]/20 transition duration-200 hover:bg-[#09615e] hover:shadow-xl hover:shadow-brand-primary/30 active:scale-95 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                     >
                       {submitting ? (
                         <>
