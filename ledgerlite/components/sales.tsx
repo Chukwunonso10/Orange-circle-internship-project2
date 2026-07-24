@@ -42,7 +42,7 @@ export function SalesClient({
               <h2 className="text-[#032523] text-2xl font-bold">Sales</h2>
 
               <p className="py-2 text-sm text-gray-700">
-                Manage your Sales and sales to your dashboard and view it
+                Manage your Sales in your dashboard and view it
                 anytime
               </p>
             </div>
@@ -60,7 +60,7 @@ export function SalesClient({
           <div className="">
             <div className="grid  gap-10 px-4 md:grid-cols-2 lg:grid-cols-4">
               <div
-                className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
+                className="max-w-sm rounded-3xl border border-[#6DAFAC]  p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
                 style={{ animationFillMode: "both", animationDelay: "100ms" }}
               >
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75] transition-transform duration-300 hover:scale-110">

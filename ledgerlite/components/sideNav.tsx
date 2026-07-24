@@ -41,7 +41,7 @@ export default function SideNav() {
       {/* Navigation button */}
       <button
         type="button"
-        className="fixed top-22 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
+        className="absolute top-3 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-100 bg-white text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
         onClick={() => setIsOpen(true)}
         aria-label="Open navigation"
       >
@@ -125,13 +125,13 @@ export default function SideNav() {
                     href={item.href}
                     className={`flex items-center gap-3 rounded-2xl px-3 py-3 font-medium transition ${
                       isActive
-                        ? "bg-[#0b7a75]/15 text-[#0b7a75]"
-                        : "text-slate-700 hover:bg-slate-100 hover:text-[#0b7a75]"
+                        ? "bg-brand-primary/15 text-brand-primary"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-brand-primary"
                     }`}
                     onClick={() => setIsOpen(false)}
                   >
                     <span
-                      className={`${isActive ? "text-[#0b7a75]" : "text-slate-500"}`}
+                      className={`${isActive ? "text-brand-primary" : "text-slate-500"}`}
                     >
                       {item.icon}
                     </span>
@@ -152,13 +152,13 @@ export default function SideNav() {
                       href={item.href}
                       className={`flex items-center gap-3 rounded-2xl px-3 py-3 font-medium transition ${
                         isActive
-                          ? "bg-[#0b7a75]/15 text-[#0b7a75]"
-                          : "text-slate-700 hover:bg-slate-100 hover:text-[#0b7a75]"
+                          ? "bg-brand-primary/15 text-brand-primary"
+                          : "text-slate-700 hover:bg-slate-100 hover:text-brand-primary"
                       }`}
                       onClick={() => setIsOpen(false)}
                     >
                       <span
-                        className={`${isActive ? "text-[#0b7a75]" : "text-slate-500"}`}
+                        className={`${isActive ? "text-brand-primary" : "text-slate-500"}`}
                       >
                         {item.icon}
                       </span>

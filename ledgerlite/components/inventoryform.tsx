@@ -4,37 +4,43 @@ import { X, Plus} from "lucide-react";
 
 export default function InventoryForm() {
   const [open, setOpen] = useState(false);
-  const [item, setItem] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [amount, setAmount] = useState(0);
+  const [product, setProduct] = useState("");
+  const [stock, setStock] = useState("");
+  const [costPrice, setCostPrice] = useState("");
+  const [sellingPrice, setSellingPrice] = useState("");
+    const [threshhold, setThreshold] = useState("");
+
+
+
 
   function resetForm() {
-    setItem("");
-    setQuantity(1);
-    setAmount(0);
+    setProduct("");
+    setStock("");
+    setCostPrice("");
+    setSellingPrice("");
+    setThreshold("");
   }
 
   function handleSave(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    const sale = { item, quantity, amount };
-    console.log("Save sales", sale);
+    const inventory = { product, stock, costPrice,sellingPrice , threshhold};
+    console.log("Save inventory", inventory);
     setOpen(false);
     resetForm();
   }
 
   return (
     <div className="px-4 py-6">
-      <div >
+      <div>
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex items-center justify-center rounded-full bg-[#0b7a75] px-2 md:px-5 py-3  text-sm font-semibold text-white shadow-sm transition hover:bg-[#09615e] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/50 cursor-pointer"
+          className="inline-flex items-center justify-center rounded-full bg-brand-primary px-2 md:px-5 py-3  text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand-primary/50 cursor-pointer"
         >
           <Plus size={18} />
-           <span className="px-1 ">Add</span>
-           Inventory
+          <span className="px-1 ">Add</span>
+          Products
         </button>
-       
       </div>
 
       {open && (
@@ -52,7 +58,7 @@ export default function InventoryForm() {
             <div className="transform rounded-3xl transition duration-300 ease-out scale-100 opacity-100">
               <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5 dark:border-zinc-800">
                 <div>
-                  <h2 className="text-xl font-semibold">Add Inventory</h2>
+                  <h2 className="text-xl font-semibold">Add Product</h2>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                     Fill item, quantity, and amount to save an invetory.
                   </p>
@@ -70,17 +76,34 @@ export default function InventoryForm() {
               <form onSubmit={handleSave} className="space-y-5 px-6 py-6">
                 <div className="space-y-2">
                   <label
-                    htmlFor="item"
+                    htmlFor="product"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300"
                   >
-                    Item
+                    Products
                   </label>
                   <input
-                    id="item"
-                    value={item}
-                    onChange={(e) => setItem(e.target.value)}
-                    placeholder="Enter item name"
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20"
+                    id="product"
+                    value={product}
+                    onChange={(e) => setProduct(e.target.value)}
+                    placeholder="Eg rice,tomatoe paste"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="stock"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Quantity in Stock
+                  </label>
+                  <input
+                    id="stock"
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
+                    placeholder="0"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                     required
                   />
                 </div>
@@ -88,40 +111,64 @@ export default function InventoryForm() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label
-                      htmlFor="quantity"
+                      htmlFor="cost"
                       className="block text-sm font-medium text-slate-700 dark:text-slate-300"
                     >
-                      Quantity
+                      ₦ Cost Price
                     </label>
                     <input
-                      id="quantity"
+                      id="cost"
                       type="number"
-                      min={1}
-                      value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20"
+                      // min={1}
+                      placeholder="0"
+                      value={costPrice}
+                      onChange={(e) => setCostPrice(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label
-                      htmlFor="amount"
+                      htmlFor="price"
                       className="block text-sm font-medium text-slate-700 dark:text-slate-300"
                     >
-                      Amount
+                      ₦ Selling Price
                     </label>
                     <input
-                      id="amount"
+                      id="price"
                       type="number"
-                      min={0}
-                      step={0.01}
-                      value={amount}
-                      onChange={(e) => setAmount(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-[#0b7a75] focus:outline-none focus:ring-2 focus:ring-[#0b7a75]/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100"
+                      placeholder="0"
+                      // min={0}
+                      // step={0.01}
+                      value={sellingPrice}
+                      onChange={(e) => setSellingPrice(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary[#0b7a75] focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100"
                       required
                     />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="thresh"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Low stock threshold
+                  </label>
+                  <input
+                    id="thresh"
+                    type="number"
+                    placeholder="0"
+                    // min={0}
+                    // step={0.01}
+                    value={threshhold}
+                    onChange={(e) => setThreshold(e.target.value)}
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary[#0b7a75] focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100"
+                    required
+                  />
+                  <p className="text-xs text-gray-700">
+                    we will alert you when stock falls below this level{" "}
+                  </p>
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3 pt-4 border-t border-slate-200  sm:flex-row sm:justify-end">
@@ -137,9 +184,9 @@ export default function InventoryForm() {
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex justify-center rounded-2xl bg-[#0b7a75] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#09615e] cursor-pointer"
+                    className="inline-flex justify-center rounded-2xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-hover cursor-pointer"
                   >
-                    Save Inventory
+                    Save product
                   </button>
                 </div>
               </form>

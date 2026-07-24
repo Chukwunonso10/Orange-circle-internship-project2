@@ -84,12 +84,14 @@ export default function Logout({
         >
           <div className="px-4 py-2">
             <p className="text-sm py-2 font-medium text-gray-900 ">
+              {/* user name */}
               {/* {user?.name ?? "Username"} */}
-              Username:{ User?.name ?? "God abeg o"}
+              { User?.name ?? "God abeg o"}
             </p>
             <p className="text-xs text-gray-500 truncate">
+              {/* businesname */}
               {/* {user?.email ?? "email@example.com"} */}
-              Email: {User?.email ?? "God pls na"}
+               {User?.email ?? "God pls na"}
             </p>
           </div>
           <div className="border-t border-gray-100 dark:border-zinc-800" />

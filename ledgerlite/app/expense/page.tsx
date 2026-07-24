@@ -4,7 +4,7 @@ import UserNav from "@/components/userNav";
 import ExpenseForm from "@/components/expenseform";
 import EspenseCard from "@/components/espensecard";
 
-import { ShoppingBag, Search } from "lucide-react";
+import { ShoppingBag, TrendingDown, Search } from "lucide-react";
 import { useState } from "react";
 
 export default function Expense() {
@@ -25,7 +25,7 @@ export default function Expense() {
               <h2 className="text-[#032523] text-2xl font-bold">Expense</h2>
 
               <p className="py-2 text-sm text-gray-700">
-                Manage your Expense and Espenses to your dashboard and view it
+                Manage your Expense in your dashboard and view it
                 anytime
               </p>
             </div>
@@ -47,38 +47,23 @@ export default function Expense() {
             </div>
           </div>
           <div className="">
-            <div className="grid  gap-10 px-4 md:grid-cols-2 lg:grid-cols-4">
-              <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
-                  <ShoppingBag size={20} />
+            <div className="">
+              <div className="max-w-sm rounded-3xl border border-[#6DAFAC]  p-6 shadow-sm">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100">
+                  <TrendingDown className="text-red-700" size={20} />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-                  Total expense today
+                  MONEY OUT
                 </p>
                 <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  0
+                  ₦0
                 </p>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                   Yesterday: 0
                 </p>
               </div>
 
-              <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
-                  <ShoppingBag size={20} />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-                  Total expense today
-                </p>
-                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  0
-                </p>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  Yesterday: 0
-                </p>
-              </div>
-
-              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
+              {/* <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
                   <ShoppingBag size={20} />
                 </div>
@@ -107,6 +92,21 @@ export default function Expense() {
                   Yesterday: 0
                 </p>
               </div>
+
+              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
+                  <ShoppingBag size={20} />
+                </div>
+                <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
+                  Total expense today
+                </p>
+                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
+                  0
+                </p>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                  Yesterday: 0
+                </p>
+              </div> */}
             </div>
 
             <aside className=" rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg">
