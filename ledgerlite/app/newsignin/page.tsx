@@ -204,7 +204,8 @@ interface LoginFormState {
   password: string;
 }
 
-export default function LedgerLiteLogin() {
+export default async function LedgerLiteLogin() {
+  const router = await useRouter()
   const [form, setForm] = useState<LoginFormState>({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -212,9 +213,26 @@ export default function LedgerLiteLogin() {
 
   const canLogin = form.email.trim() !== "" && form.password.length > 0;
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!canLogin) return;
     setSubmitted(true);
+    try {
+      const res = await fetch("/api/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email: form.email, password: form.password})
+      })
+
+      const data = await res.json()
+      if(!res.ok && !data.success){
+        throw new Error("Database error")
+      }
+      router.replace("/dashboard")
+    } catch (error) {
+      console.error("failed to login", error)
+    }
   };
 
   if (submitted) {

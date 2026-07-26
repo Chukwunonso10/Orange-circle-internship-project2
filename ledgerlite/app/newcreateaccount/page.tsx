@@ -485,7 +485,7 @@ function VerifyAccountScreen({
       <BackIconButton />
       <h2 className="text-2xl font-bold text-slate-900">Verify Your Account</h2>
       <p className="mt-1.5 mb-8 text-sm leading-relaxed text-slate-500">
-        We&apos;ve sent a verification code to your{" "}
+        We&apos;ve sent a verification Otp code to your{" "}
         {contact || "email/phone number"}. Enter the code below to continue.
       </p>
 
