@@ -22,7 +22,7 @@ export default function SearchForm() {
         // Go back to page 1 whenever a new search is performed
         params.set("page", "1");
         router.replace(`${pathname}?${params.toString()}`);
-    }, 500);
+    }, 200);
 
     return (
         <div>

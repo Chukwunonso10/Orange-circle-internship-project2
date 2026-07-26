@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             success: true, message: "expenses recorded successfully",
-        }, { status: 200 })
+        }, { status: 201 })
     } catch (error) {
         console.log("failed to record expenses", error)
         return NextResponse.json({

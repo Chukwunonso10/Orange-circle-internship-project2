@@ -7,6 +7,7 @@ import { Search, Banknote, ReceiptText } from "lucide-react";
 import SearchForm from "./searchform";
 import UserNav from "./userNav";
 import Pagination from "./pagination";
+import { Suspense } from "react";
 
 export function SalesClient({
   moneyinToday,
@@ -16,7 +17,8 @@ export function SalesClient({
   buisnessName,
   currentPage,
   totalPages,
-  totalSales
+  totalSales,
+  pageSize,
 }: {
   moneyinToday: number;
   moneyInYesterday: number;
@@ -26,6 +28,7 @@ export function SalesClient({
   currentPage: number;
   totalPages: number;
   totalSales: number;
+  pageSize: number
 }) {
   return (
     <div>
@@ -70,7 +73,7 @@ export function SalesClient({
                   Total sales today
                 </p>
                 <p className="mt-3 text-4xl font-semibold text-slate-900  transition-colors duration-300">
-                ₦{moneyinToday.toLocaleString()}
+                  ₦{moneyinToday.toLocaleString()}
                 </p>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                   Yesterday: ₦{moneyInYesterday.toLocaleString()}
@@ -105,12 +108,16 @@ export function SalesClient({
               ) : (
 
                 <div className="py-5">
+                  
+                  <Suspense fallback={<div>Loading sales...</div>}>
                   <SalesCard
                     sales={sales}
                     currentPage={currentPage}
                     totalPages={totalPages}
                     totalSales={totalSales}
+                    pageSize={pageSize}
                   />
+                   </Suspense>
                 </div>
               )}
             </aside>

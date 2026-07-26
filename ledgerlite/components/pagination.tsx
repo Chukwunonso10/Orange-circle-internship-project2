@@ -6,17 +6,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
+    pageSize: number
 }
 
-export default function Pagination({ currentPage, totalPages }: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, pageSize }: PaginationProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const pathname = usePathname()
 
     function handlePageChange(pageNumber: number) {
+
         if (pageNumber < 1 || pageNumber > totalPages) return;
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", String(pageNumber));
-        router.push(`?${params.toString()}`);
+        router.replace(`${pathname}?${params.toString()}`);
     }
 
     return (
@@ -31,21 +34,24 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
                 <ChevronLeft size={14} />
             </button>
 
-            {Array.from({  }, (_, index) => {
+            {Array.from({ length: Math.ceil(totalPages) }, (_, index) => {
                 const pageIndex = index + 1
-                const pathname = usePathname
-                return <div key={index}>
+                const isCurrent = pageIndex === currentPage
+                console.log(pageIndex, currentPage)
+
+                return (
                     <button
+                        key={index}
                         type="button"
-                        onClick={() => handlePageChange(currentPage)}
-                        
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white cursor-pointer"
+                        onClick={() => handlePageChange(pageIndex)}
+
+                        className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white cursor-pointer ${isCurrent ? "bg-green-500" : ""} disabled: cursor-not-allowed`}
                         title="Next page"
                     >
-                      {pageIndex}
+                        {pageIndex}
                     </button>
-                </div>
-})}
+                )
+            })}
 
             <button
                 type="button"
