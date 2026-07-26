@@ -1,6 +1,6 @@
 import { Trash2, Eye } from "lucide-react";
 
-interface InventoryItem {
+interface EspenseItem {
   id: string;
   itemName: string;
   quantity: number;
@@ -8,13 +8,13 @@ interface InventoryItem {
   timestamp: string;
 }
 
-interface InventoryCardProps {
-  inventory?: InventoryItem[];
+interface EspenseCardProps {
+  espense?: EspenseItem[];
 }
 
-export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
+export default function EspenseCard({ espense = [] }: EspenseCardProps) {
   // Sample data if none provided
-  const sampleInventory: InventoryItem[] = [
+  const sampleEspense: EspenseItem[] = [
     {
       id: "1",
       itemName: "Laptop",
@@ -59,7 +59,7 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
     },
   ];
 
-  const displayInventory = inventory.length > 0 ? inventory : sampleInventory;
+  const displayEspense = espense;
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -68,10 +68,10 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50">
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Item Name
+                Espense
               </th>
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Quantity
+                Category
               </th>
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                 Amount
@@ -79,17 +79,13 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                 Time
               </th>
-
               <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-600">
                 Action
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Status
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {displayInventory.map((item) => (
+            {displayEspense.map((item) => (
               <tr key={item.id} className="transition hover:bg-slate-50">
                 <td className="px-6 py-4">
                   <p className="text-sm font-medium text-slate-900">
@@ -97,7 +93,7 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
                   </p>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center justify-center rounded-lg bg-[#0b7a75]/10 px-3 py-1 text-sm font-semibold text-brand-primary">
+                  <span className="inline-flex items-center justify-center rounded-lg bg-brand-primary/10 px-3 py-1 text-sm font-semibold text-brand-primary">
                     {item.quantity}
                   </span>
                 </td>
@@ -113,7 +109,7 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
                   <div className="flex items-center justify-center gap-2">
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-brand-primary/5 hover:text-brand-primary]"
+                      className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-brand-primary/5 hover:text-brand-primary"
                       title="View details"
                     >
                       <Eye className="h-4 w-4" />
@@ -127,18 +123,15 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
                     </button>
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <p className="text-xs text-slate-500">status</p>
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {displayInventory.length === 0 && (
+      {displayEspense.length === 0 && (
         <div className="flex items-center justify-center px-6 py-12">
-          <p className="text-sm text-slate-500">No inventory records found.</p>
+          <p className="text-sm text-slate-500">No espense records found.</p>
         </div>
       )}
 
@@ -146,7 +139,7 @@ export default function IventoryCard({ inventory = [] }: InventoryCardProps) {
         <p className="text-xs text-slate-600">
           Total records:{" "}
           <span className="font-semibold text-slate-900">
-            {displayInventory.length}
+            {displayEspense.length}
           </span>
         </p>
       </div>

@@ -11,7 +11,7 @@ export default function HomeNav() {
       <div>
         <section>
           <nav>
-            <div className="bg-gray-100 flex items-center justify-between py-5 px-5 md:px-10 ">
+            <div className="border-b border-gray-200 flex items-center justify-between py-5 px-5 md:px-10 ">
               {/* logo */}
               <div>
                 <Link href="/">
@@ -61,17 +61,26 @@ export default function HomeNav() {
               <div className="hidden md:block">
                 <ul className="flex gap-6 text-sm text-slate-700">
                   <li>
-                    <a href="/#features" className="hover:text-[#0B7A75] transition">
+                    <a
+                      href="/#features"
+                      className="hover:text-[#0B7A75] transition"
+                    >
                       Features
                     </a>
                   </li>
                   <li>
-                    <a href="/#how-it-works" className="hover:text-[#0B7A75] transition">
+                    <a
+                      href="/#how-it-works"
+                      className="hover:text-[#0B7A75] transition"
+                    >
                       How it works
                     </a>
                   </li>
                   <li>
-                    <a href="/#testimonials" className="hover:text-[#0B7A75] transition">
+                    <a
+                      href="/#testimonials"
+                      className="hover:text-[#0B7A75] transition"
+                    >
                       Testimonials
                     </a>
                   </li>
@@ -89,7 +98,7 @@ export default function HomeNav() {
                   aria-label="Toggle menu"
                   aria-expanded={open}
                   onClick={() => setOpen((v) => !v)}
-                  className="p-2 rounded-md text-slate-700 hover:bg-slate-200 focus:outline-none cursor-pointer"
+                  className="p-2 rounded-md text-slate-700 bg-slate-100 hover:opacity-80 focus:outline-none cursor-pointer"
                 >
                   {open ? <X size={18} /> : <Menu size={18} />}
                 </button>
@@ -99,15 +108,15 @@ export default function HomeNav() {
                 <div className=" flex gap-2">
                   <div>
                     <Link
-                      className="bg-gray-200 font-extrabold text-sm text-[#0B7A75] rounded-lg py-3 px-2 md:px-4  hover:opacity-80"
+                      className="  text-sm text-[#0B7A75] border border-[#0B7A75] rounded-full py-3 px-2 md:px-6  hover:opacity-80"
                       href="/signin"
                     >
-                      Sign In
+                      Log In
                     </Link>
                   </div>
                   <div>
                     <Link
-                      className="bg-[#0B7A75] text-sm text-white py-3 px-2 md:px-4 rounded-lg hover:opacity-80"
+                      className="bg-[#0B7A75] text-sm text-white py-3 px-2 md:px-6 rounded-full hover:opacity-80"
                       href="/signup"
                     >
                       Sign Up
@@ -162,14 +171,14 @@ export default function HomeNav() {
                       <Link
                         href="/signin"
                         onClick={() => setOpen(false)}
-                        className="block text-center rounded-lg border border-slate-200 px-4 py-2 text-sm text-[#0B7A75]"
+                        className="block text-center rounded-full border border-[#0B7A75] px-4 py-2 text-sm text-[#0B7A75]"
                       >
-                        Sign In
+                        Log In
                       </Link>
                       <Link
                         href="/signup"
                         onClick={() => setOpen(false)}
-                        className="block text-center rounded-lg bg-[#0B7A75] px-4 py-2 text-sm text-white"
+                        className="block text-center rounded-full bg-[#0B7A75] px-4 py-2 text-sm text-white"
                       >
                         Sign Up
                       </Link>

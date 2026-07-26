@@ -1,43 +1,45 @@
 import Link from "next/link";
-import {  Mail} from "lucide-react";
+import { Mail } from "lucide-react";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
-import { FaLinkedin, FaLinkedinIn } from "react-icons/fa";
-
-
+import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 
 const footerLinks = [
-  { label: "Home", href: "/" },
-  { label: "Dashboard", href: "#" },
-  { label: "Sales", href: "#" },
-  { label: "Expense", href: "/expense" },
-  { label: "Inventory", href: "/inventory" },
+  { label: "Features", href: "/#features" },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "Testimonies", href: "/#testimonials" },
+];
+
+const legalLinks = [
+  { label: "Privacy", href: "#" },
+  { label: "Terms", href: "#" },
+  { label: "Security", href: "#" },
 ];
 
 const companyLinks = [
-  { label: "About", href: "#" },
-  { label: "Privacy", href: "#" },
-  { label: "Terms", href: "#" },
+  { label: "Supports", href: "#" },
+  { label: "Contacts", href: "#" },
+  { label: "Careers", href: "#" },
 ];
 
 const socialLinks = [
-  { label: "GitHub", href: "https://github.com", icon: FaGithub },
   { label: "Twitter", href: "https://twitter.com", icon: FaXTwitter },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: FaLinkedinIn },
-  { label: "Email", href: "mailto:raymondedosa400@gmail.com", icon: Mail },
+  { label: "Tiktok", href: "https://tiktok.com", icon: FaTiktok },
+  { label: "Instagram", href: "https://instagram.com", icon: FaInstagram },
+  { label: "Facebook", href: "https://facebook.com", icon: FaFacebook },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-100 text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100">
-      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 xl:grid-cols-[1.5fr_1fr_1fr]">
+    <section className="border-t border-slate-200 bg-slate-50 text-slate-900">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-5 py-12 sm:px-8 lg:px-10 lg:py-16">
+        <div className="grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-20">
           <div className="space-y-4">
             {/* <p className="text-xl font-semibold">LedgerLite</p> */}
             <div>
               <Link href="/">
                 <div>
                   <svg
-                    className="w-40 h-10  "
+                    className="h-auto w-40"
                     viewBox="0 0 167 33"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -76,11 +78,11 @@ export default function Footer() {
                 </div>
               </Link>
             </div>
-            <p className="max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
-              A modern finance workspace for tracking sales, expenses,
-              inventory, and performance with clarity and calm.
+            <p className="max-w-md text-sm leading-7 text-slate-600">
+              Light weight book keeping for small traders, shop owners, and
+              everyday businesses. Track every sale. Know your profit.
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               {socialLinks.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -89,60 +91,77 @@ export default function Footer() {
                     href={item.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#0B7A75]/30 bg-white text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-[#0B7A75] hover:bg-[#0B7A75]/5 focus:outline-none focus:ring-2 focus:ring-[#0B7A75]/30"
                     aria-label={item.label}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="text-[#0B7A75] h-5 w-5" />
                   </Link>
                 );
               })}
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+            <div>
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#0B7A75] ">
+                Products
+              </h2>
+              <ul className="space-y-3 text-sm">
+                {footerLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex py-1 text-slate-600 transition hover:text-[#0B7A75] focus:outline-none focus-visible:underline"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#0B7A75] dark:text-slate-400">
-              Quick links
-            </h2>
-            <ul className="space-y-3 text-sm">
-              {footerLinks.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="transition hover:text-slate-900 dark:hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <div>
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#0B7A75] ">
+                Company
+              </h2>
+              <ul className="space-y-3 text-sm">
+                {companyLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex py-1 text-slate-600 transition hover:text-[#0B7A75] focus:outline-none focus-visible:underline"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#0B7A75] dark:text-slate-400">
-              Company
-            </h2>
-            <ul className="space-y-3 text-sm">
-              {companyLinks.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="transition hover:text-slate-900 dark:hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#0B7A75] ">
+                Legal
+              </h2>
+              <ul className="space-y-3 text-sm">
+                {legalLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex py-1 text-slate-600 transition hover:text-[#0B7A75] focus:outline-none focus-visible:underline"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col items-start justify-between gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} catalyst-circle. All rights reserved.</p>
-          <p>
-            Built for finance teams who want clean reporting and calm workflows.
-          </p>
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 text-center text-xs md:text-sm text-slate-500 sm:flex-row sm:text-left">
+          <p>© {new Date().getFullYear()} Ledgerlite. All rights reserved.</p>
+          <p>Built for small businesses everywhere</p>
         </div>
       </div>
-    </footer>
+    </section>
   );
 }

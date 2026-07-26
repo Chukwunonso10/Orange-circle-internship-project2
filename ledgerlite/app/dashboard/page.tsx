@@ -1,10 +1,12 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
-import { TrendingUp, TrendingDown, ShoppingBag, Banknote } from "lucide-react";
+import DashboardCard from "@/components/dashboardcard";
+import { TrendingUp, TrendingDown, ShoppingBag, Banknote,Plus, Receipt, Package } from "lucide-react";
 import prisma from "../lib/prisma";
 import { getCurrentUserId } from "../lib/authhelper";
 import { redirect } from "next/navigation";
 import { getMetrics} from "../lib/metrics";
+import Link from "next/link";
 
 interface Profile {
   id: string
@@ -37,17 +39,17 @@ export default async function Dashboard() {
       <div className="ml-0 md:ml-70 sm:ml-0">
         <UserNav name={name} buisnessName={buisnessName} />
       </div>
-      <main className="ml-10 md:ml-72 sm:ml-10  p-6">
+      <main className="ml-0 md:ml-72 sm:ml-0  p-6">
         {/* heading */}
         <section>
           <div className="space-y-6">
             <div>
               {/*title heading */}
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-                Dashboard Page
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Good morning <span>Mary</span>
               </h1>
-              <p className="mt-2 text-slate-600 dark:text-slate-400">
-                This is the dashboard page. You can manage your dashboard here.
+              <p className=" text-slate-600 dark:text-slate-400">
+                Here’s a quick look at how your business today{" "}
               </p>
             </div>
           </div>
@@ -56,60 +58,197 @@ export default async function Dashboard() {
         {/* dashboard boxes(insight card) money in, money out, total profit, total sale  */}
         <section>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-5">
+            {/* box 3 today's profit */}
+
+            <div className="bg-[#0B7A75] p-5 border border-[#6DAFAC] md:bg-white rounded-lg shadow-sm">
+              <div className="bg-[#3a8683] p-2 w-10 md:bg-[#f4f8f8] text-slate-500 rounded-lg">
+                <Banknote className="text-white md:text-gray-600" size={18} />
+              </div>
+
+              <p className="text-sm font-semibold text-white md:text-slate-500 uppercase tracking-wider mt-3">
+                TODAY'S PROFIT
+              </p>
+
+              <h3 className="font-bold text-white md:text-[#032523] text-[40px]">
+                ₦{Number(metrics?.profitToday || 0).toLocaleString()}{" "}
+              </h3>
+
+              <p className="text-xs text-white md:text-slate-500 mt-2">
+                yesterday: ₦
+                {Number(metrics?.profitYesterday || 0).toLocaleString()}
+              </p>
+            </div>
+
             {/* box1 money in */}
-            <div className="p-5 border border-[#6DAFAC] rounded-lg ">
+            <div className="p-5 border border-[#6DAFAC] rounded-lg shadow-sm">
               <div className="p-2 w-10 bg-[#e4f5ed] text-[#02ad5e] rounded-lg">
                 <TrendingUp size={18} />
               </div>
 
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">MONEY IN</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">
+                MONEY IN
+              </p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{Number(metrics?.TotalMoneyIn || 0).toLocaleString()}</h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">
+                ₦{Number(metrics?.TotalMoneyIn || 0).toLocaleString()}
+              </h3>
 
-              <p className="text-xs text-slate-500 mt-2">yesterday: ₦{Number(metrics?.moneyInYesterday || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-2">
+                yesterday: ₦
+                {Number(metrics?.moneyInYesterday || 0).toLocaleString()}
+              </p>
             </div>
 
             {/* box 2 money out*/}
 
-            <div className="p-5 border border-[#6DAFAC] rounded-lg ">
+            <div className="p-5 border border-[#6DAFAC] rounded-lg shadow-sm">
               <div className="p-2 w-10 bg-[#f9e6e8] text-[#d01527] rounded-lg ">
                 <TrendingDown size={18} />
               </div>
 
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">MONEY OUT</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">
+                MONEY OUT
+              </p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{Number(metrics?.totalMoneyOut || 0).toLocaleString()}</h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">
+                ₦{Number(metrics?.totalMoneyOut || 0).toLocaleString()}
+              </h3>
 
-              <p className="text-xs text-slate-500 mt-2">yesterday: ₦{Number(metrics?.moneyOutYesterday || 0).toLocaleString()}</p>
-            </div>
-
-            {/* box 3 today's profit */}
-
-            <div className="p-5 border border-[#6DAFAC] rounded-lg ">
-              <div className="p-2 w-10 bg-[#f4f8f8] text-slate-500 rounded-lg">
-                <Banknote size={18} />
-              </div>
-
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">TODAY'S PROFIT</p>
-
-              <h3 className="font-bold text-[#032523] text-[40px]">₦{Number(metrics?.profitToday || 0).toLocaleString()} </h3>
-
-              <p className="text-xs text-slate-500 mt-2">yesterday: ₦{Number(metrics?.profitYesterday || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-2">
+                yesterday: ₦
+                {Number(metrics?.moneyOutYesterday || 0).toLocaleString()}
+              </p>
             </div>
 
             {/* box 4 total sales today */}
 
-            <div className="p-5 border border-[#6DAFAC] rounded-lg ">
+            <div className="p-5 border border-[#6DAFAC] rounded-lg shadow-sm ">
               <div className="p-2 w-10 bg-[#f4f8f8] text-slate-500 rounded-lg">
                 <ShoppingBag size={18} />
               </div>
 
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">TOTAL SALES TODAY</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mt-3">
+                TOTAL SALES TODAY
+              </p>
 
-              <h3 className="font-bold text-[#032523] text-[40px]">{Number(metrics?.totalsalescountToday || 0).toLocaleString()} </h3>
+              <h3 className="font-bold text-[#032523] text-[40px]">
+                {Number(
+                  metrics?.totalsalescountToday || 0,
+                ).toLocaleString()}{" "}
+              </h3>
 
-              <p className="text-xs text-slate-500 mt-2">yesterday: {Number(metrics?.totalSalesCountyesterday || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-2">
+                yesterday:{" "}
+                {Number(
+                  metrics?.totalSalesCountyesterday || 0,
+                ).toLocaleString()}
+              </p>
             </div>
+          </div>
+        </section>
+
+        <section>
+          <div className="md:flex md:justify-between ">
+            <div className="md:border md:border-gray-200 md:shadow-sm px-5 rounded-2xl">
+              <p className="p-3">Quick Actions</p>
+
+              <div className="flex justify-between gap-2  md:space-x-5 ">
+                {/* action links */}
+                <div className="py-2">
+                  <Link
+                    className="flex flex-col items-center text-white bg-[#0B7A75] rounded-2xl px-9 py-5 sm:p-15 md:p-18  hover:opacity-80"
+                    href="/sales"
+                  >
+                    <ShoppingBag className="space-y-2" size={15} />
+                    <span className=" flex items-center gap-2 py-2 text-xs md:text-sm">
+                      <span className="hidden md:block">Add</span> Sales
+                    </span>
+                  </Link>
+                </div>
+                <div className="py-2">
+                  <Link
+                    className="flex flex-col items-center text-white bg-[#0B7A75] rounded-2xl p-5 sm:p-15 md:p-18 hover:opacity-80"
+                    href="/espense"
+                  >
+                    <Receipt size={15} />
+                    <span className="flex items-center gap-2 py-2 text-xs md:text-sm">
+                      <span className="hidden md:block">Add</span> Expense
+                    </span>
+                  </Link>
+                </div>
+                <div className="py-2">
+                  <Link
+                    className="flex flex-col items-center text-white bg-[#0B7A75] rounded-2xl p-5 sm:p-15 md:p-18  hover:opacity-80"
+                    href="/inventory"
+                  >
+                    <Package size={15} />
+                    <span className="flex items-center gap-2 py-2 text-xs md:text-sm">
+                      <span className="hidden md:block">Add</span> Inventry
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* alert */}
+            <div className="md:border flex flex-col md:shadow-sm md:border-gray-200 rounded-2xl my-5">
+              <div className="flex justify-between py-4 px-6 ">
+                <h4 className="text-sm font-semibold">Low stock</h4>
+                <div className="flex  items-center  px-2 bg-red-100 rounded-xl ">
+                  <p className=" items-center text-sm text-red-700 ">
+                    3 Alerts
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-between gap-5 py-4 px-6">
+                <div className="">
+                  <Package size={15} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold">Oganic Coffee Beans</h4>
+                  <p className="text-sm text-slate-600 ">2kg left . Min 10kg</p>
+                </div>
+                <div>
+                  <Plus className="text-[#0B7A75]" size={18} />
+                </div>
+              </div>
+
+              <div className="flex justify-between gap-10 py-4 px-6">
+                <div className="">
+                  <div className="">
+                    <Package size={15} />
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold">Oganic Coffee Beans</h4>
+                  <p className="text-sm text-slate-600 ">2kg left . Min 10kg</p>
+                </div>
+                <div>
+                  <Plus className="text-[#0B7A75]" size={18} />
+                </div>
+              </div>
+
+              <div className="flex justify-between gap-10 py-4 px-6">
+                <div className="">
+                  <div className="">
+                    <Package size={15} />
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold">Oganic Coffee Beans</h4>
+                  <p className="text-sm text-slate-600 ">2kg left . Min 10kg</p>
+                </div>
+                <div>
+                  <Plus className="text-[#0B7A75]" size={18} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* transaction history */}
+        <section>
+          <div className="my-5">
+            <DashboardCard />
           </div>
         </section>
       </main>

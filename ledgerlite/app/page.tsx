@@ -17,6 +17,8 @@ import {
   Smartphone,
   ShieldCheck,
   Star,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 export default function Home() {
@@ -57,8 +59,6 @@ export default function Home() {
       <HomeNav />
 
       <main className="relative overflow-hidden">
-       
-
         <section className="relative mx-auto flex max-w-7xl flex-col gap-12 px-6 py-16 lg:flex-row lg:items-center lg:gap-20 lg:px-10">
           <div className="max-w-2xl space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#0B7A75]/10 px-4 py-2 text-sm text-[#0B7A75] shadow-sm shadow-[#0B7A75]/20">
@@ -69,32 +69,29 @@ export default function Home() {
 
             <div className="space-y-6">
               <h1 className="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-[#032523] sm:text-5xl lg:text-6xl">
-                Modern finance management for businesses that want clarity,
-                speed, and control.
+                Book keeping made simple for every small business
               </h1>
               <p className="max-w-xl text-base leading-8 text-slate-700 sm:text-lg">
-                LedgerLite brings every part of your sales, expense, and
-                inventory process into one polished workspace with automated
-                insights and clean reporting.
+                Record sales, track expenses, monitor profits and stay on top of
+                your business without spreadsheets or accounting experience.
               </p>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link
                 href="/signup"
-                className="inline-flex w-full items-center justify-center rounded-lg bg-[#0B7A75] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#0B7A75]/30 transition hover:-translate-y-0.5 hover:bg-[#0d8d84] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full bg-[#0B7A75] px-15 py-4 text-base font-semibold text-white shadow-lg shadow-[#0B7A75]/30 transition hover:-translate-y-0.5 hover:bg-[#0d8d84] sm:w-auto"
               >
-                Start free trial
+                Get Started
               </Link>
               <Link
                 href="/signin"
-                className="inline-flex w-full items-center justify-center rounded-lg border border-[#0B7A75] bg-white px-8 py-4 text-base font-semibold text-[#0B7A75] transition hover:-translate-y-0.5 hover:border-[#0B7A75] hover:text-[#0B7A75] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full border border-[#0B7A75] bg-white px-15 py-4 text-base font-semibold text-[#0B7A75] transition hover:-translate-y-0.5 hover:border-[#0B7A75] hover:text-[#0B7A75] sm:w-auto"
               >
-                Sign in
+                Log in
               </Link>
             </div>
 
-            
             <div className="">
               <div className="flex items-center gap-5 py-4">
                 <div className="flex items-center gap-2">
@@ -138,8 +135,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section>
-          <div className="flex flex-col justify-center items-center my-4">
+        <section className="my-20 mt-20">
+          <div className="flex flex-col justify-center items-center  ">
             <div className="flex justify-center items-center">
               <h3 className="text-sm  md:text-2xl font-extrabold text-[#0B7A75] py-6">
                 Trusted By Small Businesses Everywhere
@@ -147,7 +144,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-10 px-4 md:grid-cols-3 lg:grid-cols-6">
               <div className="flex flex-col items-center">
-                <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
+                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
                   <Image
                     className="object-cover"
                     src="/Cphoto1.jpeg"
@@ -156,13 +153,13 @@ export default function Home() {
                     loading="eager"
                     sizes="(max-width: 640px) 160px, 100vw"
                   />
-                </div>
+                </div> */}
                 <span className="mt-3 text-sm font-medium text-slate-900">
-                  Amara studio
+                  Amara Foods
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
+                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
                   <Image
                     className="object-cover"
                     src="/Cphoto2.jpeg"
@@ -171,13 +168,13 @@ export default function Home() {
                     loading="eager"
                     sizes="(max-width: 640px) 160px, 100vw"
                   />
-                </div>
+                </div> */}
                 <span className="mt-3 text-sm font-medium text-slate-900">
-                  Kofi Buildings
+                  Bode Grocery
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
+                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
                   <Image
                     className="object-cover"
                     src="/Cphoto3.jpeg"
@@ -186,13 +183,13 @@ export default function Home() {
                     loading="eager"
                     sizes="(max-width: 640px) 160px, 100vw"
                   />
-                </div>
+                </div> */}
                 <span className="mt-3 text-sm font-medium text-slate-900">
-                  JFE Fashion
+                  Koficuts
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
+                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
                   <Image
                     className="object-cover"
                     src="/Cphoto4.jpeg"
@@ -201,13 +198,13 @@ export default function Home() {
                     loading="eager"
                     sizes="(max-width: 640px) 160px, 100vw"
                   />
-                </div>
+                </div> */}
                 <span className="mt-3 text-sm font-medium text-slate-900">
-                  Western Coffee
+                  MarketPro
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
+                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
                   <Image
                     className="object-cover"
                     src="/Cphoto5.jpeg"
@@ -216,13 +213,13 @@ export default function Home() {
                     loading="eager"
                     sizes="(max-width: 640px) 160px, 100vw"
                   />
-                </div>
+                </div> */}
                 <span className="mt-3 text-sm font-medium text-slate-900">
-                  MarketPro
+                  Nia Tailor
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
+                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
                   <Image
                     className="object-cover"
                     src="/Cphoto6.jpeg"
@@ -231,23 +228,25 @@ export default function Home() {
                     loading="eager"
                     sizes="(max-width: 640px) 160px, 100vw"
                   />
-                </div>
+                </div> */}
                 <span className="mt-3 text-sm font-medium text-slate-900">
-                  Nia Tailor
+                  Chidi POS
                 </span>
               </div>
-              
             </div>
           </div>
         </section>
         {/* features */}
-        <section id="features" className="mx-auto max-w-7xl space-y-10 px-6 pb-16 my-6 lg:px-10">
+        <section
+          id="features"
+          className="mx-auto max-w-7xl space-y-10 px-6 pb-16 my-10 lg:px-10"
+        >
           <div className="flex flex-col justify-center items-center gap-4">
             <p className="text-sm text-[#0B7A75] font-extrabold">Features</p>
-            <h2 className="text-[#032523] text-2xl font-bold">
+            <h2 className="text-center text-[#032523] text-xl md:text-2xl font-bold">
               Everything you need to manage your business
             </h2>
-            <p className="text-sm text-gray-700">
+            <p className="text-center text-sm text-gray-700">
               A focused toolkit designed for the way real small business
               actually works
             </p>
@@ -270,12 +269,15 @@ export default function Home() {
           </div>
 
           {/* how it works */}
-          <section id="how-it-works" className="border border-gray-100 p-6 rounded-4xl shadow-sm">
+          <section
+            id="how-it-works"
+            className="border border-gray-100 p-6 rounded-4xl shadow-sm"
+          >
             <div className="flex flex-col justify-center items-center gap-4 my-6">
               <p className="text-sm text-[#0B7A75] font-extrabold">
                 How it Works
               </p>
-              <h2 className="text-[#032523] text-2xl font-bold">
+              <h2 className="text-[#032523] text-lg md:text-2xl font-bold">
                 Get started in three simple steps
               </h2>
             </div>
@@ -341,13 +343,13 @@ export default function Home() {
                 </div>
 
                 <div className="w-full lg:w-1/2">
-                  <p className="text-[#0B7A75] text-sm font-bold uppercase tracking-[0.24em] py-5">
+                  <p className="text-center text-[#0B7A75] text-sm font-bold  tracking-[0.24em] py-5">
                     Why LedgerLite
                   </p>
-                  <h3 className="text-[#032523] text-3xl font-bold leading-tight py-4">
+                  <h3 className="text-center text-[#032523] text-lg md:text-3xl font-bold leading-tight py-4">
                     Built for the way small business actually works.
                   </h3>
-                  <p className="text-base text-slate-700 leading-8">
+                  <p className="text-center text-base text-slate-700 leading-8">
                     You don't start your business to become an accountant.
                     LedgerLite handles the numbers so you can focus on the work.
                   </p>
@@ -408,42 +410,6 @@ export default function Home() {
               </div>
             </div>
           </section>
-
-          <div className="overflow-hidden rounded-[40px] bg-[#0B7A75] p-8 shadow-2xl shadow-[#0B7A75]/10 sm:p-10">
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-white">
-                  Trusted by modern businesses and start-up
-                </p>
-                <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
-                  Scale finance operations without complexity.
-                </h2>
-                <p className="mt-4 max-w-xl text-slate-300">
-                  Whether you are a startup or a growing enterprise, LedgerLite
-                  helps you stay ahead with clear workflows and intelligent
-                  dashboards.
-                </p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-3xl bg-gray-200  p-6 text-[#0B7A75] shadow-lg shadow-slate-950/20 transition hover:-translate-y-1">
-                  <p className="text-sm uppercase tracking-[0.24em] text-[#0B7A75]">
-                    Revenue
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold text-[#0B7A75]">
-                    $2.1M
-                  </p>
-                </div>
-                <div className="rounded-3xl bg-gray-200 p-6 text-[#0B7A75] shadow-lg shadow-slate-950/20 transition hover:-translate-y-1">
-                  <p className="text-sm uppercase tracking-[0.24em] text-[#0B7A75]">
-                    Projects
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold text-[#0B7A75]">
-                    34
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <section id="testimonials">
             <div>
@@ -618,7 +584,8 @@ export default function Home() {
                     Questions answered
                   </h3>
                   <p className="text-gray-700">
-                    Can't find what you are looking for? contact us
+                    Can't find what you are looking for?{" "}
+                    <span className="text-[#0B7A75]">contact us</span>
                   </p>
                 </div>
                 {/* accordian */}
@@ -626,21 +593,32 @@ export default function Home() {
                   <div className="w-full py-10">
                     {data && data.length > 0 ? (
                       data.map((dataItem) => (
-                        <div key={dataItem.id} className="">
-                          <div
-                            onClick={() => handleSingleSelection(dataItem.id)}
-                            className="flex justify-between items-center cursor-pointer bg-gray-200 p-4 mb-2"
-                          >
-                            <h3 className="text-lg font-semibold text-gray-700">
-                              {dataItem.question}
-                            </h3>
-                            <span className="text-2xl text-[#0B7A75]">+</span>
-                          </div>
-                          {selected === dataItem.id ? (
-                            <div className="text-gray-700">
-                              {dataItem.answer}
+                        <div
+                          key={dataItem.id}
+                          className="border border-gray-200 rounded-2xl"
+                        >
+                          <div key={dataItem.id} className="">
+                            <div
+                              onClick={() => handleSingleSelection(dataItem.id)}
+                              className="flex justify-between font-semibold items-center cursor-pointer   p-4 mb-2"
+                            >
+                              <h3 className="text-md  text-gray-700">
+                                {dataItem.question}
+                              </h3>
+                              <span className="text-2xl text-gray-700]">
+                                {selected ? (
+                                  <ChevronUp size={18} />
+                                ) : (
+                                  <ChevronDown size={18} />
+                                )}
+                              </span>
                             </div>
-                          ) : null}
+                            {selected === dataItem.id ? (
+                              <div className="text-gray-700 py-2 px-4">
+                                {dataItem.answer}
+                              </div>
+                            ) : null}
+                          </div>
                         </div>
                       ))
                     ) : (
@@ -653,20 +631,20 @@ export default function Home() {
           </section>
 
           <section>
-            <div className="bg-[#0B7A75]  py-20 rounded-2xl">
+            <div className="bg-[#074946]  py-20 rounded-2xl">
               <div className="flex flex-col items-center gap-4">
                 <div className="flex flex-col mx-auto px-4 items-center ">
-                  <h3 className="text-sm md:text-2xl text-white font-bold py-3">
+                  <h3 className="text-center text-sm md:text-2xl text-white font-bold py-3">
                     Ready to keep better business records?
                   </h3>
-                  <p className=" text-white text-xs md:text-sm">
+                  <p className="text-center text-white text-xs md:text-sm">
                     Start using Ledgerlite today and take control of your
                     business
                   </p>
                 </div>
                 <Link
                   href="/signup"
-                  className="bg-white text-[#0B7A75] px-7 py-3 rounded-2xl hover:opacity-80"
+                  className="bg-white text-[#074946] px-10 py-3 rounded-2xl hover:opacity-80"
                 >
                   Get Started
                 </Link>
