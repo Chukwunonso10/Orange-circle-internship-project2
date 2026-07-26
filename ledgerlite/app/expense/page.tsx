@@ -1,16 +1,42 @@
-"use client";
-import SideNav from "@/components/sideNav";
-import UserNav from "@/components/userNav";
-import ExpenseForm from "@/components/expenseform";
-import EspenseCard from "@/components/espensecard";
+import ExpenseClient from "@/components/expenseClient";
+import { getMetrics } from "../lib/metrics";
+import { getCurrentUserId } from "../lib/authhelper";
+import prisma from "../lib/prisma";
+import { redirect } from "next/navigation";
 
+<<<<<<< HEAD
+export default async function Expense() {
+  const userId = await getCurrentUserId()
+  if(!userId) {
+    redirect("/signin")
+  }
+=======
 import { ShoppingBag, TrendingDown, Search } from "lucide-react";
 import { useState } from "react";
+>>>>>>> 768855fd411e9476677c7136bffa4ac2e946a3ae
 
-export default function Expense() {
-  const [search, setSearch] = useState("");
+  const metrics = await getMetrics()
+  if(!metrics) {
+    return null
+  }
+  const { moneyOutToday, totalMoneyOut , moneyOutYesterday, } = metrics
+  
+  const allExpenses = await prisma.expense.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" }
+  })
+
+  const serializedExpenses = allExpenses.map(exp => ({
+    ...exp,
+    amount: Number(exp.amount),
+    createdAt: exp.createdAt.toISOString(),
+    updatedAt: exp.updatedAt.toISOString()
+  }))
 
   return (
+<<<<<<< HEAD
+    <ExpenseClient  moneyOutToday={moneyOutToday} totalMoneyOut={totalMoneyOut} moneyOutYesterday={moneyOutYesterday} expenses={serializedExpenses}/>
+=======
     <div>
       <div>
         <div>
@@ -139,5 +165,6 @@ export default function Expense() {
         </main>
       </div>
     </div>
+>>>>>>> 768855fd411e9476677c7136bffa4ac2e946a3ae
   );
 }
