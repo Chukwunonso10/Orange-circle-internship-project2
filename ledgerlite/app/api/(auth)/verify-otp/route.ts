@@ -1,19 +1,23 @@
 import { getCurrentUser } from '@/app/lib/authhelper';
 import prisma from '@/app/lib/prisma';
 import { NextResponse } from 'next/server';
-
+import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { code } = await request.json();
+    const { code, email } = await request.json();
 
     if (!code) {
       return NextResponse.json({ success: false, error: 'Verification code is required' }, { status: 400 });
+    }
+
+    let user = await getCurrentUser();
+    if (!user && email) {
+      user = await prisma.user.findUnique({ where: { email } });
+    }
+
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: User session or email identifier not found' }, { status: 401 });
     }
 
     if (!user.phoneNumber || !user.phoneNumberVerificationToken || !user.phoneNumberVerifiesExpiresAt) {
@@ -52,11 +56,12 @@ export async function POST(request: Request) {
 
     // 3. Process matches
     if (code.trim() === user.phoneNumberVerificationToken) {
-      // Success! Mark phone verified
+      // Success! Mark phone and account verified
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: {
           phoneNumberIsVerified: true,
+          isVerified: true,
           phoneNumberVerificationToken: null,
           phoneNumberVerifiesExpiresAt: null,
           phoneNumberVerificatonAttemps: 0,
@@ -65,7 +70,20 @@ export async function POST(request: Request) {
 
       console.log(`Phone verified successfully for user ${user.email} (Phone: ${updatedUser.phoneNumber})`);
 
-      return NextResponse.json({
+      // Setup login session for onboarding continuity
+      const sessionToken = crypto.randomUUID();
+      const isProduction = process.env.NODE_ENV === "production";
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      await prisma.session.create({
+        data: {
+          sessionToken,
+          userId: user.id,
+          expiresAt
+        }
+      });
+
+      const response = NextResponse.json({
         success: true,
         message: 'Phone number verified successfully!',
         profile: {
@@ -77,18 +95,28 @@ export async function POST(request: Request) {
           createdAt: updatedUser.createdAt,
         }
       });
+
+      response.cookies.set("sessionToken", sessionToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24
+      });
+
+      return response;
     } else {
       // Incorrect code. Increment verification attempts
-      const nextAttempts = user.phoneNumberVerificatonAttemps + 1;
+      const nextAttempts = (user.phoneNumberVerificatonAttemps ?? 0) + 1;
 
       if (nextAttempts >= 3) {
         // Brute-force lockout triggered! Immediately invalidate the token
         await prisma.user.update({
           where: { id: user.id },
           data: {
-            phoneVerificationToken: null,
-            phoneVerificationExpires: null,
-            phoneVerificationAttempts: 0,
+            phoneNumberVerificationToken: null,
+            phoneNumberVerifiesExpiresAt: null,
+            phoneNumberVerificatonAttemps: 0,
           },
         });
         return NextResponse.json({
@@ -101,7 +129,7 @@ export async function POST(request: Request) {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          phoneVerificationAttempts: nextAttempts,
+          phoneNumberVerificatonAttemps: nextAttempts,
         },
       });
 

@@ -3,11 +3,13 @@ import UserNav from "@/components/userNav";
 import { getCurrentUserId } from "../lib/authhelper";
 import prisma from "../lib/prisma";
 import ProfileClient from "@/components/profileClient";
+import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
+
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error("authentication error");
+    redirect("/signin");
   }
 
   const user = await prisma.user.findUnique({
@@ -21,7 +23,7 @@ export default async function ProfilePage() {
     },
   });
   if (!user) {
-    throw new Error("user not found");
+    redirect("/signin");
   }
 
   return (

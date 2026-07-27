@@ -173,11 +173,7 @@ export default function SalesCard({
       )}
 
       {/* Footer Page Indicators */}
-      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4 flex items-center justify-between">
-        <p className="text-xs text-slate-600">
-          Showing <span className="font-semibold text-slate-900">{displaySales.length}</span> of{" "}
-          <span className="font-semibold text-slate-900">{totalSales}</span> records
-        </p>
+      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4 flex items-center justify-center">
         <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} />
       </div>
 

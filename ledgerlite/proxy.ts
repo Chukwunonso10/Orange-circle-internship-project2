@@ -1,8 +1,16 @@
-import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function proxy(req: NextRequest){
     const pathname = req.nextUrl.pathname
+    const isAuthRoute = pathname === "/signin" || pathname === "/signup";
+    const sessionToken = req.cookies.get("sessionToken")?.value
+
+    // if (isAuthRoute && sessionToken) {
+    //     const url = req.nextUrl.clone()
+    //     url.pathname = "/dashboard"
+    //     return NextResponse.redirect(url)
+    // }
+
     const protectedRoute = pathname.startsWith("/api/protected")
     const dashboardRoute = pathname.startsWith("/dashboard")
     const expenseRoute = pathname.startsWith("/expense")
@@ -15,7 +23,6 @@ export async function proxy(req: NextRequest){
         return NextResponse.next()
     }
 
-    const sessionToken = req.cookies.get("sessionToken")?.value
     if(!sessionToken){
         let reason = "not authenticated"
         if(protectedRoute){
@@ -37,5 +44,5 @@ export async function proxy(req: NextRequest){
 }
 
 export const config = {
-    match: ["/dashboard:path*", "/api/protected/:path*"]
+    match: ["/dashboard:path*", "/api/protected/:path*", "/expenseRoute:path*", "/summeryRoute:path*", "/itemRoute:path*", "/profileRoute:path*", "/salesRoute:path*"]
 }

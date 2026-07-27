@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 
 export async function getCurrentUserId(){
   try {
-    
     const cookiesStore = await cookies()
     const sessionToken = cookiesStore.get("sessionToken")?.value
 
@@ -14,11 +13,14 @@ export async function getCurrentUserId(){
         where: {sessionToken}
     })
 
-    if (!session)return null
+    if (!session) {
+      cookiesStore.delete("sessionToken")
+      return null
+    }
 
     if (session && session.expiresAt < new Date()){
         await prisma.session.delete({where: {sessionToken}})
-
+        cookiesStore.delete("sessionToken")
         return null
     }
 
@@ -34,14 +36,17 @@ export async function getCurrentUserId(){
 }
 
 export async function getCurrentUser(){
-  const sessionToken = (await cookies()).get("sessionToken")?.value
+  const cookiesStore = await cookies()
+  const sessionToken = cookiesStore.get("sessionToken")?.value
   if(!sessionToken) return null
 
   const session = await prisma.session.findUnique({where: {sessionToken}, include: {user: true}})
 
-  if(!session) return null
+  if(!session) {
+    cookiesStore.delete("sessionToken")
+    return null
+  }
 
   const user = session.user
   return user;
-
 }

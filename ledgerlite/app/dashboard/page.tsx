@@ -1,11 +1,11 @@
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import DashboardCard from "@/components/dashboardcard";
-import { TrendingUp, TrendingDown, ShoppingBag, Banknote,Plus, Receipt, Package } from "lucide-react";
+import { TrendingUp, TrendingDown, ShoppingBag, Banknote, Plus, Receipt, Package } from "lucide-react";
 import prisma from "../lib/prisma";
 import { getCurrentUserId } from "../lib/authhelper";
 import { redirect } from "next/navigation";
-import { getMetrics} from "../lib/metrics";
+import { getMetrics } from "../lib/metrics";
 import Link from "next/link";
 
 interface Profile {
@@ -22,13 +22,61 @@ export default async function Dashboard() {
   let profile: any;
 
   profile = await prisma.user.findUnique({ where: { id: userId }, select: { name: true, buisnessName: true } })
-  const { name, buisnessName } = profile
 
   if (!profile) {
     throw new Error("profile not found")
   }
+
+  const { name, buisnessName } = profile
+
   const metrics = await getMetrics()
-  console.log(metrics)
+  const lowstock = metrics?.lowStock || []
+
+  const [sales, expenses] = await Promise.all([
+    prisma.sale.findMany({
+      where: { userId },
+      include: { item: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 5
+    }),
+    prisma.expense.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 5
+    })
+  ])
+
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "medium"})
+
+  const formattedSales = sales.map(sale => ({
+    id: sale.id,
+    transaction: sale.item?.name || sale.customItemName || "Untracked Sale",
+    type: "Sale",
+    amount: Number(sale.totalAmount),
+    // timestamp: new Date(sale.createdAt).toLocaleString(undefined, {
+    //   dateStyle: "medium",
+    //   timeStyle: "short",
+    // }),
+    timestamp:  formatter.format(),
+    rawDate: sale.createdAt
+  }));
+
+  const formattedExpenses = expenses.map(expense => ({
+    id: expense.id,
+    transaction: expense.description || expense.category || "General Expense",
+    type: "Expense",
+    amount: Number(expense.amount),
+    timestamp: formatter.format(new Date(expense.createdAt)),
+    rawDate: expense.createdAt
+  }));
+
+  const recentTransactions = [...formattedSales, ...formattedExpenses]
+    .sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime())
+    .slice(0, 5)
+    .map(({ rawDate, ...rest }) => rest);
+
 
   return (
     <div>
@@ -46,7 +94,7 @@ export default async function Dashboard() {
             <div>
               {/*title heading */}
               <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Good morning <span>Mary</span>
+                Good morning <span>{name}</span>
               </h1>
               <p className=" text-slate-600 dark:text-slate-400">
                 Here’s a quick look at how your business today{" "}
@@ -168,7 +216,7 @@ export default async function Dashboard() {
                 <div className="py-2">
                   <Link
                     className="flex flex-col items-center text-white bg-[#0B7A75] rounded-2xl p-5 sm:p-15 md:p-18 hover:opacity-80"
-                    href="/espense"
+                    href="/expense"
                   >
                     <Receipt size={15} />
                     <span className="flex items-center gap-2 py-2 text-xs md:text-sm">
@@ -196,59 +244,43 @@ export default async function Dashboard() {
                 <h4 className="text-sm font-semibold">Low stock</h4>
                 <div className="flex  items-center  px-2 bg-red-100 rounded-xl ">
                   <p className=" items-center text-sm text-red-700 ">
-                    3 Alerts
+                    {metrics?.allLowStockCount + " "} {lowstock.length <= 1 ? "Alert" : "Alerts"}
                   </p>
                 </div>
               </div>
-              <div className="flex justify-between gap-5 py-4 px-6">
-                <div className="">
-                  <Package size={15} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold">Oganic Coffee Beans</h4>
-                  <p className="text-sm text-slate-600 ">2kg left . Min 10kg</p>
-                </div>
-                <div>
-                  <Plus className="text-[#0B7A75]" size={18} />
-                </div>
-              </div>
-
-              <div className="flex justify-between gap-10 py-4 px-6">
-                <div className="">
-                  <div className="">
-                    <Package size={15} />
+              {Array.isArray(lowstock) && lowstock.length !== 0 ? (
+                lowstock.map((item: any) => (
+                  <div key={item.id} className="flex justify-between gap-5 py-4 px-6 border-b border-gray-100 last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-red-50 text-red-600 rounded-xl">
+                        <Package size={15} />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-slate-900">{item.name}</h4>
+                        <p className="text-xs text-slate-500">
+                          {item.currentStock} units left . Min {item.lowStock}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Link href={`/inventory?search=${encodeURIComponent(item.name)}`} className="text-[#0B7A75] hover:opacity-85">
+                        <Plus size={18} />
+                      </Link>
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-sm text-slate-500">
+                  No low stock alerts at the moment.
                 </div>
-                <div>
-                  <h4 className="text-sm font-semibold">Oganic Coffee Beans</h4>
-                  <p className="text-sm text-slate-600 ">2kg left . Min 10kg</p>
-                </div>
-                <div>
-                  <Plus className="text-[#0B7A75]" size={18} />
-                </div>
-              </div>
-
-              <div className="flex justify-between gap-10 py-4 px-6">
-                <div className="">
-                  <div className="">
-                    <Package size={15} />
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold">Oganic Coffee Beans</h4>
-                  <p className="text-sm text-slate-600 ">2kg left . Min 10kg</p>
-                </div>
-                <div>
-                  <Plus className="text-[#0B7A75]" size={18} />
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
         {/* transaction history */}
         <section>
           <div className="my-5">
-            <DashboardCard />
+            <DashboardCard dashboard={recentTransactions} />
           </div>
         </section>
       </main>

@@ -65,7 +65,7 @@ export default function ExportSummary() {
             </section>
 
             <section className="grid gap-6 md:grid-cols-3">
-              {summaryItems.map((item) => (
+              {summaryItems.map((item:any) => (
                 <article
                   key={item.label}
                   className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
