@@ -20,6 +20,43 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Unauthorized: User session or email identifier not found' }, { status: 401 });
     }
 
+    if (user.phoneNumberIsVerified) {
+      const sessionToken = crypto.randomUUID();
+      const isProduction = process.env.NODE_ENV === "production";
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      await prisma.session.create({
+        data: {
+          sessionToken,
+          userId: user.id,
+          expiresAt
+        }
+      });
+
+      const response = NextResponse.json({
+        success: true,
+        message: 'Phone number already verified!',
+        profile: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          phoneNumber: user.phoneNumber,
+          phoneNumberVerified: true,
+          createdAt: user.createdAt,
+        }
+      });
+
+      response.cookies.set("sessionToken", sessionToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24
+      });
+
+      return response;
+    }
+
     if (!user.phoneNumber || !user.phoneNumberVerificationToken || !user.phoneNumberVerifiesExpiresAt) {
       return NextResponse.json({
         success: false,
