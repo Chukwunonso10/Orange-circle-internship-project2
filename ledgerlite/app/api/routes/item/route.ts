@@ -48,6 +48,16 @@ export async function POST(req: NextRequest) {
                 success: false, message: "Bad Request: Name is required!"
             }, { status: 400 })
         }
+
+        const duplicateItem = await prisma.item.findUnique({
+            where: { name }
+        })
+        if (duplicateItem) {
+            return NextResponse.json({
+                success: false, message: `A product with the name "${name}" already exists.`
+            }, { status: 400 })
+        }
+
         if (lowStock <= 0 ||  currentStock <= 0) {
             return NextResponse.json({
                 success: false, message: "Bad Request: lowStock or currentStock cannot be negative"

@@ -7,8 +7,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ expe
         const userId = await getCurrentUserId()
         if (!userId) {
             return NextResponse.json({
-                success: false, message: "Uauthorized!!, pls log in"
-            })
+                success: false, message: "Unauthorized!!, pls log in"
+            }, { status: 401 })
         }
         const { operationId, amount, description, category, createdAt } = await req.json()
         const { expenseId } = await params
@@ -92,12 +92,16 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ e
         const userId = await getCurrentUserId()
         if (!userId) {
             return NextResponse.json({
-                success: false, message: "Uauthorized!!, pls log in"
-            })
+                success: false, message: "Unauthorized!!, pls log in"
+            }, { status: 401 })
         }
 
         const { expenseId } = await params
-        const { operationId } = await req.json()
+        let body: any = {};
+        try {
+            body = await req.json();
+        } catch (e) {}
+        const { operationId } = body
 
         if(operationId){
             const processedDelete = await prisma.syncOperation.findUnique({where:{id:operationId}})
@@ -126,15 +130,17 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ e
         const deleted = await prisma.$transaction(async (tsx)=>{
             const deletedRecord = await tsx.expense.delete({where: {id: expenseId}})
 
-            await tsx.syncOperation.create({
-                data:{
-                    id: operationId,
-                    operation:"DELETE",
-                    resource: "EXPENSE",
-                    resourceId:deletedRecord.id,
-                    userId
-                }
-            })
+            if (operationId) {
+                await tsx.syncOperation.create({
+                    data:{
+                        id: operationId,
+                        operation:"DELETE",
+                        resource: "EXPENSE",
+                        resourceId:deletedRecord.id,
+                        userId
+                    }
+                })
+            }
 
             return deletedRecord
         })

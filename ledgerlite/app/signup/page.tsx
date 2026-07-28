@@ -490,7 +490,7 @@ function VerifyAccountScreen({
       <h2 className="text-2xl font-bold text-slate-900">Verify Your Account</h2>
       <p className="mt-1.5 mb-8 text-sm leading-relaxed text-slate-500">
         We&apos;ve sent a verification Otp code to your{" "}
-        {contact || "email/phone number"}. Enter the code below to continue.
+        {contact || "phone number"}. Enter the code below to continue.
       </p>
 
       <div className="mb-6 flex justify-between gap-2">
@@ -790,7 +790,7 @@ export default function LedgerLiteOnboarding() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || data.message || "Invalid verification code.");
+        throw new Error(data.message || "Invalid verification code.");
       }
 
       setStep("business");
@@ -829,7 +829,7 @@ export default function LedgerLiteOnboarding() {
       
       setTimeout(() => {
         router.push("/dashboard");
-      }, 2000);
+      });
     } catch (err: any) {
       console.error("Business setup failed:", err);
       setError(err.message || "Could not complete business settings setup.");

@@ -59,6 +59,7 @@ export default function ExpenseForm() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             aria-hidden="true"
             onClick={() => setOpen(false)}
+            
           />
 
           <div

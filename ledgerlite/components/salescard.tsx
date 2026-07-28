@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Eye, X, Loader2 } from "lucide-react";
+import { Trash2, Eye, X, Loader2, Pencil } from "lucide-react";
 import Pagination from "./pagination";
+import { editSale } from "@/app/lib/actions";
+import { toast } from "react-hot-toast";
 
 interface SalesItem {
   id: string;
@@ -39,6 +41,9 @@ export default function SalesCard({
   
   // Deleting Loading State
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  
+  // Editing Modal State
+  const [editingSale, setEditingSale] = useState<any | null>(null);
 
   const displaySales = sales;
 
@@ -61,13 +66,14 @@ export default function SalesCard({
       const result = await response.json();
 
       if (response.ok && result.success) {
+        toast.success("Sale deleted successfully!");
         router.refresh();
       } else {
-        alert(result.message || "Failed to delete sale.");
+        toast.error(result.message || "Failed to delete sale.");
       }
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Network error: Could not delete sale.");
+      toast.error("Network error: Could not delete sale.");
     } finally {
       setDeletingId(null);
     }
@@ -143,6 +149,15 @@ export default function SalesCard({
                         title="View details"
                       >
                         <Eye className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingSale(item)}
+                        disabled={isDeleting}
+                        className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-amber-50 hover:text-amber-600 disabled:opacity-50 cursor-pointer"
+                        title="Edit sale"
+                      >
+                        <Pencil className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
@@ -263,6 +278,243 @@ export default function SalesCard({
           </div>
         );
       })()}
+      {/* Edit Sale Modal */}
+      {editingSale && (
+        <EditSaleModal
+          sale={editingSale}
+          onClose={() => {
+            setEditingSale(null);
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }
+
+function EditSaleModal({
+  sale,
+  onClose,
+}: {
+  sale: any;
+  onClose: () => void;
+}) {
+  const [itemType, setItemType] = useState<"tracked" | "custom">(
+    sale.itemId ? "tracked" : "custom"
+  );
+  const [products, setProducts] = useState<any[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+
+  // Load products list for tracked selector
+  useEffect(() => {
+    setLoadingProducts(true);
+    fetch("/api/routes/item")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setProducts(data.allProducts || []);
+        }
+      })
+      .catch((err) => console.error("Error loading products:", err))
+      .finally(() => setLoadingProducts(false));
+  }, []);
+
+  // Bind method to attach sale.id as the first argument
+  const editSaleWithId = editSale.bind(null, sale.id);
+
+  // Hook Server Action
+  const [state, formAction, isPending] = useActionState(editSaleWithId, null);
+
+  // Auto-close modal when action returns successfully
+  useEffect(() => {
+    if (state?.success) {
+      toast.success("Sale updated successfully!");
+      onClose();
+    } else if (state?.error) {
+      toast.error(state.error);
+    }
+  }, [state, onClose]);
+
+  // Pre-calculate unit price defaults
+  const amountValue = sale.amount !== undefined ? sale.amount : (sale.totalAmount !== undefined ? Number(sale.totalAmount) : 0);
+  const qtyValue = sale.quantity || 1;
+  const unitPriceValue = sale.unitPrice !== undefined ? Number(sale.unitPrice) : (qtyValue > 0 ? (amountValue / qtyValue) : 0);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 animate-in fade-in duration-150">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-all duration-300"
+        aria-hidden="true"
+        onClick={() => !isPending && onClose()}
+      />
+
+      <div
+        className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl bg-white text-slate-900 shadow-2xl ring-1 ring-black/10"
+        style={{
+          animation: "modal-slide-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        }}
+      >
+        <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
+          <div>
+            <h2 className="text-xl font-semibold text-slate-900">Edit Sale Transaction</h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Update sale details for ID: {sale.id}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isPending}
+            className="rounded-full p-2 text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-slate-900 hover:rotate-90 cursor-pointer disabled:opacity-50"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <form action={formAction} className="space-y-5 px-6 py-6">
+          {state?.error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-sm">
+              {state.error}
+            </div>
+          )}
+
+          {/* Segment Selector for Tracked vs Custom */}
+          {products.length > 0 && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Product Source
+              </label>
+              <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setItemType("tracked")}
+                  disabled={isPending}
+                  className={`py-2 text-xs font-semibold rounded-lg transition duration-150 cursor-pointer ${
+                    itemType === "tracked"
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  Tracked Inventory
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setItemType("custom")}
+                  disabled={isPending}
+                  className={`py-2 text-xs font-semibold rounded-lg transition duration-150 cursor-pointer ${
+                    itemType === "custom"
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  Custom / Untracked
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Item source selections using defaultValues */}
+          <div className="space-y-2">
+            <label htmlFor="edit-item-name" className="block text-sm font-medium text-slate-700">
+              Item
+            </label>
+            {itemType === "tracked" && products.length > 0 ? (
+              <select
+                id="edit-item-name"
+                name="itemId"
+                defaultValue={sale.itemId || products[0]?.id}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                disabled={loadingProducts || isPending}
+              >
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} (Stock: {p.currentStock})
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                id="edit-item-name"
+                name="customItemName"
+                type="text"
+                defaultValue={sale.customItemName || sale.itemName || ""}
+                placeholder="Enter custom item name"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                disabled={isPending}
+                required
+              />
+            )}
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {/* Quantity */}
+            <div className="space-y-2">
+              <label htmlFor="edit-quantity-input" className="block text-sm font-medium text-slate-700">
+                Quantity
+              </label>
+              <input
+                id="edit-quantity-input"
+                name="quantity"
+                type="number"
+                defaultValue={qtyValue}
+                placeholder="0"
+                min={1}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                disabled={isPending}
+                required
+              />
+            </div>
+
+            {/* Unit Price */}
+            <div className="space-y-2">
+              <label htmlFor="edit-price-input" className="block text-sm font-medium text-slate-700">
+                Unit Price (₦)
+              </label>
+              <input
+                id="edit-price-input"
+                name="unitPrice"
+                type="number"
+                defaultValue={unitPriceValue}
+                placeholder="0"
+                min={0}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                disabled={isPending}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Submitting buttons */}
+          <div className="mt-6 flex flex-col gap-3 pt-4 border-t border-slate-200">
+            <div className="flex sm:flex-row sm:justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isPending}
+                className="inline-flex justify-center rounded-2xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 transition duration-200 hover:bg-slate-100 cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isPending}
+                className="inline-flex justify-center items-center gap-2 rounded-2xl bg-[#0b7a75] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#0b7a75]/20 transition duration-200 hover:bg-[#09615e] cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Saving Changes...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+

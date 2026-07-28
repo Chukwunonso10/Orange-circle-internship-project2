@@ -20,6 +20,7 @@ export default function SalesForm() {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
 
   // Fetch user's inventory items to choose from
   useEffect(() => {

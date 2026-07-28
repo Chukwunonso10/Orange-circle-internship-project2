@@ -1,14 +1,20 @@
-"use client"
+"use client";
 import { useState } from "react";
-import { X, Plus} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X, Plus, Loader2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function InventoryForm() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [product, setProduct] = useState("");
   const [stock, setStock] = useState("");
   const [costPrice, setCostPrice] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
-    const [threshhold, setThreshold] = useState("");
+  const [threshhold, setThreshold] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
 
 
@@ -19,14 +25,65 @@ export default function InventoryForm() {
     setCostPrice("");
     setSellingPrice("");
     setThreshold("");
+    setErrorMsg(null);
   }
 
-  function handleSave(event: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSave(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const inventory = { product, stock, costPrice,sellingPrice , threshhold};
-    console.log("Save inventory", inventory);
-    setOpen(false);
-    resetForm();
+    setSubmitting(true);
+    setErrorMsg(null);
+
+    const name = product.trim();
+    const currentStock = Number(stock);
+    const lowStock = Number(threshhold);
+
+    if (!name) {
+      setErrorMsg("Product name is required.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (isNaN(currentStock) || currentStock < 0) {
+      setErrorMsg("Quantity in Stock must be a non-negative number.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (isNaN(lowStock) || lowStock < 0) {
+      setErrorMsg("Low stock threshold must be a non-negative number.");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/routes/item", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          currentStock,
+          lowStock,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to create product");
+      }
+
+      toast.success("Product created successfully!");
+      setOpen(false);
+      resetForm();
+      router.refresh();
+    } catch (err: any) {
+      console.error("Create product error:", err);
+      setErrorMsg(err.message || "Something went wrong.");
+      toast.error(err.message || "Something went wrong.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -74,6 +131,12 @@ export default function InventoryForm() {
               </div>
               {/* inventry form */}
               <form onSubmit={handleSave} className="space-y-5 px-6 py-6">
+                {errorMsg && (
+                  <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-sm animate-in fade-in slide-in-from-top-1 duration-200">
+                    {errorMsg}
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <label
                     htmlFor="product"
@@ -87,6 +150,7 @@ export default function InventoryForm() {
                     onChange={(e) => setProduct(e.target.value)}
                     placeholder="Eg rice,tomatoe paste"
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                    disabled={submitting}
                     required
                   />
                 </div>
@@ -104,6 +168,7 @@ export default function InventoryForm() {
                     onChange={(e) => setStock(e.target.value)}
                     placeholder="0"
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                    disabled={submitting}
                     required
                   />
                 </div>
@@ -119,11 +184,11 @@ export default function InventoryForm() {
                     <input
                       id="cost"
                       type="number"
-                      // min={1}
                       placeholder="0"
                       value={costPrice}
                       onChange={(e) => setCostPrice(e.target.value)}
                       className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                      disabled={submitting}
                       required
                     />
                   </div>
@@ -139,15 +204,15 @@ export default function InventoryForm() {
                       id="price"
                       type="number"
                       placeholder="0"
-                      // min={0}
-                      // step={0.01}
                       value={sellingPrice}
                       onChange={(e) => setSellingPrice(e.target.value)}
                       className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary[#0b7a75] focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100"
+                      disabled={submitting}
                       required
                     />
                   </div>
                 </div>
+
                 <div className="space-y-2">
                   <label
                     htmlFor="thresh"
@@ -159,11 +224,10 @@ export default function InventoryForm() {
                     id="thresh"
                     type="number"
                     placeholder="0"
-                    // min={0}
-                    // step={0.01}
                     value={threshhold}
                     onChange={(e) => setThreshold(e.target.value)}
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary[#0b7a75] focus:outline-none focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100"
+                    disabled={submitting}
                     required
                   />
                   <p className="text-xs text-gray-700">
@@ -171,22 +235,31 @@ export default function InventoryForm() {
                   </p>
                 </div>
 
-                <div className="mt-6 flex flex-col gap-3 pt-4 border-t border-slate-200  sm:flex-row sm:justify-end">
+                <div className="mt-6 flex flex-col gap-3 pt-4 border-t border-slate-200 sm:flex-row sm:justify-end">
                   <button
                     type="button"
                     onClick={() => {
                       resetForm();
                       setOpen(false);
                     }}
-                    className="inline-flex justify-center rounded-2xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 cursor-pointer"
+                    disabled={submitting}
+                    className="inline-flex justify-center rounded-2xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 cursor-pointer disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex justify-center rounded-2xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-hover cursor-pointer"
+                    disabled={submitting}
+                    className="inline-flex justify-center items-center gap-2 rounded-2xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-hover cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                   >
-                    Save product
+                    {submitting ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save product"
+                    )}
                   </button>
                 </div>
               </form>

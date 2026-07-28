@@ -96,7 +96,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
             })
         }
         const { itemId } = await params
-        const { operationId } = await req.json()
+        let body: any = {};
+        try {
+            body = await req.json();
+        } catch (e) {}
+        const { operationId } = body
 
         if (operationId) {
             const alreadyProcessed = await prisma.syncOperation.findUnique({

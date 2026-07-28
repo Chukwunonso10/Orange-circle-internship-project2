@@ -1,16 +1,51 @@
 "use client";
+
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import InventoryForm from "@/components/inventoryform";
 import InventoryCard from "@/components/inventorycard";
 import InventoryDisplay from "@/components/inventorydisplay";
 
-
-import { Package, Search,TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { Package, Search, TriangleAlert, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function Inventory() {
   const [search, setSearch] = useState("");
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchItems = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/routes/item");
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setItems(data.allProducts || []);
+      } else {
+        if (res.status === 404) {
+          setItems([]);
+        } else {
+          setError(data.message || "Failed to load products.");
+        }
+      }
+    } catch (err: any) {
+      setError("Network error: Could not fetch products.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const lowStockItems = items.filter((item) => item.currentStock <= item.lowStock);
 
   return (
     <div>
@@ -21,14 +56,12 @@ export default function Inventory() {
         <div className="ml-0 md:ml-70 sm:ml-0">
           <UserNav />
         </div>
-        <main className="ml-0 md:ml-72 sm:ml-10  p-6">
+        <main className="ml-0 md:ml-72 sm:ml-10 p-6">
           <div className="border border-gray-300 my-5 shadow-sm p-6 rounded-4xl">
             <div>
               <h2 className="text-[#032523] text-2xl font-bold">Inventory</h2>
-
               <p className="py-2 text-sm text-gray-700">
-                Manage your Inventory in your dashboard and view
-                it anytime
+                Manage your Inventory in your dashboard and view it anytime
               </p>
             </div>
 
@@ -49,94 +82,63 @@ export default function Inventory() {
             </div>
           </div>
 
-          <div className="">
-            <div className="">
-              <div className="flex flex-col  max-w-sm rounded-3xl border border-[#6DAFAC] p-6 shadow-sm">
-                <div className=" flex items-center gap-3">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-red-200 text-brand-primary">
+          <div>
+            <div>
+              <div className="flex flex-col max-w-sm rounded-3xl border border-[#6DAFAC] p-6 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-brand-primary">
                     <TriangleAlert className="text-red-500" size={20} />
                   </div>
-                  <p className=" text-sm font-semibold text-slate-950 ">Low stock alert</p>
+                  <p className="text-sm font-semibold text-slate-950">Low stock alert</p>
                 </div>
-                <p className="mt-3 text-lg font-semibold text-slate-900 ">
-                  No low stocks
+                <p className={`mt-3 text-lg font-semibold ${lowStockItems.length > 0 ? "text-red-600" : "text-slate-900"}`}>
+                  {lowStockItems.length > 0
+                    ? `${lowStockItems.length} Low Stock Alert${lowStockItems.length > 1 ? "s" : ""}`
+                    : "No low stocks"}
                 </p>
                 <span>
-                  <InventoryDisplay />
+                  <InventoryDisplay lowStockItems={lowStockItems} />
                 </span>
               </div>
-
-              {/* <div className="max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
-                  <Package size={20} />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-                  Total invetory today
-                </p>
-                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  0
-                </p>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  Yesterday: 0
-                </p>
-              </div>
-
-              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
-                  <Package size={20} />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-                  Total invetory today
-                </p>
-                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  0
-                </p>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  Yesterday: 0
-                </p>
-              </div>
-
-              <div className="hidden md:block max-w-sm rounded-3xl border border-[#6DAFAC] bg-[#f4faf9] p-6 shadow-sm">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75]">
-                  <Package size={20} />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-                  Total invetory today
-                </p>
-                <p className="mt-3 text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  0
-                </p>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  Yesterday: 0
-                </p>
-              </div> */}
             </div>
 
-            <aside className=" rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+            <aside className="rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg">
+              <h2 className="text-xl font-semibold text-slate-900">
                 Inventory history
               </h2>
-              <p className="py-3 text-sm text-slate-600 dark:text-slate-400">
-                Your Invetory will appear here once they are saved.
+              <p className="py-3 text-sm text-slate-600">
+                Your Inventory will appear here once they are saved.
               </p>
-              <div className="flex flex-col items-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-brand-primary/10 text-brand-primary">
-                  <Package size={22} />
+              
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+                  <p className="mt-2 text-sm text-slate-500">Loading products...</p>
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  Inventory records will appear below
-                </h3>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  When you save an inventory, it will appear in this section for
-                  quick review.
-                </p>
-                <div>
-                  <InventoryForm />
+              ) : error ? (
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl text-sm">
+                  {error}
                 </div>
-              </div>
-              <div className="py-5">
-                <InventoryCard />
-              </div>
+              ) : items.length === 0 ? (
+                <div className="flex flex-col items-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-brand-primary/10 text-brand-primary">
+                    <Package size={22} />
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-slate-900">
+                    Inventory records will appear below
+                  </h3>
+                  <p className="mt-2 text-sm text-slate-500">
+                    When you save an inventory, it will appear in this section for quick review.
+                  </p>
+                  <div>
+                    <InventoryForm />
+                  </div>
+                </div>
+              ) : (
+                <div className="py-5">
+                  <InventoryCard items={filteredItems} onRefresh={fetchItems} />
+                </div>
+              )}
             </aside>
           </div>
         </main>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Logout from "@/components/logout";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "LedgerLite",
@@ -19,7 +19,8 @@ export default async function RootLayout({
       className="h-full antialiased font-sans"
     >
       <body className="min-h-full flex flex-col">
-        {children}
+          {children}
+          <Toaster position="bottom-right" />
       </body>
     </html>
   );

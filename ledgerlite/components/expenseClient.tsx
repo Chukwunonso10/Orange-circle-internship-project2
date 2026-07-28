@@ -3,10 +3,8 @@ import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import ExpenseForm from "@/components/expenseform";
 import ExpenseCard from "@/components/expensecard";
-
 import { ShoppingBag, Search } from "lucide-react";
 import SearchForm from "@/components/searchform";
-import { useRouter } from "next/navigation";
 
 export default function ExpenseClient({moneyOutToday, totalMoneyOut, moneyOutYesterday, expenses}: {moneyOutToday: number,totalMoneyOut: number , moneyOutYesterday: number, expenses: any[]}) {
 
