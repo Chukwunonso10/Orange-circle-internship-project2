@@ -1,6 +1,9 @@
+
 import SideNav from "@/components/sideNav";
 import UserNav from "@/components/userNav";
 import DashboardCard from "@/components/dashboardcard";
+import BarChart from "@/components/dashboardbarchart";
+
 import { TrendingUp, TrendingDown, ShoppingBag, Banknote, Plus, Receipt, Package } from "lucide-react";
 import prisma from "../lib/prisma";
 import { getCurrentUserId } from "../lib/authhelper";
@@ -275,6 +278,13 @@ export default async function Dashboard() {
                 </div>
               )}
             </div>
+          </div>
+        </section>
+
+        {/* bashboard barchart */}
+        <section>
+          <div>
+           <BarChart />
           </div>
         </section>
         {/* transaction history */}

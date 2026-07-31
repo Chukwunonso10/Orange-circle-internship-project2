@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Bell } from "lucide-react";
-import Logout from "@/components/logout";
+import { Bell,User } from "lucide-react";
 
 export default function UserNav({
   name = "",
@@ -15,7 +14,7 @@ export default function UserNav({
   const [userName, setUserName] = useState(name);
   const [bizName, setBizName] = useState(buisnessName);
   const [profile, setProfile] = useState<any>(null);
-  const [avatar, setAvatar] = useState("/profilePhoto.png");
+  const [avatar, setAvatar] = useState("");
 
   useEffect(() => {
     // Sync state if props change
@@ -70,26 +69,31 @@ export default function UserNav({
                 <div className="flex flex-col">
                   {/* business name */}
                   <span className="hidden md:block text-sm font-medium text-gray-900">
-                     {bizName}  
+                    {bizName}
                   </span>
                   {/* username */}
                   <span className="hidden md:block text-xs text-gray-500">
-                     {userName}
+                    {userName}
                   </span>
                 </div>
-                <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
-                  <Image
-                    className="rounded-full object-cover w-10 h-10"
-                    src={avatar}
-                    alt="user profile photo"
-                    width={40}
-                    height={40}
-                    unoptimized
-                  />
-                </div>
-                {/* <div>
-                  <Logout user={profile} />
-                </div> */}
+                {/* Profile Image Display */}
+
+                {avatar ? (
+                  <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                    <Image
+                      className="rounded-full object-cover w-10 h-10"
+                      src={avatar}
+                      alt="profile-photo"
+                      width={40}
+                      height={40}
+                      unoptimized
+                    />
+                  </div>
+                ) : (
+                  <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
+                    <User className="w-10 h-10  text-white" />
+                  </div>
+                )}
               </div>
             </div>
           </div>

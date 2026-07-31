@@ -2,21 +2,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import HomeNav from "@/components/homeNav";
-import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
-
-
 
 import {
   CheckSquare,
   Mail,
-  Eye,
-  EyeOff,
-  Lock,
+ 
   ChevronLeft,
-  ClipboardList,
-  BarChart3,
+
   Store,
 } from "lucide-react";
 
@@ -77,26 +70,26 @@ function Logo() {
   );
 }
 
-// back icon button 
- function BackIconButton(){
-   const router = useRouter();
+// back icon button
+function BackIconButton() {
+  const router = useRouter();
 
-   // Typed click handler function
-   const handleBack = (event: React.MouseEvent<HTMLButtonElement>): void => {
-     event.preventDefault();
-     router.back();
-   };
-   return (
-     <button
-       className="bg-[#F4F8F8] py-3 md:py-4 rounded-lg text-teal-700 cursor-pointer"
-       type="button"
-       onClick={handleBack}
-       aria-label="Go back"
-     >
-       <ChevronLeft />
-     </button>
-   );
- }
+  // Typed click handler function
+  const handleBack = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
+    router.back();
+  };
+  return (
+    <button
+      className="bg-[#F4F8F8] py-2 md:py-3 rounded-lg text-teal-700 cursor-pointer"
+      type="button"
+      onClick={handleBack}
+      aria-label="Go back"
+    >
+      <ChevronLeft />
+    </button>
+  );
+}
 
 function HeroPanel() {
   return (
@@ -172,7 +165,7 @@ function TextInput({
         placeholder={placeholder}
         className=" w-full border bg-white border-slate-200 rounded-xl px-12 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200 "
       />
-      <div className="absolute  bottom-[25%] left-[90%] cursor-pointer">
+      <div className="absolute  bottom-[15%] left-[90%] cursor-pointer">
         {rightAdornment}
       </div>
     </div>
@@ -199,51 +192,24 @@ function PrimaryButton({
   );
 }
 
-interface LoginFormState {
+interface ForgetPasswordFormState {
   email: string;
-  password: string;
-  phone:string;
+  phone: string;
 }
 
-export default function LedgerLiteLogin() {
-  const router = useRouter();
-  const [form, setForm] = useState<LoginFormState>({ email: "", password: "", phone: "", });
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+export default function ForgotPassword() {
+  const [form, setForm] = useState<ForgetPasswordFormState>({
+    email: "",
+    phone: "",
+  });
+
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const canLogin = (form.email.trim() !== "" || form.phone.trim() !== "") && form.password.length > 0 && !loading;
+  const canLogin = form.email.trim() !== "" || form.phone.trim() !== "";
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (!canLogin) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/sign-in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email: form.email, password: form.password })
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to log in.");
-      }
-      
-      setSubmitted(true);
-      setTimeout(() => {
-        router.replace("/dashboard");
-      }, 1000);
-    } catch (err: any) {
-      console.error("Login failed:", err);
-      setError(err.message || "Failed to connect to server.");
-    } finally {
-      setLoading(false);
-    }
+    setSubmitted(true);
   };
 
   if (submitted) {
@@ -253,12 +219,20 @@ export default function LedgerLiteLogin() {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
             <CheckSquare className="h-8 w-8 text-teal-600" strokeWidth={2.5} />
           </div>
-          <h2 className="md:mt-6 text-2xl font-bold text-slate-900">
-            Welcome back!
+          <h2 className="mt-6 text-2xl font-bold text-slate-900">
+            Check your mail!
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            Redirecting to dashboard...
+            Reset link has been sent to{" "}
+            <span className="font-medium text-slate-700">{form.email}</span>
           </p>
+          <Link
+            onClick={() => setSubmitted(false)}
+            href="/signin"
+            className="mt-6 text-sm font-medium text-teal-600 hover:underline"
+          >
+            Back to login
+          </Link>
         </div>
       </div>
     );
@@ -266,20 +240,21 @@ export default function LedgerLiteLogin() {
 
   return (
     <div>
+      {/* <HomeNav /> */}
       <div className="min-h-screen w-full bg-slate-50">
         <div className="mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 lg:grid-cols-2">
           <HeroPanel />
 
-          <div className="flex items-center justify-center px-6 md:py-12 sm:px-10">
+          <div className="flex items-center justify-center px-6 py-0 md:py-12 sm:px-10">
             <div className="w-full max-w-sm">
               <Logo />
               <BackIconButton />
 
               <h2 className="md:mt-4 text-2xl font-bold text-slate-900">
-                Welcome Back
+                Reset Password
               </h2>
               <p className="mt-1.5 mb-6 text-sm text-slate-500">
-                Your business records are waiting for you.
+                Enter your Phone number or Email to reset password.
               </p>
 
               <Field label="Email">
@@ -291,6 +266,7 @@ export default function LedgerLiteLogin() {
                   onChange={(v) => setForm((f) => ({ ...f, email: v }))}
                 />
               </Field>
+
               <div className="flex items-center gap-4 py-2">
                 <div className="h-px flex-1 bg-slate-300" />{" "}
                 <span className="text-sm font-medium text-slate-500">OR</span>{" "}
@@ -317,70 +293,18 @@ export default function LedgerLiteLogin() {
                 </div>
               </Field>
 
-              <Field label="Password">
-                <TextInput
-                  icon={<Lock className="h-4 w-4" />}
-                  placeholder="Enter your password"
-                  type={showPassword ? "text" : "password"}
-                  value={form.password}
-                  onChange={(v) => setForm((f) => ({ ...f, password: v }))}
-                  rightAdornment={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((s) => !s)}
-                      className="text-slate-400 hover:text-slate-600"
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  }
-                />
-              </Field>
+              <div className="flex flex-col items-center gap-4">
+                <PrimaryButton onClick={handleLogin} disabled={!canLogin}>
+                  Reset Password
+                </PrimaryButton>
 
-              <div className="mb-8 flex items-center justify-between">
-                <label className="flex items-center gap-2 text-sm text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 rounded accent-[#0B7A75] border-slate-300 text-teal-600 focus:ring-teal-500"
-                  />
-                  Remember me
-                </label>
                 <Link
-                  href="/forgotpassword"
-
-                  className="text-sm font-medium text-teal-600 hover:underline"
+                  href="/signin"
+                  className="font-medium text-sm  text-teal-700 hover:underline"
                 >
-                  Forgot Password?
+                  Back to Login
                 </Link>
               </div>
-
-              {error && (
-                <div className="mb-4 text-xs font-semibold text-red-600 bg-red-50 p-3 rounded-xl">
-                  {error}
-                </div>
-              )}
-
-              <PrimaryButton onClick={handleLogin} disabled={!canLogin}>
-                {loading ? "Logging in..." : "Login"}
-              </PrimaryButton>
-
-              <p className="mt-5 text-center text-sm text-slate-500">
-                Don't have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="font-medium text-teal-600 hover:underline"
-                >
-                  Create Account
-                </Link>
-              </p>
             </div>
           </div>
         </div>

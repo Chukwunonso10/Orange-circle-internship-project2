@@ -59,12 +59,12 @@ export default function Home() {
       <HomeNav />
 
       <main className="relative overflow-hidden">
-        <section className="relative mx-auto flex max-w-7xl flex-col gap-12 px-6 py-16 lg:flex-row lg:items-center lg:gap-20 lg:px-10">
-          <div className="max-w-2xl space-y-8">
+        <section className="relative mx-auto flex max-w-7xl flex-col gap-12 py-4 px-6 md:py-16 lg:flex-row lg:items-center lg:gap-20 lg:px-10">
+          <div className="max-w-2xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#0B7A75]/10 px-4 py-2 text-sm text-[#0B7A75] shadow-sm shadow-[#0B7A75]/20">
               <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#0B7A75] animate-pulse" />
               <Sparkles size={15} />
-              Finance operations built for your workflow
+              Tract every sale. stay in control
             </div>
 
             <div className="space-y-6">
@@ -77,16 +77,16 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex  gap-4 sm:flex-row sm:items-center">
               <Link
                 href="/signup"
-                className="inline-flex w-full items-center justify-center rounded-full bg-[#0B7A75] px-15 py-4 text-base font-semibold text-white shadow-lg shadow-[#0B7A75]/30 transition hover:-translate-y-0.5 hover:bg-[#0d8d84] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full bg-[#0B7A75] px-3 md:px-15 py-4 text-base font-semibold text-white shadow-lg shadow-[#0B7A75]/30 transition hover:-translate-y-0.5 hover:bg-[#0d8d84] sm:w-auto"
               >
                 Get Started
               </Link>
               <Link
                 href="/signin"
-                className="inline-flex w-full items-center justify-center rounded-full border border-[#0B7A75] bg-white px-15 py-4 text-base font-semibold text-[#0B7A75] transition hover:-translate-y-0.5 hover:border-[#0B7A75] hover:text-[#0B7A75] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full border border-[#0B7A75] bg-white px-6 md:px-15 py-4 text-base font-semibold text-[#0B7A75] transition hover:-translate-y-0.5 hover:border-[#0B7A75] hover:text-[#0B7A75] sm:w-auto"
               >
                 Log in
               </Link>
@@ -630,24 +630,26 @@ export default function Home() {
             </div>
           </section>
 
+          
+
           <section>
-            <div className="bg-[#074946]  py-20 rounded-2xl">
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex flex-col mx-auto px-4 items-center ">
-                  <h3 className="text-center text-sm md:text-2xl text-white font-bold py-3">
-                    Ready to keep better business records?
-                  </h3>
-                  <p className="text-center text-white text-xs md:text-sm">
-                    Start using Ledgerlite today and take control of your
-                    business
-                  </p>
-                </div>
-                <Link
-                  href="/signup"
-                  className="bg-white text-[#074946] px-10 py-3 rounded-2xl hover:opacity-80"
-                >
+            <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-teal-800 to-teal-700 px-8 py-14 text-center sm:px-16">
+              
+              {/* Decorative circles */}
+              <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-teal-600/40" />{" "}
+              <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-teal-600/40" />{" "}
+              <div className="relative mx-auto max-w-xl">
+                
+                <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
+                  Ready to keep better business records?
+                </h2>
+                <p className="mt-4 text-teal-100">
+                  Start using LedgerLite today and take control of your
+                  business.
+                </p>
+                <button className="mt-8 rounded-full bg-white px-10 py-3.5 text-sm font-semibold text-teal-700 shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.99]">
                   Get Started
-                </Link>
+                </button>
               </div>
             </div>
           </section>
@@ -657,4 +659,6 @@ export default function Home() {
       <Footer />
     </div>
   );
+
+  
 }
