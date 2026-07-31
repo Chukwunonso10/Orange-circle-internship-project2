@@ -45,7 +45,13 @@ export default function SalesCard({
   // Editing Modal State
   const [editingSale, setEditingSale] = useState<any | null>(null);
 
-  const displaySales = sales;
+  const [localSales, setLocalSales] = useState<any[]>(sales);
+
+  useEffect(() => {
+    setLocalSales(sales);
+  }, [sales]);
+
+  const displaySales = localSales;
 
   // Handle Delete Action
   async function handleDelete(id: string) {
@@ -53,7 +59,10 @@ export default function SalesCard({
       return;
     }
 
+    const previousSales = [...localSales];
+    setLocalSales(prev => prev.filter(item => item.id !== id));
     setDeletingId(id);
+
     try {
       const response = await fetch(`/api/routes/sales/${id}`, {
         method: "DELETE",
@@ -69,10 +78,12 @@ export default function SalesCard({
         toast.success("Sale deleted successfully!");
         router.refresh();
       } else {
+        setLocalSales(previousSales);
         toast.error(result.message || "Failed to delete sale.");
       }
     } catch (error) {
       console.error("Delete error:", error);
+      setLocalSales(previousSales);
       toast.error("Network error: Could not delete sale.");
     } finally {
       setDeletingId(null);

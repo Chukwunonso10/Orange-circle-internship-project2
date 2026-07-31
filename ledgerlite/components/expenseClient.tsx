@@ -69,15 +69,12 @@ export default function ExpenseClient({moneyOutToday, totalMoneyOut, moneyOutYes
                     <ShoppingBag size={22} />
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-slate-900">
-                    Espense records will appear below
+                    Expense records will appear below
                   </h3>
                   <p className="mt-2 text-sm text-slate-500">
                     When you save an expense, it will appear in this section for
                     quick review.
                   </p>
-                  <div>
-                    <ExpenseForm />
-                  </div>
                 </div>
               ) : (
                 <div className="py-5">

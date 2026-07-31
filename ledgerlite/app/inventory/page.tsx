@@ -8,12 +8,17 @@ import InventoryDisplay from "@/components/inventorydisplay";
 
 import { Package, Search, TriangleAlert, Loader2 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function Inventory() {
   const [search, setSearch] = useState("");
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setSearch(value);
+  }, 300);
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
@@ -70,8 +75,8 @@ export default function Inventory() {
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   id="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  defaultValue={search}
+                  onChange={(e) => debouncedSearch(e.target.value)}
                   placeholder="Search item"
                   className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-[#6DAFAC]/6 "
                 />
@@ -111,9 +116,24 @@ export default function Inventory() {
               </p>
               
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
-                  <p className="mt-2 text-sm text-slate-500">Loading products...</p>
+                <div className="space-y-4 animate-pulse py-5">
+                  <div className="grid grid-cols-6 gap-4 bg-slate-50 p-4 rounded-t-2xl border-b border-slate-100">
+                    <div className="h-4 bg-slate-200 rounded col-span-2"></div>
+                    <div className="h-4 bg-slate-200 rounded"></div>
+                    <div className="h-4 bg-slate-200 rounded"></div>
+                    <div className="h-4 bg-slate-200 rounded"></div>
+                    <div className="h-4 bg-slate-200 rounded"></div>
+                  </div>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="grid grid-cols-6 gap-4 p-4 items-center border-b border-slate-100">
+                      <div className="h-5 bg-slate-200 rounded col-span-2"></div>
+                      <div className="h-6 bg-slate-200 rounded w-12"></div>
+                      <div className="h-4 bg-slate-200 rounded w-8"></div>
+                      <div className="h-4 bg-slate-200 rounded w-20"></div>
+                      <div className="h-6 bg-slate-200 rounded w-16 mx-auto"></div>
+                      <div className="h-5 bg-slate-200 rounded w-16"></div>
+                    </div>
+                  ))}
                 </div>
               ) : error ? (
                 <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl text-sm">

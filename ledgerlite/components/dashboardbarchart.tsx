@@ -63,7 +63,7 @@ export default function BarChart() {
         </div>
       </div>
       <div className="flex flex-col items-center pt-20">
-        <h3 className="text-2xl font-semibold mb-6">My page</h3>
+        {/* <h3 className="text-2xl font-semibold mb-6">My page</h3> */}
 
         <div className="w-full max-w-4xl ">
           <div style={{ width: "100%", height: "380px" }}>

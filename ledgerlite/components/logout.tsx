@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EllipsisVertical, LogOut } from "lucide-react";
-import { getCurrentUser } from "@/app/lib/authhelper";
+import toast from "react-hot-toast";
 
 export default function Logout({
   user
@@ -47,18 +47,21 @@ export default function Logout({
       const response = await fetch("/api/protected/logout", {
         method: "POST",
       });
-
-      if (response.ok) {
+      const data = await response.json()
+      if (response.ok && data?.message) {
         setConfirmOpen(false);
         setOpen(false);
         router.push("/signin");
         router.refresh();
+        toast.success("signed out successfully.");
       } else {
-        alert("Failed to sign out. Please try again.");
+        toast.error("Failed to sign out. Please try again.");
+        //alert("Failed to sign out. Please try again.");
       }
     } catch (error) {
       console.error("Sign out error:", error);
-      alert("Network error: Could not complete sign out.");
+      toast.error("Network error: Could not complete sign out.");
+      //alert(error || "Network error: Could not complete sign out.");
     }
   }
    
