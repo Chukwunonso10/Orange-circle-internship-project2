@@ -104,6 +104,7 @@ export function SalesClient({
                     When you save a sale, it will appear in this section for quick
                     review.
                   </p>
+                  <SalesForm />
                 </div>
               ) : (
 

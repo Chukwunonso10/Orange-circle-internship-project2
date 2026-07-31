@@ -90,7 +90,7 @@ export default function UserNav({
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-full rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
                     <User className="w-10 h-10  text-white" />
                   </div>
                 )}
