@@ -24,11 +24,11 @@ export default async function Dashboard() {
       <div>
         <SideNav />
       </div>
-      <div className="ml-0 md:ml-70 sm:ml-0">
+      <div className="ml-0 md:ml-60 sm:ml-0">
         <UserNav name={name} buisnessName={buisnessName} />
       </div>
 
-      <main className="ml-0 md:ml-72 sm:ml-0 p-6">
+      <main className="ml-0 md:ml-62 sm:ml-0 p-6">
         {/* Good morning heading */}
         <section>
           <div className="space-y-6">
@@ -52,10 +52,12 @@ export default async function Dashboard() {
 
         {/* Quick Actions and Alerts */}
         <section>
-          <div className="md:flex md:justify-between items-start gap-6">
+          <div className="lg:flex gap-6">
             {/* Quick Actions */}
-            <div className="md:border md:border-gray-200 md:shadow-sm px-5 rounded-2xl bg-white flex-1 py-4">
-              <p className="p-3 font-semibold text-sm text-slate-700">Quick Actions</p>
+            <div className=" md:border md:border-gray-200 md:shadow-sm px-5 rounded-2xl bg-white flex-1 py-4">
+              <p className="p-3 font-semibold text-sm text-slate-700">
+                Quick Actions
+              </p>
 
               <div className="flex justify-between gap-2 md:space-x-5">
                 <div className="py-2 flex-1">
@@ -94,13 +96,22 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            {/* Low stock alerts - Streamed with Suspense */}
-            <Suspense fallback={<LowStockSkeleton />}>
-              <LowStockAlerts />
-            </Suspense>
+            <div>
+              {/* Low stock alerts - Streamed with Suspense */}
+              <Suspense fallback={<LowStockSkeleton />}>
+                <LowStockAlerts />
+              </Suspense>
+            </div>
           </div>
           <div>
-            <Suspense fallback={<p className="flex items-center tify-center animate-spin"> <Loader2 /> loading...</p>}>
+            <Suspense
+              fallback={
+                <p className="flex items-center tify-center animate-spin">
+                  {" "}
+                  <Loader2 /> loading...
+                </p>
+              }
+            >
               <BarChart />
             </Suspense>
           </div>
@@ -108,7 +119,9 @@ export default async function Dashboard() {
         {/* Transaction history - Streamed with Suspense */}
         <section>
           <div className="my-5">
-            <h2 className="text-lg font-semibold text-slate-800 mb-3">Recent Transactions</h2>
+            <h2 className="text-lg font-semibold text-slate-800 mb-3">
+              Recent Transactions
+            </h2>
             <Suspense fallback={<TransactionsSkeleton />}>
               <RecentTransactions userId={user.id} />
             </Suspense>
