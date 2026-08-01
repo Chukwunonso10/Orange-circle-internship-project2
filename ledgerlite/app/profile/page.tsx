@@ -32,10 +32,10 @@ export default async function ProfilePage() {
         <div>
           <SideNav />
         </div>
-        <div className="ml-0 md:ml-70 sm:ml-0">
+        <div className="ml-0 md:ml-60 sm:ml-0">
           <UserNav name={user.name} buisnessName={user.buisnessName} />
         </div>
-        <main className="ml-0 md:ml-72 sm:ml-10 p-6">
+        <main className="ml-0 md:ml-62 sm:ml-10 p-6">
           <ProfileClient
             initialName={user.name}
             initialEmail={user.email}
