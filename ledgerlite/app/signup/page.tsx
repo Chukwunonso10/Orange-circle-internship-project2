@@ -2,8 +2,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
-
+import { useRouter } from "next/navigation";
 
 import {
   CheckSquare,
@@ -143,16 +142,16 @@ function HeroPanel() {
   );
 }
 
-
-
 function Field({
   label,
   children,
   hint,
+  error,
 }: {
   label: string;
   children: React.ReactNode;
   hint?: string;
+  error?: string;
 }) {
   return (
     <div className="mb-5">
@@ -160,9 +159,13 @@ function Field({
         {label}
       </label>
       {children}
-      {hint && (
+      {error ? (
+        <p className="mt-1.5 text-xs font-medium leading-relaxed text-rose-600">
+          {error}
+        </p>
+      ) : hint ? (
         <p className="mt-1.5 text-xs leading-relaxed text-slate-400">{hint}</p>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -174,6 +177,9 @@ function TextInput({
   value,
   onChange,
   rightAdornment,
+  error,
+  autoComplete,
+  inputMode,
 }: {
   icon?: React.ReactNode;
   placeholder: string;
@@ -181,6 +187,9 @@ function TextInput({
   value: string;
   onChange: (v: string) => void;
   rightAdornment?: React.ReactNode;
+  error?: string;
+  autoComplete?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }) {
   return (
     <div className="relative">
@@ -192,9 +201,16 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className=" w-full border bg-white border-slate-200 rounded-xl px-12 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200 "
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        aria-invalid={Boolean(error)}
+        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
+          error
+            ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+            : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+        }`}
       />
-      <div className="absolute  bottom-[25%] left-[90%] cursor-pointer">
+      <div className="absolute bottom-[15%] left-[90%] cursor-pointer">
         {rightAdornment}
       </div>
     </div>
@@ -276,103 +292,216 @@ interface AccountForm {
   agreed: boolean;
 }
 
-// back icon button 
- function BackIconButton(){
-   const router = useRouter();
+type AccountFormErrors = Partial<Record<keyof AccountForm, string>>;
 
-   // Typed click handler function
-   const handleBack = (event: React.MouseEvent<HTMLButtonElement>): void => {
-     event.preventDefault();
-     router.back();
-   };
-   return (
-     <button
-       className="bg-[#F4F8F8] md:py-5 rounded-lg text-teal-700 cursor-pointer"
-       type="button"
-       onClick={handleBack}
-       aria-label="Go back"
-     >
-       <ChevronLeft />
-     </button>
-   );
- }
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@%&*]).{8,}$/;
+
+function validateAccountForm(form: AccountForm): AccountFormErrors {
+  const errors: AccountFormErrors = {};
+
+  if (!form.fullName.trim()) {
+    errors.fullName = "Please enter your full name.";
+  }
+
+  if (!form.email.trim()) {
+    errors.email = "Email address is required.";
+  } else if (!emailRegex.test(form.email.trim())) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  if (!form.phone.trim()) {
+    errors.phone = "Phone number is required.";
+  } else if (!/^\d{10,11}$/.test(form.phone.trim())) {
+    errors.phone = "Enter a valid Nigerian phone number.";
+  }
+
+  if (!form.password) {
+    errors.password = "Password is required.";
+  } else if (form.password.length < 8) {
+    errors.password = "Password must be at least 8 characters long.";
+  } else if (!passwordRegex.test(form.password)) {
+    errors.password =
+      "Use uppercase, lowercase, number, and one special character.";
+  }
+
+  if (!form.confirmPassword) {
+    errors.confirmPassword = "Please confirm your password.";
+  } else if (form.confirmPassword !== form.password) {
+    errors.confirmPassword = "Passwords do not match.";
+  }
+
+  if (!form.agreed) {
+    errors.agreed = "Please accept the terms to continue.";
+  }
+
+  return errors;
+}
+
+function PasswordStrengthMeter({ password }: { password: string }) {
+  const rules = [
+    { label: "8+ characters", ok: password.length >= 8 },
+    { label: "1 uppercase", ok: /[A-Z]/.test(password) },
+    { label: "1 lowercase", ok: /[a-z]/.test(password) },
+    { label: "1 number", ok: /\d/.test(password) },
+    { label: "1 special char", ok: /[!@%&*]/.test(password) },
+  ];
+
+  const score = rules.filter((rule) => rule.ok).length;
+  const strengthPct = (score / rules.length) * 100;
+
+  let strengthLabel = "Weak";
+  if (score >= 4) strengthLabel = "Strong";
+  else if (score >= 2) strengthLabel = "Fair";
+
+  return (
+    <div className="mt-3 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+      <div className="flex items-center justify-between text-xs text-slate-600">
+        <span>Password strength</span>
+        <span className="font-semibold text-slate-700">{strengthLabel}</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+        <div
+          className="h-full rounded-full bg-teal-600 transition-all duration-300"
+          style={{ width: `${strengthPct}%` }}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-1 text-[11px] text-slate-500">
+        {rules.map((rule) => (
+          <div key={rule.label} className="flex items-center gap-1.5">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                rule.ok ? "bg-teal-600" : "bg-slate-300"
+              }`}
+            />
+            <span>{rule.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// back icon button
+function BackIconButton({ onBack }: { onBack?: () => void }) {
+  return (
+    <button
+      className="bg-[#F4F8F8] md:py-5 rounded-lg text-teal-700 cursor-pointer"
+      type="button"
+      onClick={onBack}
+      aria-label="Go back"
+    >
+      <ChevronLeft />
+    </button>
+  );
+}
 
 function CreateAccountScreen({
   form,
   setForm,
   onContinue,
   onLogin,
+  onBack,
   loading,
 }: {
   form: AccountForm;
   setForm: React.Dispatch<React.SetStateAction<AccountForm>>;
   onContinue: () => void;
   onLogin: () => void;
+  onBack: () => void;
   loading: boolean;
 }) {
   const [showPw, setShowPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const canContinue =
-    form.fullName.trim() !== "" &&
-    form.email.trim() !== "" &&
-    form.phone.trim() !== "" &&
-    form.password.length >= 8 &&
-    form.password === form.confirmPassword &&
-    form.agreed &&
-    !loading;
+  const errors = validateAccountForm(form);
+  const isValid = Object.keys(errors).length === 0;
+
+  const handleSubmit = () => {
+    setSubmitAttempted(true);
+    if (!isValid) return;
+    onContinue();
+  };
 
   return (
     <div className="w-full max-w-sm">
       <Logo />
       <ProgressBar step="create" />
-      <BackIconButton />
+      <BackIconButton onBack={onBack} />
 
       <h2 className="text-2xl font-bold text-slate-900">Create Your Account</h2>
       <p className="mt-1.5 mb-6 text-sm text-slate-500">
         Let's get your business set up in just a few steps
       </p>
 
-      <Field label="Full Name">
+      {submitAttempted && !isValid && (
+        <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">
+          Please review the highlighted fields and try again.
+        </div>
+      )}
+
+      <Field
+        label="Full Name"
+        error={submitAttempted ? errors.fullName : undefined}
+      >
         <TextInput
           icon={<User className="h-4 w-4" />}
           placeholder="eg. John Doe"
           value={form.fullName}
+          error={submitAttempted ? errors.fullName : undefined}
           onChange={(v) => setForm((f) => ({ ...f, fullName: v }))}
         />
       </Field>
 
-      <Field label="Email">
+      <Field label="Email" error={submitAttempted ? errors.email : undefined}>
         <TextInput
           icon={<Mail className="h-4 w-4" />}
           placeholder="eg. you@email.com"
           type="email"
           value={form.email}
+          error={submitAttempted ? errors.email : undefined}
+          autoComplete="email"
           onChange={(v) => setForm((f) => ({ ...f, email: v }))}
         />
       </Field>
 
-      <Field label="Phone Number">
+      <Field
+        label="Phone Number"
+        error={submitAttempted ? errors.phone : undefined}
+      >
         <div className="relative">
-          <span className="text-base leading-none pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">
+          <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400 text-base leading-none">
             🇳🇬
           </span>
-          <span className=" pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-sm ">
+          <span className="pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-sm">
             +234
           </span>
           <input
-            type="number"
+            type="tel"
+            inputMode="numeric"
             value={form.phone}
-            onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-            placeholder=""
-            className=" w-full border bg-white border-slate-200 text-sm rounded-xl px-18 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200"
+            onChange={(e) =>
+              setForm((f) => ({
+                ...f,
+                phone: e.target.value.replace(/\D/g, ""),
+              }))
+            }
+            placeholder="8012345678"
+            aria-invalid={Boolean(submitAttempted ? errors.phone : undefined)}
+            className={`w-full rounded-xl border bg-white px-18 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-2 ${
+              submitAttempted && errors.phone
+                ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+                : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+            }`}
           />
         </div>
       </Field>
 
       <Field
         label="Password"
-        hint="Password must be at least 8 characters and include one uppercase letter, one lowercase letter, one number, and one special character (!@%&*)"
+        hint="Use a strong password with upper/lowercase letters, a number, and a special character."
+        error={submitAttempted ? errors.password : undefined}
       >
         <TextInput
           icon={
@@ -383,6 +512,8 @@ function CreateAccountScreen({
           placeholder="Enter your password"
           type={showPw ? "text" : "password"}
           value={form.password}
+          error={submitAttempted ? errors.password : undefined}
+          autoComplete="new-password"
           onChange={(v) => setForm((f) => ({ ...f, password: v }))}
           rightAdornment={
             <button
@@ -398,9 +529,13 @@ function CreateAccountScreen({
             </button>
           }
         />
+        <PasswordStrengthMeter password={form.password} />
       </Field>
 
-      <Field label="Confirm Password">
+      <Field
+        label="Confirm Password"
+        error={submitAttempted ? errors.confirmPassword : undefined}
+      >
         <TextInput
           icon={
             <span className="text-base leading-none">
@@ -410,6 +545,8 @@ function CreateAccountScreen({
           placeholder="Confirm your password"
           type={showConfirmPw ? "text" : "password"}
           value={form.confirmPassword}
+          error={submitAttempted ? errors.confirmPassword : undefined}
+          autoComplete="new-password"
           onChange={(v) => setForm((f) => ({ ...f, confirmPassword: v }))}
           rightAdornment={
             <button
@@ -440,8 +577,13 @@ function CreateAccountScreen({
           and <span className="font-medium text-teal-600">Privacy Policy</span>.
         </span>
       </label>
+      {submitAttempted && errors.agreed && (
+        <p className="-mt-3 mb-4 text-xs font-medium text-rose-600">
+          {errors.agreed}
+        </p>
+      )}
 
-      <PrimaryButton onClick={onContinue} disabled={!canContinue}>
+      <PrimaryButton onClick={handleSubmit} disabled={loading || !isValid}>
         {loading ? "Creating Account..." : "Continue"}
       </PrimaryButton>
 
@@ -460,10 +602,12 @@ function CreateAccountScreen({
 
 function VerifyAccountScreen({
   onVerify,
+  onBack,
   contact,
   loading,
 }: {
   onVerify: (codeString: string) => void;
+  onBack: () => void;
   contact: string;
   loading: boolean;
 }) {
@@ -497,18 +641,20 @@ function VerifyAccountScreen({
     <div className="w-full max-w-sm">
       <Logo />
       <ProgressBar step="verify" />
-      <BackIconButton />
+      <BackIconButton onBack={onBack} />
       <h2 className="text-2xl font-bold text-slate-900">Verify Your Account</h2>
       <p className="mt-1.5 mb-8 text-sm leading-relaxed text-slate-500">
-        We've sent a verification Otp code to your{" "}
-        {contact || "phone number"}. Enter the code below to continue.
+        We've sent a verification Otp code to your {contact || "phone number"}.
+        Enter the code below to continue.
       </p>
 
       <div className="mb-6 flex justify-between gap-2">
         {code.map((digit, idx) => (
           <input
             key={idx}
-            ref={(el) => { inputsRef.current[idx] = el; }}
+            ref={(el) => {
+              inputsRef.current[idx] = el;
+            }}
             value={digit}
             onChange={(e) => handleChange(idx, e.target.value)}
             onKeyDown={(e) => handleKeyDown(idx, e)}
@@ -526,7 +672,10 @@ function VerifyAccountScreen({
         </button>
       </p>
 
-      <PrimaryButton onClick={() => onVerify(code.join(""))} disabled={!isComplete || loading}>
+      <PrimaryButton
+        onClick={() => onVerify(code.join(""))}
+        disabled={!isComplete || loading}
+      >
         {loading ? "Verifying OTP..." : "Verify Account"}
       </PrimaryButton>
     </div>
@@ -545,6 +694,7 @@ const BUSINESS_TYPES = [
 
 function BusinessSetupScreen({
   onFinish,
+  onBack,
   loading,
 }: {
   onFinish: (data: {
@@ -552,6 +702,7 @@ function BusinessSetupScreen({
     businessType: string;
     hasInventory: boolean | null;
   }) => void;
+  onBack: () => void;
   loading: boolean;
 }) {
   const [businessName, setBusinessName] = useState("");
@@ -565,13 +716,16 @@ function BusinessSetupScreen({
   );
 
   const canSubmit =
-    businessName.trim() !== "" && businessType !== "" && hasInventory !== null && !loading;
+    businessName.trim() !== "" &&
+    businessType !== "" &&
+    hasInventory !== null &&
+    !loading;
 
   return (
     <div className="w-full max-w-sm">
       <Logo />
       <ProgressBar step="business" />
-      <BackIconButton />
+      <BackIconButton onBack={onBack} />
       <h2 className="text-2xl font-bold text-slate-900">
         Tell Us About Your Business
       </h2>
@@ -628,13 +782,13 @@ function BusinessSetupScreen({
               {filteredTypes.map((t) => (
                 <li key={t}>
                   <button
-                     type="button"
-                     onClick={() => {
-                       setBusinessType(t);
-                       setTypeOpen(false);
-                       setTypeQuery("");
-                     }}
-                     className="w-full px-3.5 py-2.5 text-left text-sm text-slate-700 hover:bg-teal-50 hover:text-teal-700"
+                    type="button"
+                    onClick={() => {
+                      setBusinessType(t);
+                      setTypeOpen(false);
+                      setTypeQuery("");
+                    }}
+                    className="w-full px-3.5 py-2.5 text-left text-sm text-slate-700 hover:bg-teal-50 hover:text-teal-700"
                   >
                     {t}
                   </button>
@@ -767,8 +921,8 @@ export default function LedgerLiteOnboarding() {
           phoneNumber: normalizePhoneNumber(account.phone),
           password: account.password,
           confirmPassword: account.confirmPassword,
-          buisnessName: account.fullName + "'s Business" // required placeholder for schema
-        })
+          buisnessName: account.fullName + "'s Business", // required placeholder for schema
+        }),
       });
 
       const data = await res.json();
@@ -795,8 +949,8 @@ export default function LedgerLiteOnboarding() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: codeString,
-          email: account.email
-        })
+          email: account.email,
+        }),
       });
 
       const data = await res.json();
@@ -826,8 +980,8 @@ export default function LedgerLiteOnboarding() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          buisnessName: setupData.businessName
-        })
+          buisnessName: setupData.businessName,
+        }),
       });
 
       const result = await res.json();
@@ -837,7 +991,7 @@ export default function LedgerLiteOnboarding() {
 
       setBusinessName(setupData.businessName);
       setFinished(true);
-      
+
       setTimeout(() => {
         router.push("/dashboard");
       });
@@ -873,6 +1027,7 @@ export default function LedgerLiteOnboarding() {
                   setForm={setAccount}
                   onContinue={handleCreateAccount}
                   onLogin={() => setStep("welcome")}
+                  onBack={() => setStep("welcome")}
                   loading={loading}
                 />
               )}
@@ -880,12 +1035,14 @@ export default function LedgerLiteOnboarding() {
                 <VerifyAccountScreen
                   contact={contact}
                   onVerify={handleVerifyOtp}
+                  onBack={() => setStep("create")}
                   loading={loading}
                 />
               )}
               {step === "business" && !finished && (
                 <BusinessSetupScreen
                   onFinish={handleBusinessSetup}
+                  onBack={() => setStep("verify")}
                   loading={loading}
                 />
               )}
