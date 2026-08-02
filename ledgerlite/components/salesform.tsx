@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { X, Plus, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function SalesForm() {
   const router = useRouter();
@@ -100,6 +101,7 @@ export default function SalesForm() {
         setOpen(false);
         resetForm();
         router.refresh(); // Refresh Next.js Server Component data
+        toast.success("successfully recorded sales")
       } else {
         setErrorMsg(result.message || "Failed to record sale.");
       }

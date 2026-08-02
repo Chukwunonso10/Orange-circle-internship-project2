@@ -13,6 +13,7 @@ import BarChart from "@/components/dashboardbarchart";
 
 
 export default async function Dashboard() {
+  
   const user = await getCurrentUser();
   if (!user) redirect("/signin");
 

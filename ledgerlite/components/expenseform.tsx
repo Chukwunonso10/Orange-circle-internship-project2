@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, Plus} from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function ExpenseForm() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function ExpenseForm() {
     setOpen(false);
     resetForm();
     router.refresh();
+    toast.success("successfuly recorded expenses")
   }
 
   return (
