@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Bell,User } from "lucide-react";
+import Link from "next/link";
 
 export default function UserNav({
   name = "",
@@ -53,7 +54,7 @@ export default function UserNav({
     <div>
       <section>
         {/* userNav user navigation profile details */}
-        <div className="w-full border-b border-gray-100 ">
+        <div className=" w-full border-b border-gray-100 ">
           {/* user profile */}
           <div className="p-2">
             <div className="flex justify-between items-center px-4 py-2">
@@ -63,7 +64,9 @@ export default function UserNav({
 
               <div className="flex items-end gap-2">
                 <div className="bg-gray-100 p-2 rounded-full ">
-                  <Bell className="h-5 w-5 text-brand-primary-[#0b7a75] dark:text-gray-400" />
+                  <Link href="/notifications">
+                    <Bell className="h-5 w-5 text-brand-primary-[#0b7a75] dark:text-gray-400" />
+                  </Link>
                 </div>
                 <div className=""></div>
                 <div className="flex flex-col">

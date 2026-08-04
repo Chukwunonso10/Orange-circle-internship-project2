@@ -242,9 +242,9 @@ function RadioRow({
       onClick={onSelect}
       className="flex w-full max-w-lg items-center justify-between border-b border-slate-100 py-5 text-left"
     >
-      <span className="text-sm text-slate-800">{label}</span>
+      <span className="text-sm text-slate-800 ">{label}</span>
       <span
-        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 cursor-pointer ${
           selected ? "border-teal-600" : "border-slate-300"
         }`}
       >
@@ -294,7 +294,7 @@ function ToggleRow({
       <span className="text-sm text-slate-800">{label}</span>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative h-7 w-12 rounded-full transition-colors ${
+        className={`relative h-7 w-12 rounded-full transition-colors cursor-pointer ${
           checked ? "bg-teal-600" : "bg-slate-200"
         }`}
         aria-pressed={checked}
@@ -386,7 +386,7 @@ function FeedbackSection() {
         </div>
         <button
           onClick={handleSend}
-          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700"
+          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer"
         >
           Send
         </button>
@@ -433,7 +433,7 @@ function ModalShell({
       <div className="relative w-full max-w-md rounded-2xl bg-white p-7 shadow-xl">
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 text-slate-400 hover:text-slate-600"
+          className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
@@ -478,13 +478,13 @@ function ConfirmPasswordModal({
         <button
           onClick={() => onContinue(password)}
           disabled={!password}
-          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 cursor-pointer"
         >
           Continue
         </button>
         <button
           onClick={onCancel}
-          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50"
+          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer"
         >
           Cancel
         </button>
@@ -540,7 +540,7 @@ export default function LedgerLiteSettings() {
   const closeDeleteFlow = () => setDeleteStep("none");
 
   return (
-    <div className="min-h-screen w-full bg-slate-50">
+    <div className="min-h-screen w-full bg-slate-50 rounded-3xl">
       <div className="mx-auto flex max-w-6xl flex-col lg:flex-row">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 

@@ -59,7 +59,7 @@ export default function Home() {
       <HomeNav />
 
       <main className="relative overflow-hidden">
-        <section className="relative mx-auto flex max-w-7xl flex-col gap-12 py-4 px-6 md:py-16 lg:flex-row lg:items-center lg:gap-20 lg:px-10">
+        <section className="relative mx-auto flex max-w-7xl flex-col gap-12 py-4 px-6 md:py-10 lg:flex-row lg:items-center lg:gap-20 lg:px-10">
           <div className="max-w-2xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#0B7A75]/10 px-4 py-2 text-sm text-[#0B7A75] shadow-sm shadow-[#0B7A75]/20">
               <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#0B7A75] animate-pulse" />
@@ -144,91 +144,37 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-10 px-4 md:grid-cols-3 lg:grid-cols-6">
               <div className="flex flex-col items-center">
-                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    className="object-cover"
-                    src="/Cphoto1.jpeg"
-                    alt="Amara studio"
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 640px) 160px, 100vw"
-                  />
-                </div> */}
+               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Amara Foods
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    className="object-cover"
-                    src="/Cphoto2.jpeg"
-                    alt="Kofi Buildings"
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 640px) 160px, 100vw"
-                  />
-                </div> */}
+               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Bode Grocery
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    className="object-cover"
-                    src="/Cphoto3.jpeg"
-                    alt="JFE Fashion"
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 640px) 160px, 100vw"
-                  />
-                </div> */}
+                
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Koficuts
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    className="object-cover"
-                    src="/Cphoto4.jpeg"
-                    alt="Western Coffee"
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 640px) 160px, 100vw"
-                  />
-                </div> */}
+              
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   MarketPro
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    className="object-cover"
-                    src="/Cphoto5.jpeg"
-                    alt="MarketPro"
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 640px) 160px, 100vw"
-                  />
-                </div> */}
+               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Nia Tailor
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                {/* <div className="relative w-full max-w-45 aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    className="object-cover"
-                    src="/Cphoto6.jpeg"
-                    alt="Nia Tailor"
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 640px) 160px, 100vw"
-                  />
-                </div> */}
+               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Chidi POS
                 </span>

@@ -91,7 +91,7 @@ function ProgressBar({ step }: { step: Exclude<Step, "welcome"> }) {
   const { label, index } = STEP_META[step];
   const pct = (index / 3) * 100;
   return (
-    <div className="py-2 md:mb-8">
+    <div className="py-2 md:mb-0">
       <div className="mb-2 flex items-center justify-between">
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
           <div
@@ -386,7 +386,7 @@ function PasswordStrengthMeter({ password }: { password: string }) {
 function BackIconButton({ onBack }: { onBack?: () => void }) {
   return (
     <button
-      className="bg-[#F4F8F8] md:py-5 rounded-lg text-teal-700 cursor-pointer"
+      className="bg-[#F4F8F8] py-1 md:py-2 rounded-lg text-teal-700 cursor-pointer"
       type="button"
       onClick={onBack}
       aria-label="Go back"

@@ -44,7 +44,7 @@ export default function ExpenseForm() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex items-center justify-center rounded-full bg-brand-primary px-2 md:px-5 py-3  text-sm font-semibold text-white shadow-sm transition hover:bg-[#09615e] focus:outline-none focus:ring-2 focus:ring-brand-primary/50 cursor-pointer"
+          className="inline-flex items-center justify-center rounded-full bg-brand-primary px-2 md:px-5 py-3  text-sm font-semibold text-white shadow-sm transition hover:bg-brand-primary/80 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 cursor-pointer"
         >
           <Plus size={18} />
            <span className="px-1 ">Add</span>
@@ -97,7 +97,7 @@ export default function ExpenseForm() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Enter description"
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                     required
                   />
                 </div>
@@ -116,7 +116,7 @@ export default function ExpenseForm() {
                       value={category}
                       placeholder="category"
                       onChange={(e) => setcategory(e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                       required
                     />
                   </div>
@@ -136,7 +136,7 @@ export default function ExpenseForm() {
                       // step={0.01}
                       value={amount}
                       onChange={(e) => setAmount(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                       required
                     />
                   </div>

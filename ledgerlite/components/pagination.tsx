@@ -82,7 +82,7 @@ export default function Pagination({ currentPage, totalPages, pageSize }: Pagina
                         disabled={isPending}
                         className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-semibold transition cursor-pointer ${
                             isCurrent
-                                ? "bg-[#0b7a75] text-white border-[#0b7a75]"
+                                ? "bg-brand-primary text-white border-brand-primary"
                                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                         } disabled:opacity-40 disabled:cursor-not-allowed`}
                         title={`Page ${pageIndex}`}

@@ -1,5 +1,5 @@
- "use client"
-import React, {  } from "react";
+"use client";
+import React from "react";
 import ProfileClient from "@/components/profileClient";
 
 import {
@@ -55,8 +55,6 @@ const BUSINESS_TYPES = [
   "Wholesale / Distribution",
   "Other",
 ];
-
-
 
 function Sidebar({
   active,
@@ -160,37 +158,52 @@ function ToggleRow({
 
 /* ---------------- Sections ---------------- */
 
-// function PersonalProfileSection() {
-//   const [fullName, setFullName] = useState("");
-//   const [email, setEmail] = useState("");
+interface ProfileClientProps {
+  initialName: string;
+  initialEmail: string;
+  initialBuisnessName: string;
+  initialImage: string;
+  createdAt: string;
+}
 
-//   return (
-//     <div>
-//       <SectionHeading>Personal Profile</SectionHeading>
-//       <TextField
-//         label="Full Name"
-//         placeholder="eg. John Doe"
-//         value={fullName}
-//         onChange={setFullName}
-//       />
-//       <TextField
-//         label="Email"
-//         placeholder="eg. you@mail.com"
-//         type="email"
-//         value={email}
-//         onChange={setEmail}
-//       />
-//       <div className="max-w-lg space-y-3">
-//         <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
-//           Save Changes
-//         </button>
-//         <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:opacity-80 cursor-pointer ">
-//           Cancel
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+function PersonalProfileSection() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+
+  return (
+    <div>
+      {/* <ProfileClient
+        initialName={initialName}
+        initialEmail={initialEmail}
+        initialBuisnessName={initialBuisnessName}
+        initialImage={initialImage}
+        createdAt={createdAt}
+      /> */}
+      <SectionHeading>Personal Profile</SectionHeading>
+      <TextField
+        label="Full Name"
+        placeholder="eg. John Doe"
+        value={fullName}
+        onChange={setFullName}
+      />
+      <TextField
+        label="Email"
+        placeholder="eg. you@mail.com"
+        type="email"
+        value={email}
+        onChange={setEmail}
+      />
+      <div className="max-w-lg space-y-3">
+        <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
+          Save Changes
+        </button>
+        <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:opacity-80 cursor-pointer ">
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function BusinessProfileSection() {
   const [businessName, setBusinessName] = useState("");
@@ -289,15 +302,11 @@ function BusinessProfileSection() {
   );
 }
 
-
-
 /* ---------------- Root ---------------- */
 
 export default function LedgerLiteProfile() {
   const [activeSection, setActiveSection] =
     useState<ProfileSection>("personal");
-
-  
 
   return (
     <div className="min-h-screen w-full bg-slate-50">
@@ -305,7 +314,7 @@ export default function LedgerLiteProfile() {
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
         <main className="flex-1 px-10 py-10">
-          {activeSection === "personal" && ""}
+          {activeSection === "personal" && <PersonalProfileSection />}
           {activeSection === "business" && <BusinessProfileSection />}
         </main>
       </div>
