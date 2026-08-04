@@ -1,4 +1,4 @@
- "use client"
+"use client";
 import Logout from "@/components/logout";
 import React, { useState } from "react";
 import {
@@ -10,7 +10,7 @@ import {
   LogOut,
   Trash2,
   X,
-  ChevronRight,
+  CircleUserRound,
   Home,
 } from "lucide-react";
 
@@ -28,21 +28,24 @@ const NAV_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  { id: "security", label: "Security", icon: <Shield className="h-4 w-4" /> },
-  { id: "theme", label: "Theme", icon: <Palette className="h-4 w-4" /> },
+  { id: "security", label: "Security", icon: null },
+  { id: "theme", label: "Theme", icon: null },
   {
     id: "notifications",
     label: "Notifications",
-    icon: <Bell className="h-4 w-4" />,
+    icon: null,
   },
   {
     id: "feedback",
     label: "Feedback & Support",
-    icon: <MessageSquare className="h-4 w-4" />,
+    icon: null,
   },
-  { id: "account", label: "Account Action", icon: null },
+  {
+    id: "account",
+    label: "Account Action",
+    icon: null,
+  },
 ];
-
 
 function Sidebar({
   active,
@@ -52,25 +55,28 @@ function Sidebar({
   onSelect: (s: SettingsSection) => void;
 }) {
   return (
-    <aside className="w-64 shrink-0 border-r border-slate-100 bg-white px-6 py-8">
-      <h2 className="mb-6 text-xl font-bold text-slate-900">Settings</h2>
-      <nav className="space-y-1">
+    <aside className="w-full border-b border-slate-100 bg-white px-4 py-4 lg:w-72 lg:shrink-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-8">
+      <h2 className="mb-4 text-xl font-bold text-slate-900 lg:mb-6">
+        Settings
+      </h2>
+      <nav className="-mx-1 flex gap-2 overflow-x-auto pb-1 lg:mx-0 lg:block lg:space-y-1 lg:overflow-visible lg:pb-0">
         {NAV_ITEMS.map((item) => {
           const isActive = active === item.id;
           return (
             <button
               key={item.id}
               onClick={() => onSelect(item.id)}
-              className={`relative w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+              className={`relative flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors lg:w-full ${
                 isActive
                   ? "font-medium text-teal-700"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
             >
               {isActive && (
-                <span className="absolute -left-6 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-teal-600" />
+                <span className="absolute -left-1 top-1/2 hidden h-6 w-0.5 -translate-y-1/2 rounded-r bg-teal-600 lg:block" />
               )}
-              {item.label}
+              {item.icon}
+              <span className="cursor-pointer">{item.label}</span>
             </button>
           );
         })}
@@ -80,17 +86,23 @@ function Sidebar({
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
-  return <h1 className="mb-8 text-2xl font-bold text-slate-900">{children}</h1>;
+  return (
+    <h1 className="mb-6 text-2xl font-bold text-slate-900 sm:text-3xl lg:mb-8">
+      {children}
+    </h1>
+  );
 }
 
 function PasswordField({
   label,
   value,
   onChange,
+  error,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  error?: string;
 }) {
   return (
     <div className="mb-6 max-w-lg">
@@ -102,10 +114,45 @@ function PasswordField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Enter your password"
-        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+        aria-invalid={Boolean(error)}
+        className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-2 ${
+          error
+            ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+            : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
+        }`}
       />
+      {error ? <p className="mt-1.5 text-xs text-red-600">{error}</p> : null}
     </div>
   );
+}
+
+function validatePassword(password: string) {
+  if (!password.trim()) return "Password is required.";
+  if (password.length < 8) return "Password must be at least 8 characters.";
+  if (!/[A-Z]/.test(password))
+    return "Password must include an uppercase letter.";
+  if (!/[a-z]/.test(password))
+    return "Password must include a lowercase letter.";
+  if (!/\d/.test(password)) return "Password must include a number.";
+  if (!/[^A-Za-z0-9]/.test(password))
+    return "Password must include a special character.";
+  return "";
+}
+
+function validateFeedback(subject: string, message: string) {
+  const subjectError = !subject.trim()
+    ? "Subject is required."
+    : subject.trim().length < 3
+      ? "Subject must be at least 3 characters."
+      : "";
+
+  const messageError = !message.trim()
+    ? "Message is required."
+    : message.trim().length < 10
+      ? "Message must be at least 10 characters."
+      : "";
+
+  return { subjectError, messageError };
 }
 
 /* ---------------- Sections ---------------- */
@@ -114,6 +161,36 @@ function SecuritySection() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
+  const oldPasswordError =
+    submitAttempted && !oldPassword.trim()
+      ? "Current password is required."
+      : "";
+  const newPasswordError = submitAttempted ? validatePassword(newPassword) : "";
+  const confirmPasswordError = submitAttempted
+    ? !confirmPassword.trim()
+      ? "Please confirm your new password."
+      : confirmPassword !== newPassword
+        ? "Passwords do not match."
+        : ""
+    : "";
+
+  const isFormValid =
+    oldPassword.trim() &&
+    !validatePassword(newPassword) &&
+    confirmPassword.trim() &&
+    confirmPassword === newPassword;
+
+  const handleSave = () => {
+    setSubmitAttempted(true);
+
+    if (!isFormValid) {
+      return;
+    }
+
+    console.log("Security settings saved");
+  };
 
   return (
     <div>
@@ -122,19 +199,25 @@ function SecuritySection() {
         label="Old Password"
         value={oldPassword}
         onChange={setOldPassword}
+        error={oldPasswordError}
       />
       <PasswordField
         label="New Password"
         value={newPassword}
         onChange={setNewPassword}
+        error={newPasswordError}
       />
       <PasswordField
         label="Confirm Password"
         value={confirmPassword}
         onChange={setConfirmPassword}
+        error={confirmPasswordError}
       />
       <div className="max-w-lg space-y-3">
-        <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
+        <button
+          onClick={handleSave}
+          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer"
+        >
           Save Changes
         </button>
         <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer">
@@ -243,6 +326,22 @@ function NotificationsSection() {
 function FeedbackSection() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
+  const { subjectError, messageError } = validateFeedback(subject, message);
+  const showSubjectError = submitAttempted && subjectError;
+  const showMessageError = submitAttempted && messageError;
+  const isFormValid = !subjectError && !messageError;
+
+  const handleSend = () => {
+    setSubmitAttempted(true);
+
+    if (!isFormValid) {
+      return;
+    }
+
+    console.log("Feedback sent", { subject, message });
+  };
 
   return (
     <div>
@@ -255,8 +354,16 @@ function FeedbackSection() {
           <input
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            aria-invalid={Boolean(showSubjectError)}
+            className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 transition-colors focus:outline-none focus:ring-2 ${
+              showSubjectError
+                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
+            }`}
           />
+          {showSubjectError ? (
+            <p className="mt-1.5 text-xs text-red-600">{subjectError}</p>
+          ) : null}
         </div>
         <div className="mb-6">
           <label className="mb-1.5 block text-sm font-medium text-slate-700">
@@ -266,10 +373,21 @@ function FeedbackSection() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={7}
-            className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            aria-invalid={Boolean(showMessageError)}
+            className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 transition-colors focus:outline-none focus:ring-2 ${
+              showMessageError
+                ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
+            }`}
           />
+          {showMessageError ? (
+            <p className="mt-1.5 text-xs text-red-600">{messageError}</p>
+          ) : null}
         </div>
-        <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
+        <button
+          onClick={handleSend}
+          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700"
+        >
           Send
         </button>
       </div>
@@ -288,7 +406,7 @@ function AccountActionSection({
     <div>
       <SectionHeading>Account Action</SectionHeading>
       <div className="max-w-lg space-y-3">
-       <Logout />
+        <Logout />
         <button
           onClick={onDeleteAccount}
           className="flex w-full items-center gap-2 rounded-full bg-red-600 py-3.5 pl-5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 cursor-pointer"
@@ -419,17 +537,14 @@ export default function LedgerLiteSettings() {
     useState<SettingsSection>("security");
   const [deleteStep, setDeleteStep] = useState<DeleteFlowStep>("none");
 
-  
-
   const closeDeleteFlow = () => setDeleteStep("none");
 
   return (
     <div className="min-h-screen w-full bg-slate-50">
-
-      <div className="mx-auto flex max-w-6xl">
+      <div className="mx-auto flex max-w-6xl flex-col lg:flex-row">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
-        <main className="flex-1 px-10 py-10">
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
           {activeSection === "security" && <SecuritySection />}
           {activeSection === "theme" && <ThemeSection />}
           {activeSection === "notifications" && <NotificationsSection />}

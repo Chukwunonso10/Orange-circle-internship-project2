@@ -39,7 +39,7 @@ export function SalesClient({
         <div className="ml-0 md:ml-70 sm:ml-0">
           <UserNav name={name} buisnessName={buisnessName} />
         </div>
-        <main className="ml-0 md:ml-72 sm:ml-10 p-6">
+        <main className="ml-0 md:ml-62 sm:ml-10 p-6">
           <div className="border border-gray-300 my-5 rounded-4xl p-5 shadow-sm">
             <div>
               <h2 className="text-[#032523] text-2xl font-bold">Sales</h2>

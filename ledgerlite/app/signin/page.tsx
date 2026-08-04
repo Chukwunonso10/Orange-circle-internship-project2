@@ -6,8 +6,6 @@ import HomeNav from "@/components/homeNav";
 import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
 
-
-
 import {
   CheckSquare,
   Mail,
@@ -77,26 +75,26 @@ function Logo() {
   );
 }
 
-// back icon button 
- function BackIconButton(){
-   const router = useRouter();
+// back icon button
+function BackIconButton() {
+  const router = useRouter();
 
-   // Typed click handler function
-   const handleBack = (event: React.MouseEvent<HTMLButtonElement>): void => {
-     event.preventDefault();
-     router.back();
-   };
-   return (
-     <button
-       className="bg-[#F4F8F8] py-3 md:py-4 rounded-lg text-teal-700 cursor-pointer"
-       type="button"
-       onClick={handleBack}
-       aria-label="Go back"
-     >
-       <ChevronLeft />
-     </button>
-   );
- }
+  // Typed click handler function
+  const handleBack = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
+    router.back();
+  };
+  return (
+    <button
+      className="bg-[#F4F8F8] py-3 md:py-4 rounded-lg text-teal-700 cursor-pointer"
+      type="button"
+      onClick={handleBack}
+      aria-label="Go back"
+    >
+      <ChevronLeft />
+    </button>
+  );
+}
 
 function HeroPanel() {
   return (
@@ -131,9 +129,11 @@ function HeroPanel() {
 function Field({
   label,
   children,
+  error,
 }: {
   label: string;
   children: React.ReactNode;
+  error?: string;
 }) {
   return (
     <div className="mb-5">
@@ -141,6 +141,11 @@ function Field({
         {label}
       </label>
       {children}
+      {error && (
+        <p className="mt-1.5 text-xs font-medium leading-relaxed text-rose-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -152,6 +157,8 @@ function TextInput({
   value,
   onChange,
   rightAdornment,
+  error,
+  autoComplete,
 }: {
   icon?: React.ReactNode;
   placeholder: string;
@@ -159,6 +166,8 @@ function TextInput({
   value: string;
   onChange: (v: string) => void;
   rightAdornment?: React.ReactNode;
+  error?: string;
+  autoComplete?: string;
 }) {
   return (
     <div className="relative">
@@ -170,9 +179,15 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className=" w-full border bg-white border-slate-200 rounded-xl px-12 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200 "
+        autoComplete={autoComplete}
+        aria-invalid={Boolean(error)}
+        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
+          error
+            ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+            : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+        }`}
       />
-      <div className="absolute  bottom-[25%] left-[90%] cursor-pointer">
+      <div className="absolute bottom-[15%] left-[90%] cursor-pointer">
         {rightAdornment}
       </div>
     </div>
@@ -202,38 +217,73 @@ function PrimaryButton({
 interface LoginFormState {
   email: string;
   password: string;
-  phone:string;
+  phone: string;
+}
+
+type LoginFormErrors = Partial<Record<keyof LoginFormState, string>>;
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\d{10,11}$/;
+
+function validateLoginForm(form: LoginFormState): LoginFormErrors {
+  const errors: LoginFormErrors = {};
+
+  if (!form.email.trim()) {
+    errors.email = "Email address is required.";
+  } else if (!emailRegex.test(form.email.trim())) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  if (form.phone.trim() && !phoneRegex.test(form.phone.trim())) {
+    errors.phone = "Enter a valid Nigerian phone number.";
+  }
+
+  if (!form.password) {
+    errors.password = "Password is required.";
+  } else if (form.password.length < 8) {
+    errors.password = "Password must be at least 8 characters long.";
+  }
+
+  return errors;
 }
 
 export default function LedgerLiteLogin() {
   const router = useRouter();
-  const [form, setForm] = useState<LoginFormState>({ email: "", password: "", phone: "", });
+  const [form, setForm] = useState<LoginFormState>({
+    email: "",
+    password: "",
+    phone: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canLogin = (form.email.trim() !== "" || form.phone.trim() !== "") && form.password.length > 0 && !loading;
+  const errors = validateLoginForm(form);
+  const isValid = Object.keys(errors).length === 0;
 
   const handleLogin = async () => {
-    if (!canLogin) return;
+    setSubmitAttempted(true);
+    if (!isValid) return;
+
     setLoading(true);
     setError(null);
     try {
       const res = await fetch("/api/sign-in", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: form.email, password: form.password })
+        body: JSON.stringify({ email: form.email, password: form.password }),
       });
 
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || "Failed to log in.");
       }
-      
+
       setSubmitted(true);
       setTimeout(() => {
         router.replace("/dashboard");
@@ -282,12 +332,23 @@ export default function LedgerLiteLogin() {
                 Your business records are waiting for you.
               </p>
 
-              <Field label="Email">
+              {submitAttempted && !isValid && (
+                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">
+                  Please review the highlighted fields and try again.
+                </div>
+              )}
+
+              <Field
+                label="Email"
+                error={submitAttempted ? errors.email : undefined}
+              >
                 <TextInput
                   icon={<Mail className="h-4 w-4" />}
                   placeholder="eg. you@mail.com"
                   type="email"
                   value={form.email}
+                  error={submitAttempted ? errors.email : undefined}
+                  autoComplete="email"
                   onChange={(v) => setForm((f) => ({ ...f, email: v }))}
                 />
               </Field>
@@ -297,32 +358,51 @@ export default function LedgerLiteLogin() {
                 <div className="h-px flex-1 bg-slate-300" />{" "}
               </div>
 
-              <Field label="Phone Number">
+              <Field
+                label="Phone Number"
+                error={submitAttempted ? errors.phone : undefined}
+              >
                 <div className="relative">
                   <span className="text-base leading-none pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">
                     🇳🇬
                   </span>
-                  <span className=" pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-md ">
+                  <span className="pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-md">
                     +234
                   </span>
                   <input
-                    type="number"
+                    type="tel"
+                    inputMode="numeric"
                     value={form.phone}
                     onChange={(e) =>
-                      setForm((f) => ({ ...f, phone: e.target.value }))
+                      setForm((f) => ({
+                        ...f,
+                        phone: e.target.value.replace(/\D/g, ""),
+                      }))
                     }
-                    placeholder=""
-                    className=" w-full border bg-white border-slate-200 rounded-xl px-20 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200"
+                    placeholder="8012345678"
+                    aria-invalid={Boolean(
+                      submitAttempted ? errors.phone : undefined,
+                    )}
+                    className={`w-full rounded-xl border bg-white px-20 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
+                      submitAttempted && errors.phone
+                        ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+                        : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+                    }`}
                   />
                 </div>
               </Field>
 
-              <Field label="Password">
+              <Field
+                label="Password"
+                error={submitAttempted ? errors.password : undefined}
+              >
                 <TextInput
                   icon={<Lock className="h-4 w-4" />}
                   placeholder="Enter your password"
                   type={showPassword ? "text" : "password"}
                   value={form.password}
+                  error={submitAttempted ? errors.password : undefined}
+                  autoComplete="current-password"
                   onChange={(v) => setForm((f) => ({ ...f, password: v }))}
                   rightAdornment={
                     <button
@@ -368,7 +448,7 @@ export default function LedgerLiteLogin() {
                 </div>
               )}
 
-              <PrimaryButton onClick={handleLogin} disabled={!canLogin}>
+              <PrimaryButton onClick={handleLogin} disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
               </PrimaryButton>
 

@@ -1,5 +1,8 @@
-import { Trash2, Eye } from "lucide-react";
+import { Trash2, Eye, ReceiptText } from "lucide-react";
 import Link from "next/link";
+import SalesForm from "@/components/salesform";
+
+
 
 interface DashboardItem {
   id: string;
@@ -88,8 +91,10 @@ export default function DashboardCard({ dashboard = [] }: DashboardCardProps) {
       </div>
 
       {displayDashboard.length === 0 && (
-        <div className="flex items-center justify-center px-6 py-12">
+        <div className="flex flex-col items-center justify-center gap-2 px-6 py-6">
+          <ReceiptText className="text-slate-500" />
           <p className="text-sm text-slate-500">No transaction records found.</p>
+          <SalesForm />
         </div>
       )}
 

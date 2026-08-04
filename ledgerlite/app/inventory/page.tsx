@@ -58,10 +58,10 @@ export default function Inventory() {
         <div>
           <SideNav />
         </div>
-        <div className="ml-0 md:ml-70 sm:ml-0">
+        <div className="ml-0 md:ml-60 sm:ml-0">
           <UserNav />
         </div>
-        <main className="ml-0 md:ml-72 sm:ml-10 p-6">
+        <main className="ml-0 md:ml-62 sm:ml-10 p-6">
           <div className="border border-gray-300 my-5 shadow-sm p-6 rounded-4xl">
             <div>
               <h2 className="text-[#032523] text-2xl font-bold">Inventory</h2>

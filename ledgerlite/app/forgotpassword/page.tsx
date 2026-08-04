@@ -4,14 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import {
-  CheckSquare,
-  Mail,
- 
-  ChevronLeft,
-
-  Store,
-} from "lucide-react";
+import { CheckSquare, Mail, ChevronLeft, Store } from "lucide-react";
 
 /**
  * LedgerLite - Login Screen
@@ -124,9 +117,11 @@ function HeroPanel() {
 function Field({
   label,
   children,
+  error,
 }: {
   label: string;
   children: React.ReactNode;
+  error?: string;
 }) {
   return (
     <div className="mb-5">
@@ -134,6 +129,11 @@ function Field({
         {label}
       </label>
       {children}
+      {error && (
+        <p className="mt-1.5 text-xs font-medium leading-relaxed text-rose-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -145,6 +145,8 @@ function TextInput({
   value,
   onChange,
   rightAdornment,
+  error,
+  autoComplete,
 }: {
   icon?: React.ReactNode;
   placeholder: string;
@@ -152,6 +154,8 @@ function TextInput({
   value: string;
   onChange: (v: string) => void;
   rightAdornment?: React.ReactNode;
+  error?: string;
+  autoComplete?: string;
 }) {
   return (
     <div className="relative">
@@ -163,9 +167,15 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className=" w-full border bg-white border-slate-200 rounded-xl px-12 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200 "
+        autoComplete={autoComplete}
+        aria-invalid={Boolean(error)}
+        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
+          error
+            ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+            : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+        }`}
       />
-      <div className="absolute  bottom-[15%] left-[90%] cursor-pointer">
+      <div className="absolute bottom-[15%] left-[90%] cursor-pointer">
         {rightAdornment}
       </div>
     </div>
@@ -185,7 +195,7 @@ function PrimaryButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
+      className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none cursor-pointer"
     >
       {children}
     </button>
@@ -197,6 +207,33 @@ interface ForgetPasswordFormState {
   phone: string;
 }
 
+type ForgetPasswordErrors = Partial<
+  Record<keyof ForgetPasswordFormState, string>
+>;
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\d{10,11}$/;
+
+function validateForgotPasswordForm(
+  form: ForgetPasswordFormState,
+): ForgetPasswordErrors {
+  const errors: ForgetPasswordErrors = {};
+
+  if (form.email.trim() && !emailRegex.test(form.email.trim())) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  if (form.phone.trim() && !phoneRegex.test(form.phone.trim())) {
+    errors.phone = "Enter a valid Nigerian phone number.";
+  }
+
+  if (!form.email.trim() && !form.phone.trim()) {
+    errors.email = "Enter either your email or phone number.";
+  }
+
+  return errors;
+}
+
 export default function ForgotPassword() {
   const [form, setForm] = useState<ForgetPasswordFormState>({
     email: "",
@@ -204,11 +241,14 @@ export default function ForgotPassword() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const canLogin = form.email.trim() !== "" || form.phone.trim() !== "";
+  const errors = validateForgotPasswordForm(form);
+  const isValid = Object.keys(errors).length === 0;
 
   const handleLogin = () => {
-    if (!canLogin) return;
+    setSubmitAttempted(true);
+    if (!isValid) return;
     setSubmitted(true);
   };
 
@@ -257,12 +297,23 @@ export default function ForgotPassword() {
                 Enter your Phone number or Email to reset password.
               </p>
 
-              <Field label="Email">
+              {submitAttempted && !isValid && (
+                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">
+                  Please enter a valid email or phone number to continue.
+                </div>
+              )}
+
+              <Field
+                label="Email"
+                error={submitAttempted ? errors.email : undefined}
+              >
                 <TextInput
                   icon={<Mail className="h-4 w-4" />}
                   placeholder="eg. you@mail.com"
                   type="email"
                   value={form.email}
+                  error={submitAttempted ? errors.email : undefined}
+                  autoComplete="email"
                   onChange={(v) => setForm((f) => ({ ...f, email: v }))}
                 />
               </Field>
@@ -273,28 +324,42 @@ export default function ForgotPassword() {
                 <div className="h-px flex-1 bg-slate-300" />{" "}
               </div>
 
-              <Field label="Phone Number">
+              <Field
+                label="Phone Number"
+                error={submitAttempted ? errors.phone : undefined}
+              >
                 <div className="relative">
                   <span className="text-base leading-none pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">
                     🇳🇬
                   </span>
-                  <span className=" pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-md ">
+                  <span className="pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-md">
                     +234
                   </span>
                   <input
-                    type="number"
+                    type="tel"
+                    inputMode="numeric"
                     value={form.phone}
                     onChange={(e) =>
-                      setForm((f) => ({ ...f, phone: e.target.value }))
+                      setForm((f) => ({
+                        ...f,
+                        phone: e.target.value.replace(/\D/g, ""),
+                      }))
                     }
-                    placeholder=""
-                    className=" w-full border bg-white border-slate-200 rounded-xl px-20 py-2.5 text-slate-900 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-sky-200"
+                    placeholder="8012345678"
+                    aria-invalid={Boolean(
+                      submitAttempted ? errors.phone : undefined,
+                    )}
+                    className={`w-full rounded-xl border bg-white px-20 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
+                      submitAttempted && errors.phone
+                        ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+                        : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+                    }`}
                   />
                 </div>
               </Field>
 
               <div className="flex flex-col items-center gap-4">
-                <PrimaryButton onClick={handleLogin} disabled={!canLogin}>
+                <PrimaryButton onClick={handleLogin}>
                   Reset Password
                 </PrimaryButton>
 

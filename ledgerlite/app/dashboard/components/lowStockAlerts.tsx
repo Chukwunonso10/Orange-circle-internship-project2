@@ -9,7 +9,7 @@ export default async function LowStockAlerts() {
   const count = metrics?.allLowStockCount || 0;
 
   return (
-    <div className="md:border flex flex-col md:shadow-sm md:border-gray-200 rounded-2xl my-5 bg-white w-full md:max-w-md">
+    <div className="md:border flex flex-col md:shadow-sm md:border-gray-200 rounded-2xl lg:px-5 py-5 my-5 bg-white w-full md:max-w-md">
       <div className="flex justify-between py-4 px-6 border-b border-gray-50">
         <h4 className="text-sm font-semibold text-slate-800">Low stock</h4>
         <div className="flex items-center px-2 bg-red-100 rounded-xl">

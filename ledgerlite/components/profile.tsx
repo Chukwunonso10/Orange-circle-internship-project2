@@ -1,13 +1,26 @@
  "use client"
-import React, { useState } from "react";
+import React, {  } from "react";
+import ProfileClient from "@/components/profileClient";
+
 import {
   CheckSquare,
   Bell,
-  User,
   Building2,
   Search,
   ChevronDown,
 } from "lucide-react";
+
+import { useState, useRef } from "react";
+import {
+  Camera,
+  User,
+  Mail,
+  Building,
+  Calendar,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
+import Image from "next/image";
 
 /**
  * LedgerLite - Profile Module
@@ -43,55 +56,7 @@ const BUSINESS_TYPES = [
   "Other",
 ];
 
-function Logo() {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600">
-        <CheckSquare className="h-4 w-4 text-white" strokeWidth={2.5} />
-      </div>
-      <span className="text-lg font-semibold tracking-tight text-slate-900">
-        Ledger<span className="font-normal text-teal-600">Lite</span>
-      </span>
-    </div>
-  );
-}
 
-function TopBar({
-  businessName,
-  ownerName,
-}: {
-  businessName: string;
-  ownerName: string;
-}) {
-  const initials = ownerName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-100 bg-white px-6">
-      <Logo />
-      <div className="flex items-center gap-5">
-        <button className="relative text-slate-400 hover:text-slate-600">
-          <Bell className="h-5 w-5" />
-        </button>
-        <div className="flex items-center gap-3">
-          <div className="text-right leading-tight">
-            <p className="text-sm font-semibold text-slate-800">
-              {businessName}
-            </p>
-            <p className="text-xs text-slate-400">{ownerName}</p>
-          </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-600 text-xs font-semibold text-white">
-            {initials}
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function Sidebar({
   active,
@@ -185,7 +150,7 @@ function ToggleRow({
       >
         <span
           className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-            checked ? "translate-x-6" : "translate-x-1"
+            checked ? "-translate-x-6" : "translate-x-1"
           }`}
         />
       </button>
@@ -195,37 +160,37 @@ function ToggleRow({
 
 /* ---------------- Sections ---------------- */
 
-function PersonalProfileSection() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+// function PersonalProfileSection() {
+//   const [fullName, setFullName] = useState("");
+//   const [email, setEmail] = useState("");
 
-  return (
-    <div>
-      <SectionHeading>Personal Profile</SectionHeading>
-      <TextField
-        label="Full Name"
-        placeholder="eg. John Doe"
-        value={fullName}
-        onChange={setFullName}
-      />
-      <TextField
-        label="Email"
-        placeholder="eg. you@mail.com"
-        type="email"
-        value={email}
-        onChange={setEmail}
-      />
-      <div className="max-w-lg space-y-3">
-        <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700">
-          Save Changes
-        </button>
-        <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50">
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div>
+//       <SectionHeading>Personal Profile</SectionHeading>
+//       <TextField
+//         label="Full Name"
+//         placeholder="eg. John Doe"
+//         value={fullName}
+//         onChange={setFullName}
+//       />
+//       <TextField
+//         label="Email"
+//         placeholder="eg. you@mail.com"
+//         type="email"
+//         value={email}
+//         onChange={setEmail}
+//       />
+//       <div className="max-w-lg space-y-3">
+//         <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
+//           Save Changes
+//         </button>
+//         <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:opacity-80 cursor-pointer ">
+//           Cancel
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
 
 function BusinessProfileSection() {
   const [businessName, setBusinessName] = useState("");
@@ -313,10 +278,10 @@ function BusinessProfileSection() {
       />
 
       <div className="max-w-lg space-y-3">
-        <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700">
+        <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
           Save Changes
         </button>
-        <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50">
+        <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer hover:opacity-80">
           Cancel
         </button>
       </div>
@@ -324,24 +289,23 @@ function BusinessProfileSection() {
   );
 }
 
+
+
 /* ---------------- Root ---------------- */
 
 export default function LedgerLiteProfile() {
   const [activeSection, setActiveSection] =
     useState<ProfileSection>("personal");
 
-  const businessName = "Thrift n Vogue";
-  const ownerName = "Mary Johnson";
+  
 
   return (
     <div className="min-h-screen w-full bg-slate-50">
-      <TopBar businessName={businessName} ownerName={ownerName} />
-
       <div className="mx-auto flex max-w-6xl">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
         <main className="flex-1 px-10 py-10">
-          {activeSection === "personal" && <PersonalProfileSection />}
+          {activeSection === "personal" && ""}
           {activeSection === "business" && <BusinessProfileSection />}
         </main>
       </div>

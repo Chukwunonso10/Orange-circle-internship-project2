@@ -10,6 +10,7 @@ import { LowStockSkeleton, MetricsSkeleton, TransactionsSkeleton } from "./compo
 import LowStockAlerts from "./components/lowStockAlerts";
 import RecentTransactions from "./components/recentTransactions";
 import BarChart from "@/components/dashboardbarchart";
+import WelcomeGreeting from "@/components/welcomeGreeting";
 
 
 export default async function Dashboard() {
@@ -19,24 +20,31 @@ export default async function Dashboard() {
 
   const { name, buisnessName } = user
 
+  // Pre-calculate server time greeting for initial paint
+  const hours = new Date().getHours();
+  let initialGreeting = "Good morning";
+  if (hours >= 12 && hours < 18) {
+    initialGreeting = "Good afternoon";
+  } else if (hours >= 18 || hours < 5) {
+    initialGreeting = "Good evening";
+  }
+
   return (
     <div>
       {/* Sidebar navigation */}
       <div>
         <SideNav />
       </div>
-      <div className="ml-0 md:ml-70 sm:ml-0">
+      <div className="ml-0 md:ml-60 sm:ml-0">
         <UserNav name={name} buisnessName={buisnessName} />
       </div>
 
-      <main className="ml-0 md:ml-72 sm:ml-0 p-6">
+      <main className="ml-0 md:ml-62 sm:ml-0 p-6">
         {/* Good morning heading */}
         <section>
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Good morning <span>{name}</span>
-              </h1>
+              <WelcomeGreeting name={name} initialGreeting={initialGreeting} />
               <p className="text-slate-600 dark:text-slate-400">
                 Here’s a quick look at how your business today
               </p>
@@ -53,10 +61,12 @@ export default async function Dashboard() {
 
         {/* Quick Actions and Alerts */}
         <section>
-          <div className="md:flex md:justify-between items-start gap-6">
+          <div className="lg:flex gap-6">
             {/* Quick Actions */}
-            <div className="md:border md:border-gray-200 md:shadow-sm px-5 rounded-2xl bg-white flex-1 py-4">
-              <p className="p-3 font-semibold text-sm text-slate-700">Quick Actions</p>
+            <div className=" md:border md:border-gray-200 md:shadow-sm px-5 rounded-2xl bg-white flex-1 py-4">
+              <p className="p-3 font-semibold text-sm text-slate-700">
+                Quick Actions
+              </p>
 
               <div className="flex justify-between gap-2 md:space-x-5">
                 <div className="py-2 flex-1">
@@ -95,13 +105,22 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            {/* Low stock alerts - Streamed with Suspense */}
-            <Suspense fallback={<LowStockSkeleton />}>
-              <LowStockAlerts />
-            </Suspense>
+            <div>
+              {/* Low stock alerts - Streamed with Suspense */}
+              <Suspense fallback={<LowStockSkeleton />}>
+                <LowStockAlerts />
+              </Suspense>
+            </div>
           </div>
           <div>
-            <Suspense fallback={<p className="flex items-center tify-center animate-spin"> <Loader2 /> loading...</p>}>
+            <Suspense
+              fallback={
+                <p className="flex items-center tify-center animate-spin">
+                  {" "}
+                  <Loader2 /> loading...
+                </p>
+              }
+            >
               <BarChart />
             </Suspense>
           </div>
@@ -109,7 +128,9 @@ export default async function Dashboard() {
         {/* Transaction history - Streamed with Suspense */}
         <section>
           <div className="my-5">
-            <h2 className="text-lg font-semibold text-slate-800 mb-3">Recent Transactions</h2>
+            <h2 className="text-lg font-semibold text-slate-800 mb-3">
+              Recent Transactions
+            </h2>
             <Suspense fallback={<TransactionsSkeleton />}>
               <RecentTransactions userId={user.id} />
             </Suspense>
