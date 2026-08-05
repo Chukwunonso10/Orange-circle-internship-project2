@@ -593,9 +593,9 @@ export default function Home() {
                   Start using LedgerLite today and take control of your
                   business.
                 </p>
-                <button className="mt-8 rounded-full bg-white px-10 py-3.5 text-sm font-semibold text-teal-700 shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.99]">
+                <Link href="/signup" className="mt-8 rounded-full bg-white px-10 py-3.5 text-sm font-semibold text-teal-700 shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.99]">
                   Get Started
-                </button>
+                </Link>
               </div>
             </div>
           </section>
