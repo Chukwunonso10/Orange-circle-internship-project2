@@ -2,8 +2,21 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Bell,User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { useLocalStorage } from "@/app/lib/useLocalStorage";
+
+type NotificationKind = "low-stock" | "export-ready" | "restock";
+
+interface AppNotification {
+  id: string;
+  kind: NotificationKind;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+}
 
 export default function UserNav({
   name = "",
@@ -16,6 +29,43 @@ export default function UserNav({
   const [bizName, setBizName] = useState(buisnessName);
   const [profile, setProfile] = useState<any>(null);
   const [avatar, setAvatar] = useState("");
+
+  const [readIds] = useLocalStorage<string[]>(
+    "ledgerlite-read-notifications",
+    []
+  );
+  const [lowStockAlertsEnabled] = useLocalStorage<boolean>(
+    "ledgerlite-alert-low-stock",
+    true
+  );
+
+  // Fetch dynamic notifications list to compute unread count badge
+  const { data } = useQuery<{ notifications: AppNotification[] }>({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      const res = await fetch("/api/protected/notifications");
+      if (!res.ok) {
+        throw new Error("Failed to load notifications");
+      }
+      return res.json();
+    },
+    refetchInterval: 30000, // Check for updates every 30 seconds
+  });
+
+  const rawNotifications = data?.notifications ?? [];
+
+  // Filter based on user preferences in Settings
+  const filteredNotifications = rawNotifications.filter((n) => {
+    if (n.kind === "low-stock" && !lowStockAlertsEnabled) {
+      return false;
+    }
+    return true;
+  });
+
+  // Calculate unread count (exclude locally read notification IDs)
+  const unreadCount = filteredNotifications.filter(
+    (n) => !n.read && !readIds.includes(n.id)
+  ).length;
 
   useEffect(() => {
     // Sync state if props change
@@ -63,12 +113,17 @@ export default function UserNav({
               </div>
 
               <div className="flex items-end gap-2">
-                <div className="bg-gray-100 p-2 rounded-full ">
+                <div className="bg-gray-100 p-2 rounded-full relative">
                   <Link href="/notifications">
                     <Bell className="h-5 w-5 text-brand-primary-[#0b7a75] dark:text-gray-400" />
                   </Link>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-extrabold text-white ring-2 ring-white">
+                      {unreadCount}
+                    </span>
+                  )}
                 </div>
-                <div className=""></div>
+                <div className="w-1"></div>
                 <div className="flex flex-col">
                   {/* business name */}
                   <span className="hidden md:block text-sm font-medium text-gray-900">
@@ -93,8 +148,8 @@ export default function UserNav({
                     />
                   </div>
                 ) : (
-                  <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
-                    <User className="w-10 h-10  text-white" />
+                  <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center w-10 h-10">
+                    <User className="w-6 h-6 text-white" />
                   </div>
                 )}
               </div>
