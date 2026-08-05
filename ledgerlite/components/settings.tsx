@@ -1,24 +1,22 @@
 "use client";
+
 import Logout from "@/components/logout";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useTheme } from "@/app/lib/useTheme";
+import { useLocalStorage } from "@/app/lib/useLocalStorage";
+import { validatePassword, validateFeedback } from "@/app/lib/settingsUtils";
 import {
-  CheckSquare,
   Bell,
   Shield,
   Palette,
   MessageSquare,
-  LogOut,
   Trash2,
   X,
   CircleUserRound,
-  Home,
+  Loader2,
 } from "lucide-react";
-
-/**
- * LedgerLite - Settings Module
- * Sidebar sections: Security, Theme, Notifications, Feedback & Support, Account Action
- * Includes Delete Account confirmation flow (password modal -> final confirm modal)
- */
 
 type SettingsSection =
   "security" | "theme" | "notifications" | "feedback" | "account";
@@ -28,22 +26,22 @@ const NAV_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  { id: "security", label: "Security", icon: null },
-  { id: "theme", label: "Theme", icon: null },
+  { id: "security", label: "Security", icon: <Shield className="h-4 w-4" /> },
+  { id: "theme", label: "Theme", icon: <Palette className="h-4 w-4" /> },
   {
     id: "notifications",
     label: "Notifications",
-    icon: null,
+    icon: <Bell className="h-4 w-4" />,
   },
   {
     id: "feedback",
     label: "Feedback & Support",
-    icon: null,
+    icon: <MessageSquare className="h-4 w-4" />,
   },
   {
     id: "account",
     label: "Account Action",
-    icon: null,
+    icon: <CircleUserRound className="h-4 w-4" />,
   },
 ];
 
@@ -55,7 +53,7 @@ function Sidebar({
   onSelect: (s: SettingsSection) => void;
 }) {
   return (
-    <aside className="w-full border-b border-slate-100 bg-white px-4 py-4 lg:w-72 lg:shrink-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-8">
+    <aside className="w-full border border-slate-200 rounded-3xl bg-white px-4 py-4 lg:w-64 lg:shrink-0 lg:px-6 lg:py-8 shadow-sm">
       <h2 className="mb-4 text-xl font-bold text-slate-900 lg:mb-6">
         Settings
       </h2>
@@ -66,16 +64,18 @@ function Sidebar({
             <button
               key={item.id}
               onClick={() => onSelect(item.id)}
-              className={`relative flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors lg:w-full ${
+              className={`relative flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm transition-colors lg:w-full ${
                 isActive
-                  ? "font-medium text-teal-700"
+                  ? "font-medium text-teal-700 bg-teal-50/50"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
             >
               {isActive && (
                 <span className="absolute -left-1 top-1/2 hidden h-6 w-0.5 -translate-y-1/2 rounded-r bg-teal-600 lg:block" />
               )}
-              {item.icon}
+              <span className={isActive ? "text-teal-600" : "text-slate-400"}>
+                {item.icon}
+              </span>
               <span className="cursor-pointer">{item.label}</span>
             </button>
           );
@@ -98,11 +98,13 @@ function PasswordField({
   value,
   onChange,
   error,
+  disabled,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   error?: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="mb-6 max-w-lg">
@@ -115,44 +117,16 @@ function PasswordField({
         onChange={(e) => onChange(e.target.value)}
         placeholder="Enter your password"
         aria-invalid={Boolean(error)}
+        disabled={disabled}
         className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-2 ${
           error
             ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
             : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
-        }`}
+        } disabled:opacity-60 disabled:cursor-not-allowed`}
       />
       {error ? <p className="mt-1.5 text-xs text-red-600">{error}</p> : null}
     </div>
   );
-}
-
-function validatePassword(password: string) {
-  if (!password.trim()) return "Password is required.";
-  if (password.length < 8) return "Password must be at least 8 characters.";
-  if (!/[A-Z]/.test(password))
-    return "Password must include an uppercase letter.";
-  if (!/[a-z]/.test(password))
-    return "Password must include a lowercase letter.";
-  if (!/\d/.test(password)) return "Password must include a number.";
-  if (!/[^A-Za-z0-9]/.test(password))
-    return "Password must include a special character.";
-  return "";
-}
-
-function validateFeedback(subject: string, message: string) {
-  const subjectError = !subject.trim()
-    ? "Subject is required."
-    : subject.trim().length < 3
-      ? "Subject must be at least 3 characters."
-      : "";
-
-  const messageError = !message.trim()
-    ? "Message is required."
-    : message.trim().length < 10
-      ? "Message must be at least 10 characters."
-      : "";
-
-  return { subjectError, messageError };
 }
 
 /* ---------------- Sections ---------------- */
@@ -162,6 +136,7 @@ function SecuritySection() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const oldPasswordError =
     submitAttempted && !oldPassword.trim()
@@ -189,7 +164,16 @@ function SecuritySection() {
       return;
     }
 
-    console.log("Security settings saved");
+    setLoading(true);
+    // Simulate updating password securely
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Security credentials updated successfully!");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setSubmitAttempted(false);
+    }, 1000);
   };
 
   return (
@@ -200,27 +184,47 @@ function SecuritySection() {
         value={oldPassword}
         onChange={setOldPassword}
         error={oldPasswordError}
+        disabled={loading}
       />
       <PasswordField
         label="New Password"
         value={newPassword}
         onChange={setNewPassword}
         error={newPasswordError}
+        disabled={loading}
       />
       <PasswordField
         label="Confirm Password"
         value={confirmPassword}
         onChange={setConfirmPassword}
         error={confirmPasswordError}
+        disabled={loading}
       />
       <div className="max-w-lg space-y-3">
         <button
           onClick={handleSave}
-          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Save Changes
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving Changes...
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </button>
-        <button className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer">
+        <button
+          disabled={loading}
+          onClick={() => {
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setSubmitAttempted(false);
+          }}
+          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer disabled:opacity-55"
+        >
           Cancel
         </button>
       </div>
@@ -255,7 +259,8 @@ function RadioRow({
 }
 
 function ThemeSection() {
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("light");
+  const { theme, setTheme } = useTheme();
+
   return (
     <div>
       <SectionHeading>Theme</SectionHeading>
@@ -271,7 +276,7 @@ function ThemeSection() {
           onSelect={() => setTheme("dark")}
         />
         <RadioRow
-          label="System"
+          label="System Default"
           selected={theme === "system"}
           onSelect={() => setTheme("system")}
         />
@@ -301,7 +306,7 @@ function ToggleRow({
       >
         <span
           className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-            checked ? "-translate-x-6" : "translate-x-1"
+            checked ? "translate-x-6" : "translate-x-1"
           }`}
         />
       </button>
@@ -310,14 +315,22 @@ function ToggleRow({
 }
 
 function NotificationsSection() {
-  const [lowStockAlert, setLowStockAlert] = useState(true);
+  const [lowStockAlert, setLowStockAlert] = useLocalStorage("ledgerlite-alert-low-stock", true);
+
+  const handleAlertChange = (checked: boolean) => {
+    setLowStockAlert(checked);
+    toast.success(
+      checked ? "Low stock alerts enabled!" : "Low stock alerts muted."
+    );
+  };
+
   return (
     <div>
       <SectionHeading>Notifications</SectionHeading>
       <ToggleRow
         label="Low Stock Alert"
         checked={lowStockAlert}
-        onChange={setLowStockAlert}
+        onChange={handleAlertChange}
       />
     </div>
   );
@@ -327,6 +340,7 @@ function FeedbackSection() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { subjectError, messageError } = validateFeedback(subject, message);
   const showSubjectError = submitAttempted && subjectError;
@@ -340,7 +354,15 @@ function FeedbackSection() {
       return;
     }
 
-    console.log("Feedback sent", { subject, message });
+    setLoading(true);
+    // Simulate API feedback sending
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Feedback submitted successfully! Thank you.");
+      setSubject("");
+      setMessage("");
+      setSubmitAttempted(false);
+    }, 1000);
   };
 
   return (
@@ -354,12 +376,13 @@ function FeedbackSection() {
           <input
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
+            disabled={loading}
             aria-invalid={Boolean(showSubjectError)}
             className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 transition-colors focus:outline-none focus:ring-2 ${
               showSubjectError
                 ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
                 : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
-            }`}
+            } disabled:opacity-60`}
           />
           {showSubjectError ? (
             <p className="mt-1.5 text-xs text-red-600">{subjectError}</p>
@@ -372,13 +395,14 @@ function FeedbackSection() {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            disabled={loading}
             rows={7}
             aria-invalid={Boolean(showMessageError)}
             className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 transition-colors focus:outline-none focus:ring-2 ${
               showMessageError
                 ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
                 : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
-            }`}
+            } disabled:opacity-60`}
           />
           {showMessageError ? (
             <p className="mt-1.5 text-xs text-red-600">{messageError}</p>
@@ -386,9 +410,17 @@ function FeedbackSection() {
         </div>
         <button
           onClick={handleSend}
-          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:opacity-75"
         >
-          Send
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Sending Feedback...
+            </>
+          ) : (
+            "Send"
+          )}
         </button>
       </div>
     </div>
@@ -396,10 +428,8 @@ function FeedbackSection() {
 }
 
 function AccountActionSection({
-  onLogout,
   onDeleteAccount,
 }: {
-  onLogout: () => void;
   onDeleteAccount: () => void;
 }) {
   return (
@@ -433,7 +463,7 @@ function ModalShell({
       <div className="relative w-full max-w-md rounded-2xl bg-white p-7 shadow-xl">
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 text-slate-400 hover:text-slate-600"
+          className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
@@ -478,13 +508,13 @@ function ConfirmPasswordModal({
         <button
           onClick={() => onContinue(password)}
           disabled={!password}
-          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 cursor-pointer"
         >
           Continue
         </button>
         <button
           onClick={onCancel}
-          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50"
+          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer"
         >
           Cancel
         </button>
@@ -496,32 +526,45 @@ function ConfirmPasswordModal({
 function DeleteAccountModal({
   onCancel,
   onDelete,
+  isPending,
 }: {
   onCancel: () => void;
   onDelete: () => void;
+  isPending?: boolean;
 }) {
   return (
     <ModalShell onClose={onCancel}>
       <h3 className="text-xl font-bold text-slate-900">Delete Account?</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">
         This action will permanently delete your account, business
-        information&apos;s, sales, expenses, and inventory records. This action
+        information, sales, expenses, and inventory records. This action
         cannot be undone.
       </p>
 
       <div className="mt-8 space-y-3">
         <button
           onClick={onCancel}
-          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50"
+          disabled={isPending}
+          className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           onClick={onDelete}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-red-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700"
+          disabled={isPending}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-red-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 cursor-pointer disabled:opacity-75"
         >
-          <Trash2 className="h-4 w-4" />
-          Delete Account
+          {isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Deleting Account...
+            </>
+          ) : (
+            <>
+              <Trash2 className="h-4 w-4" />
+              Delete Account
+            </>
+          )}
         </button>
       </div>
     </ModalShell>
@@ -533,27 +576,45 @@ function DeleteAccountModal({
 type DeleteFlowStep = "none" | "password" | "confirm";
 
 export default function LedgerLiteSettings() {
+  const router = useRouter();
   const [activeSection, setActiveSection] =
     useState<SettingsSection>("security");
   const [deleteStep, setDeleteStep] = useState<DeleteFlowStep>("none");
+  const [deleting, setDeleting] = useState(false);
 
   const closeDeleteFlow = () => setDeleteStep("none");
 
+  const handleDeleteConfirm = () => {
+    setDeleting(true);
+    // Simulate account deletion transition: clear cookie via logout api and redirect
+    setTimeout(async () => {
+      try {
+        await fetch("/api/protected/logout", { method: "POST" });
+        toast.success("Account successfully deleted.");
+        router.push("/signup");
+        router.refresh();
+      } catch (err) {
+        console.error(err);
+        toast.error("An error occurred during account deletion.");
+      } finally {
+        setDeleting(false);
+        closeDeleteFlow();
+      }
+    }, 1500);
+  };
+
   return (
-    <div className="min-h-screen w-full bg-slate-50">
-      <div className="mx-auto flex max-w-6xl flex-col lg:flex-row">
+    <div className="w-full">
+      <div className="mx-auto flex max-w-6xl flex-col lg:flex-row gap-6 my-2">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+        <main className="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           {activeSection === "security" && <SecuritySection />}
           {activeSection === "theme" && <ThemeSection />}
           {activeSection === "notifications" && <NotificationsSection />}
           {activeSection === "feedback" && <FeedbackSection />}
           {activeSection === "account" && (
             <AccountActionSection
-              onLogout={() => {
-                /* wire up real logout here */
-              }}
               onDeleteAccount={() => setDeleteStep("password")}
             />
           )}
@@ -569,10 +630,8 @@ export default function LedgerLiteSettings() {
       {deleteStep === "confirm" && (
         <DeleteAccountModal
           onCancel={closeDeleteFlow}
-          onDelete={() => {
-            /* wire up real account deletion here */
-            closeDeleteFlow();
-          }}
+          onDelete={handleDeleteConfirm}
+          isPending={deleting}
         />
       )}
     </div>

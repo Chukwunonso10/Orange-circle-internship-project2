@@ -6,7 +6,6 @@ import SalesCard from "@/components/salescard";
 import { Search, Banknote, ReceiptText } from "lucide-react";
 import SearchForm from "./searchform";
 import UserNav from "./userNav";
-import Pagination from "./pagination";
 import { Suspense } from "react";
 
 export function SalesClient({

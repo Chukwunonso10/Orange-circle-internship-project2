@@ -99,7 +99,7 @@ export default function ProfileClient({
   return (
     <div>
       <LedgerLiteProfile />
-      <div className="mx-auto max-w-2xl border border-slate-200 bg-white p-8 rounded-4xl shadow-sm">
+      <div className="mx-auto max-w-2xl border border-slate-200 bg-white p-4 sm:p-8 rounded-4xl shadow-sm">
         <div className="border-b border-slate-100 pb-6 mb-8 text-center sm:text-left">
           <h2 className="text-2xl font-bold text-slate-900">
             Profile Settings
@@ -247,7 +247,7 @@ export default function ProfileClient({
                   type="email"
                   disabled
                   value={initialEmail}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm text-slate-500 shadow-sm outline-none cursor-not-allowed"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm text-slate-500 shadow-sm outline-none cursor-not-allowed truncate"
                   title="Email cannot be changed"
                 />
               </div>
