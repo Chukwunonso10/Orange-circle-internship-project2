@@ -26,22 +26,22 @@ const NAV_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  { id: "security", label: "Security", icon: <Shield className="h-4 w-4" /> },
-  { id: "theme", label: "Theme", icon: <Palette className="h-4 w-4" /> },
+  { id: "security", label: "Security", icon: null},
+  { id: "theme", label: "Theme", icon: null },
   {
     id: "notifications",
     label: "Notifications",
-    icon: <Bell className="h-4 w-4" />,
+    icon: null
   },
   {
     id: "feedback",
     label: "Feedback & Support",
-    icon: <MessageSquare className="h-4 w-4" />,
+    icon: null
   },
   {
     id: "account",
     label: "Account Action",
-    icon: <CircleUserRound className="h-4 w-4" />,
+    icon: null
   },
 ];
 
@@ -53,7 +53,7 @@ function Sidebar({
   onSelect: (s: SettingsSection) => void;
 }) {
   return (
-    <aside className="w-full border border-slate-200 rounded-3xl bg-white px-4 py-4 lg:w-64 lg:shrink-0 lg:px-6 lg:py-8 shadow-sm">
+    <aside className="w-full border-b border-slate-100 bg-white px-4 py-4 sm:px-5 lg:w-72 lg:shrink-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-8">
       <h2 className="mb-4 text-xl font-bold text-slate-900 lg:mb-6">
         Settings
       </h2>
@@ -76,7 +76,9 @@ function Sidebar({
               <span className={isActive ? "text-teal-600" : "text-slate-400"}>
                 {item.icon}
               </span>
-              <span className="cursor-pointer">{item.label}</span>
+              <span className="cursor-pointer whitespace-nowrap">
+                {item.label}
+              </span>
             </button>
           );
         })}
@@ -107,7 +109,7 @@ function PasswordField({
   disabled?: boolean;
 }) {
   return (
-    <div className="mb-6 max-w-lg">
+    <div className="mb-6 w-full max-w-lg">
       <label className="mb-1.5 block text-sm font-medium text-slate-700">
         {label}
       </label>
@@ -200,7 +202,7 @@ function SecuritySection() {
         error={confirmPasswordError}
         disabled={loading}
       />
-      <div className="max-w-lg space-y-3">
+      <div className="w-full max-w-lg space-y-3">
         <button
           onClick={handleSave}
           disabled={loading}
@@ -244,11 +246,11 @@ function RadioRow({
   return (
     <button
       onClick={onSelect}
-      className="flex w-full max-w-lg items-center justify-between border-b border-slate-100 py-5 text-left"
+      className="flex w-full max-w-lg items-center justify-between gap-4 border-b border-slate-100 py-5 text-left"
     >
-      <span className="text-sm text-slate-800 ">{label}</span>
+      <span className="text-sm text-slate-800">{label}</span>
       <span
-        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 cursor-pointer ${
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 cursor-pointer ${
           selected ? "border-teal-600" : "border-slate-300"
         }`}
       >
@@ -295,18 +297,18 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex w-full max-w-lg items-center justify-between py-3">
+    <div className="flex w-full max-w-lg items-center justify-between gap-4 py-3">
       <span className="text-sm text-slate-800">{label}</span>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative h-7 w-12 rounded-full transition-colors cursor-pointer ${
+        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors cursor-pointer ${
           checked ? "bg-teal-600" : "bg-slate-200"
         }`}
         aria-pressed={checked}
       >
         <span
           className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-            checked ? "translate-x-6" : "translate-x-1"
+            checked ? "-translate-x-6" : "translate-x-1"
           }`}
         />
       </button>
@@ -315,12 +317,15 @@ function ToggleRow({
 }
 
 function NotificationsSection() {
-  const [lowStockAlert, setLowStockAlert] = useLocalStorage("ledgerlite-alert-low-stock", true);
+  const [lowStockAlert, setLowStockAlert] = useLocalStorage(
+    "ledgerlite-alert-low-stock",
+    true,
+  );
 
   const handleAlertChange = (checked: boolean) => {
     setLowStockAlert(checked);
     toast.success(
-      checked ? "Low stock alerts enabled!" : "Low stock alerts muted."
+      checked ? "Low stock alerts enabled!" : "Low stock alerts muted.",
     );
   };
 
@@ -435,11 +440,13 @@ function AccountActionSection({
   return (
     <div>
       <SectionHeading>Account Action</SectionHeading>
-      <div className="max-w-lg space-y-3">
-        <Logout />
+      <div className="w-full max-w-lg space-y-3">
+        <div className="w-full">
+          <Logout />
+        </div>
         <button
           onClick={onDeleteAccount}
-          className="flex w-full items-center gap-2 rounded-full bg-red-600 py-3.5 pl-5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 cursor-pointer"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-red-600 py-3.5 px-4 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 cursor-pointer sm:justify-start sm:pl-5"
         >
           <Trash2 className="h-4 w-4" />
           Delete Account
@@ -459,11 +466,11 @@ function ModalShell({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
-      <div className="relative w-full max-w-md rounded-2xl bg-white p-7 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-3 py-4 sm:px-4">
+      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7">
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 cursor-pointer"
+          className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 cursor-pointer sm:right-5 sm:top-5"
         >
           <X className="h-5 w-5" />
         </button>
@@ -536,9 +543,8 @@ function DeleteAccountModal({
     <ModalShell onClose={onCancel}>
       <h3 className="text-xl font-bold text-slate-900">Delete Account?</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">
-        This action will permanently delete your account, business
-        information, sales, expenses, and inventory records. This action
-        cannot be undone.
+        This action will permanently delete your account, business information,
+        sales, expenses, and inventory records. This action cannot be undone.
       </p>
 
       <div className="mt-8 space-y-3">
@@ -604,11 +610,11 @@ export default function LedgerLiteSettings() {
   };
 
   return (
-    <div className="w-full">
-      <div className="mx-auto flex max-w-6xl flex-col lg:flex-row gap-6 my-2">
+    <div className="w-full bg-white px-0 sm:px-2">
+      <div className="mx-auto flex max-w-6xl flex-col overflow-hidden bg-white lg:flex-row">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
-        <main className="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <main className="flex-1 px-4 py-5 sm:px-6 sm:py-7 lg:px-10 lg:py-10">
           {activeSection === "security" && <SecuritySection />}
           {activeSection === "theme" && <ThemeSection />}
           {activeSection === "notifications" && <NotificationsSection />}

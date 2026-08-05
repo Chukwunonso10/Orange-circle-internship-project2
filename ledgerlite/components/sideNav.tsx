@@ -41,7 +41,7 @@ export default function SideNav() {
       {/* Navigation button */}
       <button
         type="button"
-        className="absolute top-3 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-100 bg-white text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
+        className="absolute top-3 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-100 bg-white text-slate-800  transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
         onClick={() => setIsOpen(true)}
         aria-label="Open navigation"
       >

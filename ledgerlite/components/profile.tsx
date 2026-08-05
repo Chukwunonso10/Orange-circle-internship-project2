@@ -1,26 +1,7 @@
 "use client";
 import React from "react";
-import ProfileClient from "@/components/profileClient";
-
-import {
-  CheckSquare,
-  Bell,
-  Building2,
-  Search,
-  ChevronDown,
-} from "lucide-react";
-
-import { useState, useRef } from "react";
-import {
-  Camera,
-  User,
-  Mail,
-  Building,
-  Calendar,
-  Loader2,
-  CheckCircle2,
-} from "lucide-react";
-import Image from "next/image";
+import { Search, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 /**
  * LedgerLite - Profile Module
@@ -37,12 +18,12 @@ const NAV_ITEMS: {
   {
     id: "personal",
     label: "Personal Profile",
-    icon: <User className="h-4 w-4" />,
+    icon: null,
   },
   {
     id: "business",
     label: "Business Profile",
-    icon: <Building2 className="h-4 w-4" />,
+    icon: null,
   },
 ];
 
@@ -64,23 +45,23 @@ function Sidebar({
   onSelect: (s: ProfileSection) => void;
 }) {
   return (
-    <aside className="w-64 shrink-0 border-r border-slate-100 bg-white px-6 py-8">
-      <h2 className="mb-6 text-xl font-bold text-slate-900">Profile</h2>
-      <nav className="space-y-1">
+    <aside className="w-full border-b border-slate-100 bg-white px-4 py-4 sm:px-6 lg:w-72 lg:shrink-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-8">
+      <h2 className="mb-4 text-xl font-bold text-slate-900 lg:mb-6">Profile</h2>
+      <nav className="flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-1 lg:pb-0">
         {NAV_ITEMS.map((item) => {
           const isActive = active === item.id;
           return (
             <button
               key={item.id}
               onClick={() => onSelect(item.id)}
-              className={`relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+              className={`relative flex min-w-fit items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm transition-colors cursor-pointer lg:w-full ${
                 isActive
                   ? "font-medium text-teal-700"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
             >
               {isActive && (
-                <span className="absolute -left-6 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-teal-600" />
+                <span className="absolute -left-4 top-1/2 hidden h-6 w-0.5 -translate-y-1/2 rounded-r bg-teal-600 lg:block" />
               )}
               <span className={isActive ? "text-teal-600" : "text-slate-400"}>
                 {item.icon}
@@ -95,7 +76,11 @@ function Sidebar({
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
-  return <h1 className="mb-8 text-2xl font-bold text-slate-900">{children}</h1>;
+  return (
+    <h1 className="mb-6 text-xl font-bold text-slate-900 sm:mb-8 sm:text-2xl">
+      {children}
+    </h1>
+  );
 }
 
 function TextField({
@@ -112,7 +97,7 @@ function TextField({
   type?: string;
 }) {
   return (
-    <div className="mb-6 max-w-lg">
+    <div className="mb-5 w-full max-w-full sm:mb-6 sm:max-w-lg">
       <label className="mb-1.5 block text-sm font-medium text-slate-700">
         {label}
       </label>
@@ -137,11 +122,11 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="mb-8 flex w-full max-w-lg items-center justify-between">
+    <div className="mb-6 flex w-full max-w-full items-center justify-between gap-3 sm:mb-8 sm:max-w-lg">
       <span className="text-sm font-medium text-slate-700">{label}</span>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative h-7 w-12 rounded-full transition-colors ${
+        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors cursor-pointer ${
           checked ? "bg-teal-600" : "bg-slate-200"
         }`}
         aria-pressed={checked}
@@ -157,14 +142,6 @@ function ToggleRow({
 }
 
 /* ---------------- Sections ---------------- */
-
-interface ProfileClientProps {
-  initialName: string;
-  initialEmail: string;
-  initialBuisnessName: string;
-  initialImage: string;
-  createdAt: string;
-}
 
 function PersonalProfileSection() {
   const [fullName, setFullName] = useState("");
@@ -193,7 +170,7 @@ function PersonalProfileSection() {
         value={email}
         onChange={setEmail}
       />
-      <div className="max-w-lg space-y-3">
+      <div className="max-w-full space-y-3 sm:max-w-lg">
         <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
           Save Changes
         </button>
@@ -227,7 +204,7 @@ function BusinessProfileSection() {
         onChange={setBusinessName}
       />
 
-      <div className="relative mb-8 max-w-lg">
+      <div className="relative mb-6 max-w-full sm:mb-8 sm:max-w-lg">
         <label className="mb-1.5 block text-sm font-medium text-slate-700">
           Business Type
         </label>
@@ -290,7 +267,7 @@ function BusinessProfileSection() {
         onChange={setInventoryEnabled}
       />
 
-      <div className="max-w-lg space-y-3">
+      <div className="max-w-full space-y-3 sm:max-w-lg">
         <button className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer">
           Save Changes
         </button>
@@ -309,11 +286,11 @@ export default function LedgerLiteProfile() {
     useState<ProfileSection>("personal");
 
   return (
-    <div className="min-h-screen w-full bg-slate-50">
-      <div className="mx-auto flex max-w-6xl">
+    <div className=" w-full bg-white">
+      <div className="mx-auto flex max-w-6xl flex-col lg:flex-row">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
-        <main className="flex-1 px-10 py-10">
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
           {activeSection === "personal" && <PersonalProfileSection />}
           {activeSection === "business" && <BusinessProfileSection />}
         </main>

@@ -40,7 +40,7 @@ export default function ExportSummary() {
           <UserNav />
         </div>
 
-        <main className="min-h-screen ml-0 md:ml-62 p-6 bg-slate-50">
+        <main className=" ml-0 md:ml-62 p-6 ">
           <div className="max-w-6xl mx-auto space-y-8">
             {/* <section className="rounded-4xl border border-slate-200 bg-white p-8 shadow-sm">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
