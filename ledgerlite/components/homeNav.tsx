@@ -17,7 +17,7 @@ export default function HomeNav() {
                 <Link href="/">
                   <div>
                     <svg
-                      className="w-30 h-10 md:w-40 md:"
+                      className="w-40 h-10 md:w-40 md:"
                       viewBox="0 0 167 33"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"

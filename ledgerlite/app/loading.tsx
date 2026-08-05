@@ -64,7 +64,7 @@ export default function Loading() {
 
         <div className="mt-6 w-full overflow-hidden rounded-full bg-slate-100">
           <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-            <div className="absolute inset-y-0 left-[-35%] w-[35%] rounded-full bg-gradient-to-r from-[#0B7A75] via-[#51a7a2] to-[#0B7A75] opacity-95 [animation:loading-bar_1.6s_ease-in-out_infinite]" />
+            <div className="absolute inset-y-0 left-[-35%] w-[35%] rounded-full bg-linear-to-r from-[#0B7A75] via-[#51a7a2] to-[#0B7A75] opacity-95 [animation:loading-bar_1.6s_ease-in-out_infinite]" />
           </div>
         </div>
 

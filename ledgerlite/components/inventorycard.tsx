@@ -184,7 +184,7 @@ export default function InventoryCard({ items = [], onRefresh }: InventoryCardPr
                     <p className="text-sm font-medium text-slate-900">{item.name}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center justify-center rounded-lg bg-[#0b7a75]/10 px-3 py-1 text-sm font-semibold text-brand-primary">
+                    <span className="inline-flex items-center justify-center rounded-lg bg-brand-primary/10 px-3 py-1 text-sm font-semibold text-brand-primary">
                       {item.currentStock}
                     </span>
                   </td>

@@ -68,11 +68,11 @@ export default function BarChart() {
             </div>
 
             <div className="flex flex-col gap-4">
-              <div className="flex gap-2">
-                <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
+              <div className="hidden md:block space-x-2">
+                <button className="bg-gray-300 py-1 px-2 rounded-lg md:text-xs text-gray-700 cursor-pointer">
                   Today
                 </button>
-                <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
+                <button className="bg-gray-300 py-1 px-2 rounded-lg  text-xs text-gray-700 cursor-pointer">
                   This week
                 </button>
                 <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
@@ -98,7 +98,7 @@ export default function BarChart() {
         </div>
       </div>
       {/* the bar chart */}
-      <div className="border border-gray-300 shadow-sm p-5 rounded-4xl my-5">
+      <div className="md:border md:border-gray-300 md:shadow-sm p-5 md:rounded-4xl my-5">
         <div className=" flex justify-around  gap-10">
           <div>
             <h4 className="text-sm text-gray-900 font-semibold">
@@ -110,7 +110,7 @@ export default function BarChart() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="flex gap-2">
+            <div className="hidden md:block  space-x-2">
               <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
                 Today
               </button>
@@ -125,12 +125,12 @@ export default function BarChart() {
             <div>
               <div className="flex items-center gap-2">
                 <div className="bg-[#02AD5E] h-2 w-6 rounded-lg"></div>
-                <p className="text-xs text-gray-700">Money In</p>
+                <p className="text-[10px] md:text-xs text-gray-700">Money In</p>
               </div>
 
               <div className="flex items-center gap-2">
                 <div className="bg-[#D01527] h-2 w-6 rounded-lg"></div>
-                <p className="text-xs text-gray-700">Money Out</p>
+                <p className="text-[10px] md:text-xs text-gray-700">Money Out</p>
               </div>
             </div>
           </div>

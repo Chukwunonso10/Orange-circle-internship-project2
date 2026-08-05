@@ -148,7 +148,7 @@ export default function EditExpenseModal({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description"
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-brand-primary"
                 disabled={updating}
               />
             </div>
@@ -163,7 +163,7 @@ export default function EditExpenseModal({
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="Category"
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-brand-primary"
                 disabled={updating}
                 required
               />
@@ -179,7 +179,7 @@ export default function EditExpenseModal({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0"
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-[#0b7a75]"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-brand-primary"
                 disabled={updating}
                 required
               />
@@ -199,7 +199,7 @@ export default function EditExpenseModal({
             <button
               type="submit"
               disabled={updating}
-              className="inline-flex justify-center items-center gap-2 rounded-2xl bg-[#0b7a75] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#09615e] cursor-pointer disabled:opacity-75"
+              className="inline-flex justify-center items-center gap-2 rounded-2xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary/80 cursor-pointer disabled:opacity-75"
             >
               {updating ? (
                 <>

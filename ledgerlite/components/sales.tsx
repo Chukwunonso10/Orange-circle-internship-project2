@@ -63,10 +63,10 @@ export function SalesClient({
           <div className="">
             <div className="grid  gap-10 px-4 md:grid-cols-2 lg:grid-cols-4">
               <div
-                className="max-w-sm rounded-3xl border border-[#6DAFAC]  p-6 shadow-sm transition-all  hover:shadow-md hover:border-[#0b7a75] animate-in fade-in slide-in-from-left duration-500"
+                className="max-w-sm rounded-3xl border border-[#6DAFAC]  p-6 shadow-sm transition-all  hover:shadow-md hover:border-brand-primary animate-in fade-in slide-in-from-left duration-500"
                 style={{ animationFillMode: "both", animationDelay: "100ms" }}
               >
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a75]/10 text-[#0b7a75] transition-transform duration-300 hover:scale-110">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary transition-transform duration-300 hover:scale-110">
                   <ReceiptText size={20} />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500 ">
@@ -83,7 +83,7 @@ export function SalesClient({
             </div>
             {/* sales. history */}
             <aside
-              className="rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg transition-all  hover:shadow-xl hover:border-[#0b7a75] animate-in fade-in slide-in-from-bottom duration-500"
+              className="rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg transition-all  hover:shadow-xl hover:border-brand-primary animate-in fade-in slide-in-from-bottom duration-500"
               style={{ animationFillMode: "both", animationDelay: "200ms" }}
             >
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
@@ -94,7 +94,7 @@ export function SalesClient({
               </p>
               {sales.length === 0 ? (
                 <div className="flex flex-col items-center mt-6 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-[#0b7a75]/10 text-[#0b7a75]">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-brand-primary/10 text-brand-primary">
                     <ReceiptText size={22} />
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-slate-900 ">
