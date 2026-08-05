@@ -115,7 +115,7 @@ export default function ProfileClient({
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-start">
             {/* Profile Image Display */}
 
-            <div className="relative group h-28 w-28 overflow-hidden rounded-full border-2 border-[#0b7a75] bg-slate-50 flex items-center justify-center shadow-md">
+            <div className="relative group h-28 w-28 overflow-hidden rounded-full border-2 border-brand-primary bg-slate-50 flex items-center justify-center shadow-md">
               {image ? (
                 <Image
                   src={image}
@@ -172,7 +172,7 @@ export default function ProfileClient({
 
           {/* Feedback Messages */}
           {successMessage && (
-            <div className="flex items-center gap-2 rounded-2xl bg-[#edf7f6] p-4 text-sm font-medium text-[#0b7a75]">
+            <div className="flex items-center gap-2 rounded-2xl bg-[#edf7f6] p-4 text-sm font-medium text-brand-primary">
               <CheckCircle2 size={16} />
               <span>{successMessage}</span>
             </div>
@@ -204,7 +204,7 @@ export default function ProfileClient({
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/15"
+                  className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-[#6DAFAC]/15"
                   placeholder="Enter your name"
                 />
               </div>
@@ -228,7 +228,7 @@ export default function ProfileClient({
                   required
                   value={buisnessName}
                   onChange={(e) => setBuisnessName(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#6DAFAC]/15"
+                  className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-[#6DAFAC]/15"
                   placeholder="Enter business name"
                 />
               </div>
@@ -277,7 +277,7 @@ export default function ProfileClient({
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0b7a75] text-white hover:bg-[#09615e] px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-primary text-white hover:bg-brand-primary px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
             >
               {loading ? (
                 <>

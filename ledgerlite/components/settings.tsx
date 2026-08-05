@@ -246,9 +246,9 @@ function RadioRow({
       onClick={onSelect}
       className="flex w-full max-w-lg items-center justify-between border-b border-slate-100 py-5 text-left"
     >
-      <span className="text-sm text-slate-800">{label}</span>
+      <span className="text-sm text-slate-800 ">{label}</span>
       <span
-        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 cursor-pointer ${
           selected ? "border-teal-600" : "border-slate-300"
         }`}
       >
@@ -299,7 +299,7 @@ function ToggleRow({
       <span className="text-sm text-slate-800">{label}</span>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative h-7 w-12 rounded-full transition-colors ${
+        className={`relative h-7 w-12 rounded-full transition-colors cursor-pointer ${
           checked ? "bg-teal-600" : "bg-slate-200"
         }`}
         aria-pressed={checked}
@@ -411,7 +411,7 @@ function FeedbackSection() {
         <button
           onClick={handleSend}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:opacity-75"
+          className="w-full flex items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:opacity-75 cursor-pointer"
         >
           {loading ? (
             <>

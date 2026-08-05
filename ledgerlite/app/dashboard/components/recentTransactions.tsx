@@ -1,24 +1,31 @@
 import React from "react";
 import prisma from "@/app/lib/prisma";
-import DashboardCard from "@/components/dashboardcard";
+import RecentTransactionsClient from "./recentTransactionsClient";
 
 interface RecentTransactionsProps {
   userId: string;
 }
 
 export default async function RecentTransactions({ userId }: RecentTransactionsProps) {
-  const [sales, expenses] = await Promise.all([
+  const limit = 3;
+  const page = 1;
+  const skip = 0;
+
+  // Pre-fetch initial page 1 on the server to support instant static page load (SEO / SSR friendly)
+  const [sales, expenses, totalSales, totalExpenses] = await Promise.all([
     prisma.sale.findMany({
       where: { userId },
       include: { item: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
-      take: 5,
+      take: limit,
     }),
     prisma.expense.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
-      take: 5,
+      take: limit,
     }),
+    prisma.sale.count({ where: { userId } }),
+    prisma.expense.count({ where: { userId } }),
   ]);
 
   const formatter = new Intl.DateTimeFormat("en-GB", {
@@ -32,7 +39,7 @@ export default async function RecentTransactions({ userId }: RecentTransactionsP
     type: "Sale",
     amount: Number(sale.totalAmount),
     timestamp: formatter.format(new Date(sale.createdAt)),
-    rawDate: sale.createdAt,
+    createdAt: sale.createdAt.toISOString(),
   }));
 
   const formattedExpenses = expenses.map((expense) => ({
@@ -41,13 +48,27 @@ export default async function RecentTransactions({ userId }: RecentTransactionsP
     type: "Expense",
     amount: Number(expense.amount),
     timestamp: formatter.format(new Date(expense.createdAt)),
-    rawDate: expense.createdAt,
+    createdAt: expense.createdAt.toISOString(),
   }));
 
-  const recentTransactions = [...formattedSales, ...formattedExpenses]
-    .sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime())
-    .slice(0, 5)
-    .map(({ rawDate, ...rest }) => rest);
+  const allTransactions = [...formattedSales, ...formattedExpenses].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
-  return <DashboardCard dashboard={recentTransactions} />;
+  const paginatedTransactions = allTransactions.slice(skip, skip + limit);
+  const totalEntries = totalSales + totalExpenses;
+  const totalPages = Math.ceil(totalEntries / limit);
+
+  const initialData = {
+    transactions: paginatedTransactions,
+    pagination: {
+      totalEntries,
+      page,
+      limit,
+      totalPages,
+      hasMore: page < totalPages,
+    },
+  };
+
+  return <RecentTransactionsClient initialData={initialData} userId={userId} />;
 }

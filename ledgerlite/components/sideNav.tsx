@@ -24,7 +24,7 @@ export default function SideNav() {
     { href: "/expense", label: "Expense", icon: <ShoppingBag size={18} /> },
     { href: "/inventory", label: "Inventory", icon: <Package size={18} /> },
     {
-      href: "/export-summery",
+      href: "/export-summary",
       label: "Export Summary",
       icon: <Download size={18} />,
     },

@@ -316,7 +316,7 @@ export default function SalesForm() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="inline-flex justify-center items-center gap-2 rounded-2xl bg-[#0b7a75] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#0b7a75]/20 transition duration-200 hover:bg-[#09615e] hover:shadow-xl hover:shadow-brand-primary/30 active:scale-95 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                      className="inline-flex justify-center items-center gap-2 rounded-2xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-primary/20 transition duration-200 hover:bg-[#09615e] hover:shadow-xl hover:shadow-brand-primary/30 active:scale-95 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                     >
                       {submitting ? (
                         <>

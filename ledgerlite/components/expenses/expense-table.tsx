@@ -1,6 +1,7 @@
 "use client";
 
 import { Eye, Pencil, Trash2, Loader2 } from "lucide-react";
+import Pagination from "@/components/pagination";
 
 interface ExpenseItem {
   id: string;
@@ -10,33 +11,38 @@ interface ExpenseItem {
   createdAt: string | Date;
 }
 
-
 interface ExpenseTableProps {
   expenses: ExpenseItem[];
   onView: (expense: ExpenseItem) => void;
   onEdit: (expense: ExpenseItem) => void;
   onDelete: (expense: ExpenseItem) => void;
   deletingId: string | null;
+  page?: number;
+  totalPages?: number;
+  totalEntries?: number;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
 }
 
-/**
- * ExpenseTable Component
- * 
- * Production-style UI Layout Component.
- * Its ONLY responsibility is laying out expense data records into a structured grid table
- * and forwarding trigger actions (view, edit, delete clicks) back to the parent coordinator.
- * 
- * Core Design Patterns:
- * 1. Presentational Component: Focuses purely on styling, headers, rendering lists, and format values.
- * 2. Event Delegation: Decouples trigger handlers from network/mutations logic by delegating to props.
- */
 export default function ExpenseTable({
   expenses,
   onView,
   onEdit,
   onDelete,
   deletingId,
+  page,
+  totalPages,
+  totalEntries,
+  pageSize,
+  onPageChange,
 }: ExpenseTableProps) {
+  const showPagination =
+    typeof page === "number" &&
+    typeof totalPages === "number" &&
+    typeof totalEntries === "number" &&
+    typeof pageSize === "number" &&
+    onPageChange;
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -111,7 +117,7 @@ export default function ExpenseTable({
                         type="button"
                         onClick={() => onEdit(item)}
                         disabled={isDeleting}
-                        className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-blue-500 disabled:opacity-50 cursor-pointer"
+                        className="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-blue-50 hover:text-blue-500 disabled:opacity-50 cursor-pointer"
                         title="Edit"
                       >
                         <Pencil className="h-4 w-4" />
@@ -124,7 +130,7 @@ export default function ExpenseTable({
                         title="Delete"
                       >
                         {isDeleting ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-red-500" />
+                           <Loader2 className="h-4 w-4 animate-spin text-red-500" />
                         ) : (
                           <Trash2 className="h-4 w-4" />
                         )}
@@ -144,14 +150,24 @@ export default function ExpenseTable({
         </div>
       )}
 
-      {/* Footer stats */}
-      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4">
-        <p className="text-xs text-slate-600">
-          Total records:{" "}
-          <span className="font-semibold text-slate-900">
-            {expenses.length}
-          </span>
-        </p>
+      {/* Footer Section */}
+      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4 flex items-center">
+        {showPagination ? (
+          <Pagination
+            currentPage={page!}
+            totalPages={totalPages!}
+            pageSize={pageSize!}
+            totalEntries={totalEntries!}
+            onPageChange={onPageChange}
+          />
+        ) : (
+          <p className="text-xs text-slate-600">
+            Total records:{" "}
+            <span className="font-semibold text-slate-900">
+              {expenses.length}
+            </span>
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useTransition, useState } from "react";
+import { useOptimistic, useTransition, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import SideNav from "@/components/sideNav";
@@ -49,6 +49,22 @@ export default function ExpenseClient({
     expenses,
     (state, nextExpenses: ExpenseItem[]) => nextExpenses
   );
+
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
+  const totalEntries = optimisticExpenses.length;
+  const totalPages = Math.ceil(totalEntries / pageSize) || 1;
+  const paginatedExpenses = optimisticExpenses.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+
+  useEffect(() => {
+    if (page > 1 && paginatedExpenses.length === 0) {
+      setPage(page - 1);
+    }
+  }, [paginatedExpenses.length, page]);
 
   // Dispatch functions executed inside transitions
   async function handleAddExpense(data: { description: string; category: string; amount: number }) {
@@ -213,11 +229,16 @@ export default function ExpenseClient({
               ) : (
                 <div className="py-5">
                   <ExpenseTable
-                    expenses={optimisticExpenses}
+                    expenses={paginatedExpenses}
                     onView={setViewExpense}
                     onEdit={setEditExpense}
                     onDelete={setDeleteExpense}
                     deletingId={deletingId}
+                    page={page}
+                    totalPages={totalPages}
+                    totalEntries={totalEntries}
+                    pageSize={pageSize}
+                    onPageChange={setPage}
                   />
 
                   {/* Details Viewer Modal */}

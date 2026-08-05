@@ -155,7 +155,7 @@ export default function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
                       placeholder="0"
                       value={amount || ""}
                       onChange={(e) => setAmount(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#0b7a75] focus:ring-2 focus:ring-[#0b7a75]/20"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                       required
                       disabled={isPending}
                     />
