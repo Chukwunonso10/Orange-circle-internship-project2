@@ -73,9 +73,8 @@ function NotificationCard({
   const style = KIND_STYLES[notification.kind];
 
   return (
-    <div className={`rounded-2xl border px-5 py-4 transition-all duration-200 ${style.card} ${
-      notification.read ? "opacity-60" : "opacity-100 ring-1 ring-teal-500/5 shadow-sm"
-    }`}>
+    <div className={`rounded-2xl border px-5 py-4 transition-all duration-200 ${style.card} ${notification.read ? "opacity-60" : "opacity-100 ring-1 ring-teal-500/5 shadow-sm"
+      }`}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 shrink-0">{style.icon}</span>
