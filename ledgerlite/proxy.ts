@@ -35,7 +35,6 @@ export async function proxy(req: NextRequest){
         url.pathname = "/signin"
         url.searchParams.set("reason", reason)
         url.searchParams.set("error", "Unauthorized")
-        console.log('hello')
         return NextResponse.redirect(url)
         
     }
