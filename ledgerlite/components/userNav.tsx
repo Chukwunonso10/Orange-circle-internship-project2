@@ -115,7 +115,7 @@ export default function UserNav({
               <div className="flex items-end gap-2">
                 <div className="bg-gray-100 p-2 rounded-full relative">
                   <Link href="/notifications">
-                    <Bell className="h-5 w-5 text-brand-primary-[#0b7a75] dark:text-gray-400" />
+                    <Bell className="h-6 w-6 text-brand-primary " />
                   </Link>
                   {unreadCount > 0 && (
                     <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-extrabold text-white ring-2 ring-white">
@@ -136,6 +136,7 @@ export default function UserNav({
                 </div>
                 {/* Profile Image Display */}
 
+{/* 
                 {avatar ? (
                   <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
                     <Image
@@ -152,6 +153,26 @@ export default function UserNav({
                     <User className="w-6 h-6 text-white" />
                   </div>
                 )}
+======= */}
+                <div className="hidden md:block">
+                  {avatar ? (
+                    <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                      <Image
+                        className="rounded-full object-cover w-10 h-10"
+                        src={avatar}
+                        alt="profile-photo"
+                        width={40}
+                        height={40}
+                        unoptimized
+                      />
+                    </div>
+                  ) : (
+                    <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
+                      <User className="w-10 h-10  text-white" />
+                    </div>
+                  )}
+                </div>
+{/* >>>>>>> a6eb87c7be8db0d543ddc030ef63b265d7dfa309 */}
               </div>
             </div>
           </div>

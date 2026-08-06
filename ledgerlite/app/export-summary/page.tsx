@@ -13,7 +13,7 @@ export default function ExportSummary() {
           <UserNav />
         </div>
 
-        <main className="min-h-screen ml-0 md:ml-62 p-6 bg-slate-50">
+        <main className=" ml-0 md:ml-62 p-6 ">
           <div className="max-w-6xl mx-auto space-y-8">
             <section>
               <LedgerLiteExportSummary />

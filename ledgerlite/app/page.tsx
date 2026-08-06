@@ -144,37 +144,31 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-10 px-4 md:grid-cols-3 lg:grid-cols-6">
               <div className="flex flex-col items-center">
-               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Amara Foods
                 </span>
               </div>
               <div className="flex flex-col items-center">
-               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Bode Grocery
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Koficuts
                 </span>
               </div>
               <div className="flex flex-col items-center">
-              
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   MarketPro
                 </span>
               </div>
               <div className="flex flex-col items-center">
-               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Nia Tailor
                 </span>
               </div>
               <div className="flex flex-col items-center">
-               
                 <span className="mt-3 text-sm font-medium text-slate-900">
                   Chidi POS
                 </span>
@@ -576,16 +570,12 @@ export default function Home() {
             </div>
           </section>
 
-          
-
           <section>
             <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-teal-800 to-teal-700 px-8 py-14 text-center sm:px-16">
-              
               {/* Decorative circles */}
               <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-teal-600/40" />{" "}
               <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-teal-600/40" />{" "}
               <div className="relative mx-auto max-w-xl">
-                
                 <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
                   Ready to keep better business records?
                 </h2>
@@ -593,9 +583,14 @@ export default function Home() {
                   Start using LedgerLite today and take control of your
                   business.
                 </p>
-                <button className="mt-8 rounded-full bg-white px-10 py-3.5 text-sm font-semibold text-teal-700 shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.99]">
-                  Get Started
-                </button>
+                <div className="mt-10">
+                  <Link
+                    href="/signup"
+                    className=" rounded-full bg-white px-10 py-3.5 text-sm font-semibold text-teal-700 shadow-sm transition-transform hover:scale-[1.02] hover:opacity-80 active:scale-[0.99]"
+                  >
+                    Get Started
+                  </Link>
+                </div>
               </div>
             </div>
           </section>

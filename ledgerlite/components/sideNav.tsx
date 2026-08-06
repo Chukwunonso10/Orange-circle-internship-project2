@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import {
   Home,
   ShoppingBag,
@@ -12,11 +13,14 @@ import {
   Settings,
   Menu,
   X,
+  User,
 } from "lucide-react";
 
 export default function SideNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [avatar, setAvatar] = useState("");
+
   // navigation items for the sidebar
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: <Home size={18} /> },
@@ -41,7 +45,7 @@ export default function SideNav() {
       {/* Navigation button */}
       <button
         type="button"
-        className="absolute top-3 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-100 bg-white text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
+        className="absolute top-3 left-2 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-100 bg-white text-slate-800  transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400  md:hidden cursor-pointer"
         onClick={() => setIsOpen(true)}
         aria-label="Open navigation"
       >
@@ -60,7 +64,7 @@ export default function SideNav() {
       >
         <div className="flex items-center justify-between gap-3">
           {/* Logo */}
-          <div>
+          <div className="hidden md:block">
             <div>
               <svg
                 width="167"
@@ -102,6 +106,24 @@ export default function SideNav() {
               </svg>
             </div>
           </div>
+          <div className="md:hidden">
+            {avatar ? (
+              <div className="w-12 h-12  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                <Image
+                  className="rounded-full object-cover w-12 h-12"
+                  src={avatar}
+                  alt="profile-photo"
+                  width={50}
+                  height={50}
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
+                <User className="w-12 h-12  text-white" />
+              </div>
+            )}
+          </div>
           {/* Close button */}
           <button
             type="button"
@@ -112,9 +134,13 @@ export default function SideNav() {
             <X size={18} />
           </button>
         </div>
+        <div className="md:hidden border-b border-gray-300 py-2">
+          <h3 className="text-sm font-medium text-gray-900">businessName</h3>
+          <p className="text-xs text-gray-700">userName</p>
+        </div>
         {/* Navigation */}
-        <nav className="mt-10">
-          <ul className="space-y-4 ">
+        <nav className="mt-5 md:mt-10">
+          <ul className="space-y-2 md:space-y-4 ">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -139,8 +165,8 @@ export default function SideNav() {
             })}
           </ul>
           {/* Utility Items */}
-          <div className="mt-10 border-t border-slate-200 pt-6 ">
-            <ul className="space-y-4">
+          <div className="mt-5 md:mt-10 border-t border-slate-200 pt-6 ">
+            <ul className="space-y-2 md:space-y-4">
               {utilityItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
