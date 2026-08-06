@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "@/app/lib/useLocalStorage";
 
-type NotificationKind = "low-stock" | "export-ready" | "restock";
+type NotificationKind = "low-stock" | "export-ready" | "restock" | "profile-update";
 
 interface AppNotification {
   id: string;
@@ -38,9 +38,13 @@ export default function UserNav({
     "ledgerlite-alert-low-stock",
     true
   );
+  const [customNotifs] = useLocalStorage<AppNotification[]>(
+    "ledgerlite-custom-notifications",
+    []
+  );
 
   // Fetch dynamic notifications list to compute unread count badge
-  const { data } = useQuery<{ notifications: AppNotification[] }>({
+  const { data, refetch } = useQuery<{ notifications: AppNotification[] }>({
     queryKey: ["notifications"],
     queryFn: async () => {
       const res = await fetch("/api/protected/notifications");
@@ -52,10 +56,21 @@ export default function UserNav({
     refetchInterval: 30000, // Check for updates every 30 seconds
   });
 
+  // Dynamically refetch when custom profile update events occur
+  useEffect(() => {
+    const handleUpdate = () => {
+      refetch();
+    };
+    window.addEventListener("ledgerlite-notification-new", handleUpdate);
+    return () => {
+      window.removeEventListener("ledgerlite-notification-new", handleUpdate);
+    };
+  }, [refetch]);
+
   const rawNotifications = data?.notifications ?? [];
 
   // Filter based on user preferences in Settings
-  const filteredNotifications = rawNotifications.filter((n) => {
+  const filteredNotifications = [...customNotifs, ...rawNotifications].filter((n) => {
     if (n.kind === "low-stock" && !lowStockAlertsEnabled) {
       return false;
     }
