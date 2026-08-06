@@ -54,9 +54,9 @@ function RadioRow({
       onClick={onSelect}
       className="flex w-full items-center justify-between rounded-xl py-3 text-left transition-colors hover:bg-slate-50 cursor-pointer"
     >
-      <span className="text-sm text-slate-700 sm:text-[15px]">{label}</span>
+      <span className="text-sm text-slate-700">{label}</span>
       <span
-        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 cursor-pointer ${
           selected ? "border-teal-600" : "border-slate-300"
         }`}
       >
@@ -66,13 +66,110 @@ function RadioRow({
   );
 }
 
+function PillTab({
+  label,
+  active,
+  onSelect,
+}: {
+  label: string;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
+        active
+          ? "border-teal-600 bg-teal-600 text-white"
+          : "border-slate-200 text-slate-600 hover:bg-slate-50"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-4 sm:px-6 sm:py-5">
-      <p className="text-xs text-slate-500 sm:text-sm">{label}</p>
+    <div className="rounded-2xl border border-teal-50 bg-[#F4F8F8] px-5 py-4 sm:px-6 sm:py-5">
+      <p className="text-sm text-slate-500">{label}</p>
       <p className="mt-1.5 text-xl font-bold text-teal-700 sm:text-2xl">
         {value}
       </p>
+    </div>
+  );
+}
+
+function StatsGrid({ data }: { data: SummaryData }) {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:gap-5">
+      <StatCard label="Money In" value={formatNaira(data.moneyIn)} />
+      <StatCard label="Money Out" value={formatNaira(data.moneyOut)} />
+      <StatCard label="Profit" value={formatNaira(data.profit)} />
+      <div className="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-4 sm:px-6 sm:py-5 col-span-2 grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-xs text-slate-500 sm:text-sm">Total Sales Count</p>
+          <p className="mt-1 text-lg font-bold text-teal-700">
+            {data.totalSales} sales
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-slate-500 sm:text-sm">Total Expenses Count</p>
+          <p className="mt-1 text-lg font-bold text-teal-700">
+            {data.totalExpenses} expenses
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FormatRadioGroup({
+  format,
+  onChange,
+  layout = "stacked",
+}: {
+  format: ExportFormat;
+  onChange: (f: ExportFormat) => void;
+  layout?: "stacked" | "inline";
+}) {
+  if (layout === "inline") {
+    return (
+      <div className="flex flex-wrap items-center gap-6">
+        {FORMAT_OPTIONS.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id)}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <span className="text-sm text-slate-700">{opt.label}</span>
+            <span
+              className={`flex h-5 w-5 items-center justify-center rounded-full border-2 cursor-pointer ${
+                format === opt.id ? "border-teal-600" : "border-slate-300"
+              }`}
+            >
+              {format === opt.id && (
+                <span className="h-2.5 w-2.5 rounded-full bg-teal-600" />
+              )}
+            </span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="divide-y divide-slate-50">
+      {FORMAT_OPTIONS.map((opt) => (
+        <RadioRow
+          key={opt.id}
+          label={opt.label}
+          selected={format === opt.id}
+          onSelect={() => onChange(opt.id)}
+        />
+      ))}
     </div>
   );
 }
@@ -202,127 +299,159 @@ export default function LedgerLiteExportSummary() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 lg:flex-row">
-      {/* Left panel: options */}
-      <div className="w-full border-b border-slate-100 px-4 py-6 sm:px-6 lg:w-72 lg:shrink-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-8">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800">Period</h3>
-        <div className="mb-2 divide-y divide-slate-50">
-          {PERIOD_OPTIONS.map((opt) => (
-            <RadioRow
-              key={opt.id}
-              label={opt.label}
-              selected={period === opt.id}
-              onSelect={() => setPeriod(opt.id)}
-            />
-          ))}
-        </div>
-
-        <h3 className="mb-2 mt-8 text-sm font-semibold text-slate-800">
-          Format
-        </h3>
-        <div className="mb-8 divide-y divide-slate-50">
-          {FORMAT_OPTIONS.map((opt) => (
-            <RadioRow
-              key={opt.id}
-              label={opt.label}
-              selected={format === opt.id}
-              onSelect={() => setFormat(opt.id)}
-            />
-          ))}
-        </div>
-
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={handleExport}
-            disabled={isPending}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Download className="h-4 w-4" />
-            Export
-          </button>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="w-full cursor-pointer rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50"
-          >
-            Cancel
-          </button>
-        </div>
+    <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+      {/* Mobile-only header */}
+      <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4 lg:hidden">
+        <h1 className="text-lg font-bold text-slate-900">Export Summary</h1>
       </div>
 
-      {/* Right panel: live preview */}
-      <div
-        id="export-report-preview"
-        className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8 bg-white"
-      >
-        <div className="flex justify-between items-start border-b border-slate-100 pb-4">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
-              Ledger Summary Report
-            </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Period: {PERIOD_LABELS[period]}
-            </p>
+      <div className="flex flex-col lg:flex-row">
+        {/* Desktop sidebar (options) */}
+        <div className="hidden w-72 shrink-0 border-r border-slate-100 px-6 py-8 lg:block">
+          <h3 className="mb-2 text-sm font-semibold text-slate-800">Period</h3>
+          <div className="mb-2 divide-y divide-slate-50">
+            {PERIOD_OPTIONS.map((opt) => (
+              <RadioRow
+                key={opt.id}
+                label={opt.label}
+                selected={period === opt.id}
+                onSelect={() => setPeriod(opt.id)}
+              />
+            ))}
           </div>
-          <div className="text-right hidden sm:block">
-            <span className="inline-flex items-center rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
-              LedgerLite Verified
-            </span>
+
+          <h3 className="mb-2 mt-8 text-sm font-semibold text-slate-800">
+            Export format
+          </h3>
+          <div className="mb-8">
+            <FormatRadioGroup
+              format={format}
+              onChange={setFormat}
+              layout="stacked"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={isPending}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer disabled:opacity-50"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer"
+            >
+              Cancel
+            </button>
           </div>
         </div>
 
-        <h3 className="mt-6 mb-5 text-lg font-bold text-slate-800 sm:text-xl">
-          {businessName}
-        </h3>
+        {/* Preview panel (shared, layout adapts) */}
+        <div className="flex-1 px-5 py-6 sm:px-8 sm:py-8 bg-white">
+          <h2 className="hidden text-xl font-bold text-slate-900 lg:block">
+            Summary Preview
+          </h2>
+          <p className="mt-1 hidden text-sm text-slate-500 lg:block">
+            Period: {PERIOD_LABELS[period]}
+          </p>
 
-        {isPending ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 text-teal-600 animate-spin" />
-            <p className="mt-2 text-sm text-slate-500">
-              Loading summary figures...
+          {/* Mobile-only: "Summary Preview" label + pill tabs for period */}
+          <div className="lg:hidden">
+            <p className="mb-3 text-sm font-medium text-slate-800">
+              Summary Preview
             </p>
+            <div className="mb-6 flex gap-2 overflow-x-auto">
+              {PERIOD_OPTIONS.map((opt) => (
+                <PillTab
+                  key={opt.id}
+                  label={opt.label}
+                  active={period === opt.id}
+                  onSelect={() => setPeriod(opt.id)}
+                />
+              ))}
+            </div>
           </div>
-        ) : error ? (
-          <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-sm font-semibold text-red-600 text-center">
-            Failed to load report summary data.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
-            <StatCard
-              label="Money In"
-              value={formatNaira(summaryData.moneyIn)}
-            />
-            <StatCard
-              label="Money Out"
-              value={formatNaira(summaryData.moneyOut)}
-            />
-            <StatCard
-              label="Net Profit"
-              value={formatNaira(summaryData.profit)}
-            />
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-4 sm:px-6 sm:py-5 col-span-1 sm:col-span-2 grid grid-cols-2 gap-4">
+
+          {/* Live Preview Container (Used by window print capture) */}
+          <div id="export-report-preview" className="bg-white">
+            <div className="flex justify-between items-start border-b border-slate-100 pb-4">
               <div>
-                <p className="text-xs text-slate-500 sm:text-sm">Total Sales Count</p>
-                <p className="mt-1 text-lg font-bold text-teal-700">
-                  {summaryData.totalSales} sales
+                <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
+                  Ledger Summary Report
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Period: {PERIOD_LABELS[period]}
                 </p>
               </div>
-              <div>
-                <p className="text-xs text-slate-500 sm:text-sm">Total Expenses Count</p>
-                <p className="mt-1 text-lg font-bold text-teal-700">
-                  {summaryData.totalExpenses} expenses
+              <div className="text-right hidden sm:block">
+                <span className="inline-flex items-center rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
+                  LedgerLite Verified
+                </span>
+              </div>
+            </div>
+
+            <h3 className="mt-6 mb-4 text-base font-semibold text-slate-800 sm:mt-6 sm:mb-5 sm:text-lg">
+              {businessName}
+            </h3>
+
+            {isPending ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 text-teal-600 animate-spin" />
+                <p className="mt-2 text-sm text-slate-500">
+                  Loading summary figures...
                 </p>
+              </div>
+            ) : error ? (
+              <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-sm font-semibold text-red-600 text-center">
+                Failed to load report summary data.
+              </div>
+            ) : (
+              <StatsGrid data={summaryData} />
+            )}
+
+            {/* Footer signature line visible ONLY when printing */}
+            <div className="mt-16 border-t border-dashed border-slate-200 pt-6 hidden print:block">
+              <div className="flex justify-between items-center text-xs text-slate-400">
+                <p>Generated dynamically on: {new Date().toLocaleDateString()}</p>
+                <p>Sign-off Stamp: ____________________</p>
               </div>
             </div>
           </div>
-        )}
 
-        {/* Footer signature line visible ONLY when printing */}
-        <div className="mt-16 border-t border-dashed border-slate-200 pt-6 hidden print:block">
-          <div className="flex justify-between items-center text-xs text-slate-400">
-            <p>Generated dynamically on: {new Date().toLocaleDateString()}</p>
-            <p>Sign-off Stamp: ____________________</p>
+          {/* Mobile-only: export format + action buttons below preview */}
+          <div className="mt-8 lg:hidden">
+            <h3 className="mb-3 text-sm font-semibold text-slate-800">
+              Export format
+            </h3>
+            <FormatRadioGroup
+              format={format}
+              onChange={setFormat}
+              layout="inline"
+            />
+
+            <div className="mt-8 space-y-3">
+              <button
+                type="button"
+                onClick={handleExport}
+                disabled={isPending}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer disabled:opacity-50"
+              >
+                <Download className="h-4 w-4" />
+                Export
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="w-full rounded-full border border-slate-200 py-3.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-slate-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
