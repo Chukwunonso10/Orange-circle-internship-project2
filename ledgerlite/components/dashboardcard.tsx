@@ -99,7 +99,9 @@ export default function DashboardCard({
               </th>
             </tr>
           </thead>
-          <tbody className={`divide-y divide-slate-100 transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}>
+          <tbody
+            className={`divide-y divide-slate-100 transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}
+          >
             {dashboard.map((item) => {
               const isSale =
                 item.type.toLowerCase() === "sale" ||
@@ -154,9 +156,15 @@ export default function DashboardCard({
       </div>
 
       {dashboard.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-2 px-6 py-12">
+        <div className="flex flex-col items-center justify-center gap-2 px-6 py-10">
           <ReceiptText className="text-slate-400 h-8 w-8" />
-          <p className="text-sm text-slate-500 font-medium">No transaction records found.</p>
+          <h4 className="text-sm text-slate-900 font-semibold">
+            No recent activities.
+          </h4>
+          <h4 className="text-xs text-slate-500">
+            Your sales and expense will appear here once you start recording transactions
+          </h4>
+
           <div className="mt-2">
             <SalesForm />
           </div>

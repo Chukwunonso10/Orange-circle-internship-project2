@@ -65,7 +65,7 @@ export default function UserNav({
               <div className="flex items-end gap-2">
                 <div className="bg-gray-100 p-2 rounded-full ">
                   <Link href="/notifications">
-                    <Bell className="h-5 w-5 text-brand-primary-[#0b7a75] dark:text-gray-400" />
+                    <Bell className="h-6 w-6 text-brand-primary " />
                   </Link>
                 </div>
                 <div className=""></div>
@@ -81,22 +81,24 @@ export default function UserNav({
                 </div>
                 {/* Profile Image Display */}
 
-                {avatar ? (
-                  <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
-                    <Image
-                      className="rounded-full object-cover w-10 h-10"
-                      src={avatar}
-                      alt="profile-photo"
-                      width={40}
-                      height={40}
-                      unoptimized
-                    />
-                  </div>
-                ) : (
-                  <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
-                    <User className="w-10 h-10  text-white" />
-                  </div>
-                )}
+                <div className="hidden md:block">
+                  {avatar ? (
+                    <div className="w-10 h-10  rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                      <Image
+                        className="rounded-full object-cover w-10 h-10"
+                        src={avatar}
+                        alt="profile-photo"
+                        width={40}
+                        height={40}
+                        unoptimized
+                      />
+                    </div>
+                  ) : (
+                    <div className=" rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
+                      <User className="w-10 h-10  text-white" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

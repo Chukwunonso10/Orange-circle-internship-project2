@@ -35,7 +35,7 @@ export function SalesClient({
         <div>
           <SideNav />
         </div>
-        <div className="ml-0 md:ml-70 sm:ml-0">
+        <div className="ml-0 md:ml-60 sm:ml-0">
           <UserNav name={name} buisnessName={buisnessName} />
         </div>
         <main className="ml-0 md:ml-62 sm:ml-10 p-6">
@@ -44,8 +44,7 @@ export function SalesClient({
               <h2 className="text-[#032523] text-2xl font-bold">Sales</h2>
 
               <p className="py-2 text-sm text-gray-700">
-                Manage your Sales in your dashboard and view it
-                anytime
+                Manage your Sales in your dashboard and view it anytime
               </p>
             </div>
 
@@ -78,14 +77,13 @@ export function SalesClient({
                   Yesterday: ₦{moneyInYesterday.toLocaleString()}
                 </p>
               </div>
-
             </div>
             {/* sales. history */}
             <aside
               className="rounded-4xl my-10 border border-[#6DAFAC] bg-white/95 p-6 shadow-lg transition-all  hover:shadow-xl hover:border-brand-primary animate-in fade-in slide-in-from-bottom duration-500"
               style={{ animationFillMode: "both", animationDelay: "200ms" }}
             >
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+              <h2 className="text-xl font-semibold text-[#032523] ">
                 Sales history
               </h2>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
@@ -100,24 +98,22 @@ export function SalesClient({
                     No sales records yet
                   </h3>
                   <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                    When you save a sale, it will appear in this section for quick
-                    review.
+                    When you save a sale, it will appear in this section for
+                    quick review.
                   </p>
                   <SalesForm />
                 </div>
               ) : (
-
                 <div className="py-5">
-                  
                   <Suspense fallback={<div>Loading sales...</div>}>
-                  <SalesCard
-                    sales={sales}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    totalSales={totalSales}
-                    pageSize={pageSize}
-                  />
-                   </Suspense>
+                    <SalesCard
+                      sales={sales}
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      totalSales={totalSales}
+                      pageSize={pageSize}
+                    />
+                  </Suspense>
                 </div>
               )}
             </aside>

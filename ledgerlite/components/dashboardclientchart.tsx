@@ -124,7 +124,7 @@ export default function BarChart({ inflow, outflow }: { inflow: number[], outflo
   return (
     <div>
       <div>
-        <div className="border border-gray-300 shadow-sm p-5 rounded-4xl my-5">
+        {/* <div className="border border-gray-300 shadow-sm p-5 rounded-4xl my-5">
           <div className=" flex justify-around  gap-10">
             <div>
               <h4 className="text-sm text-gray-900 font-semibold">
@@ -163,7 +163,7 @@ export default function BarChart({ inflow, outflow }: { inflow: number[], outflo
               <ExpenseForm />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       {/* the bar chart */}
       <div className="border border-gray-300 shadow-sm p-5 rounded-4xl my-5">
@@ -178,27 +178,39 @@ export default function BarChart({ inflow, outflow }: { inflow: number[], outflo
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="flex gap-2">
-              <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
+            {/* desktop buttons */}
+            <div className="hidden md:block">
+               <div className="flex gap-2">
+              <button className="bg-gray-300 py-1 px-2 rounded-lg text-[10px] text-gray-700 cursor-pointer">
                 Today
               </button>
-              <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
+              <button className="bg-gray-300 py-1 px-2 rounded-lg text-[10px] text-gray-700 cursor-pointer">
                 This week
               </button>
-              <button className="bg-gray-300 py-1 px-2 rounded-lg text-xs text-gray-700 cursor-pointer">
+              <button className="bg-gray-300 py-1 px-2 rounded-lg text-[10px] text-gray-700 cursor-pointer">
                 This month
               </button>
+            </div>
+            </div>
+            {/* mobile buttons */}
+           
+            <div className="md:hidden">
+              <select className="rounded-2xl text-xs text-teal-700 border border-teal-700" name="timeframe" id="time">
+                <option value="today">Today</option>
+                <option value="thisweek">This Week</option>
+                <option value="thismonth">This Month</option>
+              </select>
             </div>
 
             <div>
               <div className="flex items-center gap-2">
                 <div className="bg-[#02AD5E] h-2 w-6 rounded-lg"></div>
-                <p className="text-xs text-gray-700">Money In</p>
+                <p className="text-[10px] md:text-xs text-gray-700">Money In</p>
               </div>
 
               <div className="flex items-center gap-2">
                 <div className="bg-[#D01527] h-2 w-6 rounded-lg"></div>
-                <p className="text-xs text-gray-700">Money Out</p>
+                <p className="text-[10px] md:text-xs text-gray-700">Money Out</p>
               </div>
             </div>
           </div>
