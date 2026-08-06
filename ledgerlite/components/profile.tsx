@@ -198,7 +198,7 @@ function PersonalProfileSection({
               unoptimized
             />
           ) : (
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-linear-to-br from-teal-500 to-teal-700 flex items-center justify-center">
               <User className="w-12 h-12 text-white" />
             </div>
           )}
@@ -490,8 +490,8 @@ export default function LedgerLiteProfile({
   };
 
   return (
-    <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="flex flex-col lg:flex-row min-h-[500px]">
+    <div className="w-full bg-white overflow-hidden">
+      <div className="flex flex-col lg:flex-row min-h-125">
         <Sidebar active={activeSection} onSelect={setActiveSection} />
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10 bg-white">
