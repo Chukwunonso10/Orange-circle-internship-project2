@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { sendGAEvent } from "@next/third-parties/google";
 
 type Period = "today" | "week" | "month";
 type ExportFormat = "pdf" | "image";
@@ -94,7 +95,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-teal-50 bg-[#F4F8F8] px-5 py-4 sm:px-6 sm:py-5">
       <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1.5 text-xl font-bold text-teal-700 sm:text-2xl">
+      <p className="mt-1.5 text-sm md:text-xl font-bold text-teal-700 sm:text-2xl">
         {value}
       </p>
     </div>
@@ -110,13 +111,15 @@ function StatsGrid({ data }: { data: SummaryData }) {
       <div className="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-4 sm:px-6 sm:py-5 col-span-2 grid grid-cols-2 gap-4">
         <div>
           <p className="text-xs text-slate-500 sm:text-sm">Total Sales Count</p>
-          <p className="mt-1 text-lg font-bold text-teal-700">
+          <p className="mt-1 text-sm md:text-lg font-bold text-teal-700">
             {data.totalSales} sales
           </p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 sm:text-sm">Total Expenses Count</p>
-          <p className="mt-1 text-lg font-bold text-teal-700">
+          <p className="text-xs text-slate-500 sm:text-sm">
+            Total Expenses Count
+          </p>
+          <p className="mt-1 text-sm md:text-lg font-bold text-teal-700">
             {data.totalExpenses} expenses
           </p>
         </div>
@@ -289,7 +292,7 @@ export default function LedgerLiteExportSummary() {
       }
     } else {
       alert(
-        "To save as Image, you can use your device screenshot shortcut or choose standard PDF print export instead."
+        "To save as Image, you can use your device screenshot shortcut or choose standard PDF print export instead.",
       );
     }
   };
@@ -334,7 +337,10 @@ export default function LedgerLiteExportSummary() {
           <div className="space-y-3">
             <button
               type="button"
-              onClick={handleExport}
+              onClick={() => {
+                handleExport();
+                sendGAEvent({ event: "buttonClicked", value: "users_exported_summary" });
+              }}
               disabled={isPending}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer disabled:opacity-50"
             >
@@ -417,7 +423,9 @@ export default function LedgerLiteExportSummary() {
             {/* Footer signature line visible ONLY when printing */}
             <div className="mt-16 border-t border-dashed border-slate-200 pt-6 hidden print:block">
               <div className="flex justify-between items-center text-xs text-slate-400">
-                <p>Generated dynamically on: {new Date().toLocaleDateString()}</p>
+                <p>
+                  Generated dynamically on: {new Date().toLocaleDateString()}
+                </p>
                 <p>Sign-off Stamp: ____________________</p>
               </div>
             </div>
