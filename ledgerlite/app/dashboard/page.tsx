@@ -116,9 +116,10 @@ export default async function Dashboard() {
           <div>
             <Suspense
               fallback={
-                <p className="flex items-center justify-center animate-spin">
+                <p className="mt-10 flex items-center justify-center animate-spin">
                   {" "}
-                  <Loader2 /> loading...
+                  <Loader2 className="text-teal-600"/> 
+                  
                 </p>
               }
             >

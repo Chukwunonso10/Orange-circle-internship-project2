@@ -68,7 +68,7 @@ export default async function DashboardMetrics() {
     return (
       <article
         key={stat.title}
-        className={`rounded-2xl border border-[#6DAFAC]/60 p-2  md:p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${stat.cardClass}`}
+        className={`rounded-2xl  border border-[#6DAFAC]/60 p-2  md:p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${stat.cardClass}`}
       >
         <div
           className={`flex h-6 w-6 md:h-11 md:w-11  items-center justify-center rounded-xl ${stat.iconWrapper}`}
@@ -109,7 +109,7 @@ export default async function DashboardMetrics() {
         </div>
       </div>
 
-      <div className="hidden sm:grid sm:grid-cols-2 xl:grid-cols-4 md:gap-4">
+      <div className="hidden sm:grid sm:grid-cols-2 sm:gap-4 xl:grid-cols-4 md:gap-4">
         {stats.map((stat) => renderStatCard(stat))}
       </div>
     </section>
