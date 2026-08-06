@@ -1,4 +1,4 @@
-"use client"
+
 import LedgerLiteNotifications from "@/components/appnotifications"
 
 export default function Notifications() {
