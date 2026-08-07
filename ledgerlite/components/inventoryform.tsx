@@ -9,12 +9,14 @@ interface InventoryFormProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   hideTrigger?: boolean;
+  onSaveSuccess?: () => void;
 }
 
 export default function InventoryForm({
   open,
   onOpenChange,
   hideTrigger = false,
+  onSaveSuccess,
 }: InventoryFormProps) {
   const router = useRouter();
   const [internalOpen, setInternalOpen] = useState(false);
@@ -101,6 +103,9 @@ export default function InventoryForm({
       toast.success("Product created successfully!");
       handleOpen(false);
       resetForm();
+      if (onSaveSuccess) {
+        onSaveSuccess();
+      }
       router.refresh();
     } catch (err: any) {
       console.error("Create product error:", err);
