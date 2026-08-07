@@ -76,7 +76,7 @@ export default function SalesForm({
       .finally(() => {
         setLoadingProducts(false);
       });
-  }, [open]);
+  }, [isOpen]);
 
   function resetForm() {
     setItemType("tracked");
