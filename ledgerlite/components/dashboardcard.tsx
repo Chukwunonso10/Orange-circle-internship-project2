@@ -116,20 +116,18 @@ export default function DashboardCard({
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center justify-center rounded-lg px-3 py-1 text-[10px] md:text-xs font-semibold ${
-                        isSale
+                      className={`inline-flex items-center justify-center rounded-lg px-3 py-1 text-[10px] md:text-xs font-semibold ${isSale
                           ? "bg-[#e4f5ed] text-[#02ad5e]"
                           : "bg-[#f9e6e8] text-[#d01527]"
-                      }`}
+                        }`}
                     >
                       {item.type}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <p
-                      className={`text-[10px] md:text-sm font-bold ${
-                        isSale ? "text-[#02ad5e]" : "text-[#d01527]"
-                      }`}
+                      className={`text-[10px] md:text-sm font-bold ${isSale ? "text-[#02ad5e]" : "text-[#d01527]"
+                        }`}
                     >
                       {isSale ? "+" : "-"}₦{item.amount.toLocaleString()}
                     </p>
@@ -211,11 +209,10 @@ export default function DashboardCard({
                     key={`page-${num}`}
                     onClick={() => onPageChange(num as number)}
                     aria-current={isActive ? "page" : undefined}
-                    className={`inline-flex h-8 w-8 items-center justify-center rounded-lg font-semibold transition-colors cursor-pointer ${
-                      isActive
+                    className={`inline-flex h-8 w-8 items-center justify-center rounded-lg font-semibold transition-colors cursor-pointer ${isActive
                         ? "bg-teal-600 text-white shadow-sm shadow-teal-600/10"
                         : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                    }`}
+                      }`}
                   >
                     {num}
                   </button>

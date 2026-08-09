@@ -337,10 +337,14 @@ export default function LedgerLiteExportSummary() {
           <div className="space-y-3">
             <button
               type="button"
-              onClick={() => {
-                handleExport();
-                sendGAEvent({ event: "buttonClicked", value: "users_exported_summary" });
-              }}
+              onClick={() =>
+                sendGAEvent({
+                  event: "exportSummary_clicked",
+                  action: "user_exportedSummary",
+                  label: "exportSummary_button",
+                })
+              }
+
               disabled={isPending}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer disabled:opacity-50"
             >
