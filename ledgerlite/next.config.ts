@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
     allowedDevOrigins: ['phantasmagorian-alfonso-chalcolithic.ngrok-free.dev'],
-  },
   async headers() {
     return [
       {
