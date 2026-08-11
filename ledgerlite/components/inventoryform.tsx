@@ -124,7 +124,7 @@ export default function InventoryForm({
         <div>
           <button
             type="button"
-            onClick={() => handleOpen(true)}
+            onClick={() => handleOpen(true)} 
             className="inline-flex items-center justify-center rounded-full bg-brand-primary px-2 md:px-5 py-3  text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand-primary/50 cursor-pointer"
           >
             <Plus size={18} />

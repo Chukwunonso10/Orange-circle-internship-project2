@@ -2,6 +2,32 @@ import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+export async function GET(req: NextRequest, { params }: { params: Promise<{ expenseId: string }> }) {
+    try {
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 })
+        }
+        const { expenseId } = await params
+        const expense = await prisma.expense.findUnique({
+            where: { id: expenseId }
+        })
+        if (!expense || expense.userId !== userId) {
+            return NextResponse.json({ success: false, message: "Expense not found" }, { status: 404 })
+        }
+        return NextResponse.json({
+            success: true,
+            expense: {
+                ...expense,
+                amount: Number(expense.amount)
+            }
+        })
+    } catch (error) {
+        console.error("GET expense error:", error)
+        return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
+    }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ expenseId: string }> }) {
     try {
         const userId = await getCurrentUserId()

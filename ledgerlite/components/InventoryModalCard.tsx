@@ -12,7 +12,7 @@ export default function InventoryModalCard() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex flex-col items-center justify-center h-full text-white bg-[#0B7A75] rounded-2xl px-4 py-5 md:py-12 hover:opacity-80 transition duration-150 w-full cursor-pointer"
+        className="flex flex-col items-center justify-center h-full text-white bg-[#0B7A75] rounded-2xl px-4 py-5 md:py-12 hover:opacity-80 transition  duration-150 w-full  cursor-pointer"
       >
         <Package size={15} />
         <span className="flex items-center gap-2 text-xs md:text-sm">

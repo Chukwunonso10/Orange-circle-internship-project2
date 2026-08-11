@@ -3,6 +3,34 @@ import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
+export async function GET(req: NextRequest, { params }: { params: Promise<{ salesId: string }> }) {
+    try {
+        const userId = await getCurrentUserId()
+        if (!userId) {
+            return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 })
+        }
+        const { salesId } = await params
+        const sale = await prisma.sale.findUnique({
+            where: { id: salesId },
+            include: { item: { select: { name: true } } }
+        })
+        if (!sale || sale.userId !== userId) {
+            return NextResponse.json({ success: false, message: "Sale not found" }, { status: 404 })
+        }
+        return NextResponse.json({
+            success: true,
+            sale: {
+                ...sale,
+                unitPrice: Number(sale.unitPrice),
+                totalAmount: Number(sale.totalAmount)
+            }
+        })
+    } catch (error) {
+        console.error("GET sale error:", error)
+        return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
+    }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ salesId: string }> }) {
     try {
         const userId = await getCurrentUserId()
@@ -141,7 +169,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ sale
 
         })
         return NextResponse.json({
-            success: false, message: "successfully updated sales"
+            success: true, message: "successfully updated sales"
         }, { status: 200 })
 
     } catch (error) {
