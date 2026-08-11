@@ -10,6 +10,7 @@ interface Transaction {
   type: string;
   amount: number;
   timestamp: string;
+  createdAt?: string;
 }
 
 interface PaginationMetadata {

@@ -14,6 +14,7 @@ interface DashboardItem {
   type: string;
   amount: number;
   timestamp: string;
+  createdAt?: string;
 }
 
 interface DashboardCardProps {
@@ -148,7 +149,14 @@ export default function DashboardCard({
                     </p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className=" text-[10px] md:text-xs text-slate-500">{item.timestamp}</p>
+                    <p className=" text-[10px] md:text-xs text-slate-500" suppressHydrationWarning>
+                      {item.createdAt 
+                        ? new Date(item.createdAt).toLocaleString(undefined, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })
+                        : item.timestamp}
+                    </p>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-2">
