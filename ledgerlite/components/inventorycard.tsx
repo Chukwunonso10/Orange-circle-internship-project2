@@ -10,6 +10,8 @@ interface Item {
   name: string;
   lowStock: number;
   currentStock: number;
+  costPrice?: any;
+  sellingPrice?: any;
   createdAt: string;
 }
 
@@ -29,6 +31,8 @@ export default function InventoryCard({ items = [], onRefresh }: InventoryCardPr
   const [editName, setEditName] = useState("");
   const [editStock, setEditStock] = useState("");
   const [editThreshold, setEditThreshold] = useState("");
+  const [editCostPrice, setEditCostPrice] = useState("");
+  const [editSellingPrice, setEditSellingPrice] = useState("");
 
   const [page, setPage] = useState(1);
   const pageSize = 5;
@@ -89,6 +93,8 @@ export default function InventoryCard({ items = [], onRefresh }: InventoryCardPr
     setEditName(item.name);
     setEditStock(String(item.currentStock));
     setEditThreshold(String(item.lowStock));
+    setEditCostPrice(String(item.costPrice !== undefined && item.costPrice !== null ? Number(item.costPrice) : ""));
+    setEditSellingPrice(String(item.sellingPrice !== undefined && item.sellingPrice !== null ? Number(item.sellingPrice) : ""));
     setEditError(null);
   }
 
@@ -132,6 +138,8 @@ export default function InventoryCard({ items = [], onRefresh }: InventoryCardPr
           name,
           currentStock,
           lowStock,
+          costPrice: Number(editCostPrice) || 0,
+          sellingPrice: Number(editSellingPrice) || 0,
         }),
       });
 
@@ -154,6 +162,8 @@ export default function InventoryCard({ items = [], onRefresh }: InventoryCardPr
 
   function closeEditModal() {
     setEditingItem(null);
+    setEditCostPrice("");
+    setEditSellingPrice("");
     setEditError(null);
   }
 
@@ -348,6 +358,35 @@ export default function InventoryCard({ items = [], onRefresh }: InventoryCardPr
                   disabled={updating}
                   required
                 />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1">
+                  <label htmlFor="edit-cost" className="block text-sm font-medium text-slate-700">
+                    ₦ Cost Price
+                  </label>
+                  <input
+                    id="edit-cost"
+                    value={editCostPrice}
+                    onChange={(e) => setEditCostPrice(e.target.value)}
+                    placeholder="0"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                    disabled={updating}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="edit-price" className="block text-sm font-medium text-slate-700">
+                    ₦ Selling Price
+                  </label>
+                  <input
+                    id="edit-price"
+                    value={editSellingPrice}
+                    onChange={(e) => setEditSellingPrice(e.target.value)}
+                    placeholder="0"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                    disabled={updating}
+                  />
+                </div>
               </div>
 
               <div className="mt-6 flex flex-col gap-2 pt-4 border-t border-slate-100 sm:flex-row sm:justify-end">

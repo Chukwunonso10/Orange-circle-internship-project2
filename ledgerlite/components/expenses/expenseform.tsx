@@ -5,6 +5,7 @@ import { X, Plus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { sendGAEvent } from "@next/third-parties/google";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ExpenseFormProps {
   open?: boolean;
@@ -24,6 +25,7 @@ export default function ExpenseForm({
   onAddExpense,
 }: ExpenseFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [internalOpen, setInternalOpen] = useState(false);
   const isOpen = typeof open === "boolean" ? open : internalOpen;
   const [description, setDescription] = useState("");
@@ -78,6 +80,7 @@ export default function ExpenseForm({
           }
           router.refresh();
         }
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
         toast.success("Expense recorded successfully!");
         handleOpen(false);
         resetForm();

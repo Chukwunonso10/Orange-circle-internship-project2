@@ -12,7 +12,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ item
         }
 
         const { itemId } = await params
-        const { operationId, name, lowStock, currentStock } = await req.json()
+        const { operationId, name, lowStock, currentStock, costPrice, sellingPrice } = await req.json()
 
 
         if (!name) {
@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ item
             }, { status: 400 })
         }
 
-        if (lowStock <= 0 || currentStock <= 0) {
+        if (lowStock < 0 || currentStock < 0) {
             return NextResponse.json({
                 success: false, message: "Bad Request: lowStock or currentStock cannot be negative"
             }, { status: 400 })
@@ -57,6 +57,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ item
                     name: name !== undefined ? name.trim() : undefined,
                     lowStock: lowStock ? Number(lowStock) : undefined,
                     currentStock: currentStock ? Number(currentStock) : undefined,
+                    costPrice: costPrice !== undefined ? Number(costPrice) : undefined,
+                    sellingPrice: sellingPrice !== undefined ? Number(sellingPrice) : undefined,
                 }
             })
 

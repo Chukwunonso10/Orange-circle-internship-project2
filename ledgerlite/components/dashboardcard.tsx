@@ -373,6 +373,16 @@ function TransactionActionModal({
     }
   }, [isSale, mode]);
 
+  // Auto-populate price when item changes in edit mode
+  useEffect(() => {
+    if (isSale && mode === "edit" && editItemId && products.length > 0) {
+      const selectedProduct = products.find((p) => p.id === editItemId);
+      if (selectedProduct && selectedProduct.sellingPrice !== undefined) {
+        setEditPrice(String(selectedProduct.sellingPrice));
+      }
+    }
+  }, [editItemId, isSale, mode, products]);
+
   const handleDelete = async () => {
     setSubmitting(true);
     try {
@@ -492,7 +502,7 @@ function TransactionActionModal({
                       <p className="text-sm font-semibold text-slate-800">{detail?.quantity} units</p>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Unit Price</span>
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Selling Price</span>
                       <p className="text-sm font-semibold text-slate-800">₦{Number(detail?.unitPrice).toLocaleString()}</p>
                     </div>
                   </>
@@ -622,7 +632,7 @@ function TransactionActionModal({
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-xs font-semibold text-slate-700">Unit Price (₦)</label>
+                      <label className="block text-xs font-semibold text-slate-700">Selling Price (₦)</label>
                       <input
                         type="number"
                         value={editPrice}

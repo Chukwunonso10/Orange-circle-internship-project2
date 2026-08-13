@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
                 success: false, message: "unauthorized: pls log in to continue"
             }, { status: 401 })
         }
-        const { operationId, id, name, lowStock, currentStock, createdAt } = await req.json()
+        const { operationId, id, name, lowStock, currentStock, costPrice, sellingPrice, createdAt } = await req.json()
 
         if (!name) {
             return NextResponse.json({
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
             }, { status: 400 })
         }
 
-        if (lowStock <= 0 ||  currentStock <= 0) {
+        if (lowStock < 0 ||  currentStock < 0) {
             return NextResponse.json({
                 success: false, message: "Bad Request: lowStock or currentStock cannot be negative"
             }, { status: 400 })
@@ -92,6 +92,8 @@ export async function POST(req: NextRequest) {
                             name,
                             lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
                             currentStock: currentStock !== undefined ? Number(currentStock) : undefined,
+                            costPrice: costPrice !== undefined ? Number(costPrice) : undefined,
+                            sellingPrice: sellingPrice !== undefined ? Number(sellingPrice) : undefined,
                             createdAt: createdAt ? new Date(createdAt) : undefined
                         }
                     })
@@ -103,6 +105,8 @@ export async function POST(req: NextRequest) {
                             name,
                             lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
                             currentStock: currentStock !== undefined ? Number(currentStock) : undefined,
+                            costPrice: costPrice !== undefined ? Number(costPrice) : undefined,
+                            sellingPrice: sellingPrice !== undefined ? Number(sellingPrice) : undefined,
                             userId,
                             createdAt: createdAt ? new Date(createdAt) : undefined
                         }
@@ -117,6 +121,8 @@ export async function POST(req: NextRequest) {
                         name,
                         lowStock: lowStock !== undefined ? Number(lowStock) : undefined,
                         currentStock: currentStock !== undefined ? Number(currentStock) : undefined,
+                        costPrice: costPrice !== undefined ? Number(costPrice) : undefined,
+                        sellingPrice: sellingPrice !== undefined ? Number(sellingPrice) : undefined,
                         userId,
                         createdAt: createdAt ? new Date(createdAt) : undefined
                     }

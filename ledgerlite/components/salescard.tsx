@@ -259,7 +259,7 @@ export default function SalesCard({
                   <span className="text-sm font-semibold text-slate-900">{qty}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Unit Price</span>
+                  <span className="text-sm text-slate-500">Selling Price</span>
                   <span className="text-sm font-semibold text-slate-900">
                     ₦{unit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
@@ -523,7 +523,7 @@ function EditSaleModal({
             {/* Unit Price */}
             <div className="space-y-2">
               <label htmlFor="edit-price-input" className="block text-sm font-medium text-slate-700">
-                Unit Price (₦)
+                Selling Price (₦)
               </label>
               <input
                 id="edit-price-input"

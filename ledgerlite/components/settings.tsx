@@ -184,7 +184,7 @@ function SecuritySection() {
         toast.error(result.error || "Failed to update security credentials.");
       }
     } catch (err) {
-      toast.error("Network error: Could not save password changes.");
+      toast.error("Network error: Could not save password  changes.");
     } finally {
       setLoading(false);
     }

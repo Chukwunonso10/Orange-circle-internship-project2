@@ -43,7 +43,8 @@ export default function RecentTransactionsClient({
     queryKey: ["transactions", userId, page],
     queryFn: async () => {
       const res = await fetch(
-        `/api/protected/transactions?page=${page}&limit=${limit}`
+        `/api/protected/transactions?page=${page}&limit=${limit}&_t=${Date.now()}`,
+        { cache: "no-store" }
       );
       if (!res.ok) {
         throw new Error("Failed to fetch transactions");

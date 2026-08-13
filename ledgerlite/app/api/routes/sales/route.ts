@@ -4,12 +4,28 @@ import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
         const userId = await getCurrentUserId()
         if (!userId) {
             return NextResponse.json({
                 success: false, message: "Unauthorize!!: pls log in"
+            })
+        }
+
+        const { searchParams } = new URL(req.url)
+        const itemId = searchParams.get("itemId")
+        const latestOnly = searchParams.get("latestOnly") === "true"
+
+        if (latestOnly && itemId) {
+            const lastSale = await prisma.sale.findFirst({
+                where: { userId, itemId },
+                orderBy: { createdAt: "desc" },
+                select: { unitPrice: true }
+            })
+            return NextResponse.json({
+                success: true,
+                unitPrice: lastSale ? Number(lastSale.unitPrice) : null
             })
         }
         // const {page, ...queryParams} = searchParams

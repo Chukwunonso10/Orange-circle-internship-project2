@@ -8,6 +8,21 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 export const metadata: Metadata = {
   title: "LedgerLite",
   description: "Record sales, track expenses, manage inventory and stay on top of your business with ease.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "LedgerLite",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#0B7A75",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default async function RootLayout({

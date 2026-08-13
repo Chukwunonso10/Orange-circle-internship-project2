@@ -2,6 +2,8 @@ import { getCurrentUserId } from "@/app/lib/authhelper";
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const userId = await getCurrentUserId();
@@ -63,16 +65,23 @@ export async function GET(req: NextRequest) {
     const totalEntries = totalSales + totalExpenses;
     const totalPages = Math.ceil(totalEntries / limit);
 
-    return NextResponse.json({
-      transactions: paginatedTransactions,
-      pagination: {
-        totalEntries,
-        page,
-        limit,
-        totalPages,
-        hasMore: page < totalPages,
+    return NextResponse.json(
+      {
+        transactions: paginatedTransactions,
+        pagination: {
+          totalEntries,
+          page,
+          limit,
+          totalPages,
+          hasMore: page < totalPages,
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0, must-revalidate",
+        },
+      }
+    );
   } catch (error) {
     console.error("API error fetching transactions:", error);
     return NextResponse.json(

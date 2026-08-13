@@ -65,7 +65,11 @@ export async function getMetrics() {
     ])
 
     const lowStockItems = allItems.filter(item => item.currentStock <= item.lowStock)
-    const lowStock = lowStockItems.slice(0, 3)
+    const lowStock = lowStockItems.slice(0, 3).map(item => ({
+        ...item,
+        costPrice: Number(item.costPrice),
+        sellingPrice: Number(item.sellingPrice),
+    }))
     const lowStockCount = lowStockItems.length
 
     const TotalMoneyIn = Number(TotalRevenue._sum.totalAmount) ?? 0
