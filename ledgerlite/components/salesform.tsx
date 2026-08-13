@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { X, Plus, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { sendGAEvent } from "@next/third-parties/google";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SalesFormProps {
   open?: boolean;
@@ -18,6 +19,7 @@ export default function SalesForm({
   hideTrigger = false,
 }: SalesFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [internalOpen, setInternalOpen] = useState(false);
   const isOpen = typeof open === "boolean" ? open : internalOpen;
 
@@ -78,6 +80,18 @@ export default function SalesForm({
       });
   }, [isOpen]);
 
+  // Fetch latest unit price for selected item
+  useEffect(() => {
+    if (itemType !== "tracked" || !selectedItemId || products.length === 0) return;
+
+    const selectedProduct = products.find((p) => p.id === selectedItemId);
+    if (selectedProduct && selectedProduct.sellingPrice !== undefined) {
+      setUnitPrice(String(selectedProduct.sellingPrice));
+    } else {
+      setUnitPrice(""); // Clear if no price stored, allowing manual input
+    }
+  }, [selectedItemId, itemType, products]);
+
   function resetForm() {
     setItemType("tracked");
     setSelectedItemId(products[0]?.id || "");
@@ -126,6 +140,7 @@ export default function SalesForm({
       if (response.ok && result.success) {
         handleOpen(false);
         resetForm();
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
         router.refresh(); // Refresh Next.js Server Component data
         toast.success("successfully recorded sales");
       } else {
@@ -307,7 +322,7 @@ export default function SalesForm({
                       htmlFor="unitPrice"
                       className="block text-sm font-medium text-slate-700 "
                     >
-                      Unit Price (₦)
+                      Selling Price (₦)
                     </label>
                     <input
                       id="unitPrice"

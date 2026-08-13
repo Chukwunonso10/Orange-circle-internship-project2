@@ -5,34 +5,54 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, password } = await req.json()
+        const { email, password, phoneNumber } = await req.json()
 
-        if (!email || !password) {
+        if (!email && !phoneNumber) {
             return NextResponse.json({
-                success: false, message: "Bad Request: email or password is required"
+                success: false, message: "Bad Request: email or phone number is required"
+            }, { status: 400 })
+        }
+        if (!password) {
+            return NextResponse.json({
+                success: false, message: "Bad Request: password is required"
             }, { status: 400 })
         }
 
-        const regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!regexPattern.test(email)) {
-            return NextResponse.json({
-                success: false, message: "invalid email address"
-            }, { status: 400 })
-        }
-
-        const lowerEmail = email.toLowerCase().trim()
         if (password.length < 8) {
             return NextResponse.json({
                 success: false, message: "password must be a minimum of 8 characters"
             }, { status: 400 })
         }
 
+        let user = null;
 
-        const user = await prisma.user.findUnique({ where: { email: lowerEmail } })
+        if (email) {
+            const regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if (!regexPattern.test(email)) {
+                return NextResponse.json({
+                    success: false, message: "invalid email address"
+                }, { status: 400 })
+            }
+            const lowerEmail = email.toLowerCase().trim()
+            user = await prisma.user.findUnique({ where: { email: lowerEmail } })
+        } else if (phoneNumber) {
+            const e164Regex = /^\+[1-9]\d{1,14}$/;
+            const standardizedPhone = phoneNumber.trim().replace(/\s+/g, "");
+
+            if (!e164Regex.test(standardizedPhone)) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Phone number must be in E.164 format (e.g. +2348012345678).",
+                    }, { status: 400 });
+            }
+            user = await prisma.user.findUnique({ where: { phoneNumber: standardizedPhone } })
+        }
+
         if (!user) {
             return NextResponse.json({
                 success: false, message: "Account Not Found"
-            },{status: 404})
+            }, { status: 404 })
         }
 
         const isPassword = await Verifypassword(password, user.passwordHash)
@@ -66,7 +86,7 @@ export async function POST(req: NextRequest) {
             secure: isProduction,
             sameSite: "lax",
             path: "/",
-            maxAge: 60*60*24
+            maxAge: 60 * 60 * 24
         })
 
         return NextResponse.json({
@@ -75,7 +95,7 @@ export async function POST(req: NextRequest) {
                 email: user.email,
                 buisnessName: user.buisnessName,
                 name: user.name
-                
+
             }
         }, { status: 200 })
 

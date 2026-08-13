@@ -92,6 +92,8 @@ export default function InventoryForm({
           name,
           currentStock,
           lowStock,
+          costPrice: Number(costPrice) || 0,
+          sellingPrice: Number(sellingPrice) || 0,
         }),
       });
 

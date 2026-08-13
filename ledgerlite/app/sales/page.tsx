@@ -7,7 +7,7 @@ import { Prisma } from "../generated/prisma/client";
 
 
 
-export default async function Sales({ searchParams }: { searchParams: { [key: string]: string } }) {
+export default async function Sales({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
 
   const userId = await getCurrentUserId()
   if (!userId) {

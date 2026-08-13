@@ -228,14 +228,19 @@ const phoneRegex = /^\d{10,11}$/;
 function validateLoginForm(form: LoginFormState): LoginFormErrors {
   const errors: LoginFormErrors = {};
 
-  if (!form.email.trim()) {
-    errors.email = "Email address is required.";
-  } else if (!emailRegex.test(form.email.trim())) {
-    errors.email = "Enter a valid email address.";
-  }
+  const hasEmail = Boolean(form.email.trim());
+  const hasPhone = Boolean(form.phone.trim());
 
-  if (form.phone.trim() && !phoneRegex.test(form.phone.trim())) {
-    errors.phone = "Enter a valid Nigerian phone number.";
+  if (!hasEmail && !hasPhone) {
+    errors.email = "Please enter either an email address or a phone number.";
+    errors.phone = "Please enter either an email address or a phone number.";
+  } else {
+    if (hasEmail && !emailRegex.test(form.email.trim())) {
+      errors.email = "Enter a valid email address.";
+    }
+    if (hasPhone && !phoneRegex.test(form.phone.trim())) {
+      errors.phone = "Enter a valid Nigerian phone number.";
+    }
   }
 
   if (!form.password) {
@@ -271,12 +276,23 @@ export default function LedgerLiteLogin() {
     setLoading(true);
     setError(null);
     try {
+      const body: any = { password: form.password };
+      if (form.email.trim()) {
+        body.email = form.email.trim();
+      } else if (form.phone.trim()) {
+        let phoneDigits = form.phone.trim();
+        if (phoneDigits.startsWith("0")) {
+          phoneDigits = phoneDigits.substring(1);
+        }
+        body.phoneNumber = `+234${phoneDigits}`;
+      }
+
       const res = await fetch("/api/sign-in", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: form.email, password: form.password }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
