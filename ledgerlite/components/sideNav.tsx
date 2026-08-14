@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -20,6 +20,40 @@ export default function SideNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [avatar, setAvatar] = useState("");
+
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    // Check if app is already running in standalone mode
+    const isStandalone = 
+      window.matchMedia('(display-mode: standalone)').matches || 
+      (window.navigator as any).standalone;
+
+    if (isStandalone) return;
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setIsInstallable(false);
+      setDeferredPrompt(null);
+    }
+  };
 
   // navigation items for the sidebar
   const navItems = [
@@ -189,6 +223,20 @@ export default function SideNav() {
                   </li>
                 );
               })}
+              {isInstallable && (
+                <li>
+                  <button
+                    onClick={handleInstallClick}
+                    type="button"
+                    className="w-full flex items-center gap-3 rounded-2xl px-3 py-3 font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-primary transition cursor-pointer text-left"
+                  >
+                    <span className="text-slate-500">
+                      <Download size={18} />
+                    </span>
+                    <span>Install App</span>
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </nav>
