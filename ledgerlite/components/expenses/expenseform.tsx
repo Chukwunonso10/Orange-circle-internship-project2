@@ -18,7 +18,7 @@ interface ExpenseFormProps {
   }) => Promise<void>;
 }
 
-export default function ExpenseForm({
+export default function  ExpenseForm({
   open,
   onOpenChange,
   hideTrigger = false,

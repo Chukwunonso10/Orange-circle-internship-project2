@@ -993,6 +993,7 @@ export default function LedgerLiteOnboarding() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           buisnessName: setupData.businessName,
+          hasInventory: setupData.hasInventory,
         }),
       });
 
