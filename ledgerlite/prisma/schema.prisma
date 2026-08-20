@@ -76,6 +76,10 @@ model User {
   dailyPhoneSmsSent             DateTime?
   dailyPhoneSmsReset DateTime?
 
+  resetToken          String?   @unique
+  resetTokenExpiresAt DateTime?
+  hasInventory        Boolean   @default(true)
+
   session        Session[]
   expense        Expense[]
   sale           Sale[]

@@ -115,6 +115,23 @@ export default function UserNav({
     };
   }, []);
 
+  // Listen to profile info updates dynamically from other pages without reloading
+  useEffect(() => {
+    function handleProfileUpdate(e: Event) {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        const { name, buisnessName, image } = customEvent.detail;
+        if (name) setUserName(name);
+        if (buisnessName) setBizName(buisnessName);
+        if (image) setAvatar(image);
+      }
+    }
+    window.addEventListener("profile-info-update", handleProfileUpdate);
+    return () => {
+      window.removeEventListener("profile-info-update", handleProfileUpdate);
+    };
+  }, []);
+
   return (
     <div>
       <section>

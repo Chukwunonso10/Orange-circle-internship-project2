@@ -51,25 +51,40 @@ export default function SalesForm({
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Fetch user's inventory items to choose from
+  // Fetch user's profile and inventory items to choose from
   useEffect(() => {
     if (!isOpen) return;
 
     setLoadingProducts(true);
-    fetch("/api/routes/item")
+    fetch("/api/protected/profile")
       .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          const list = data.allProducts || [];
-          setProducts(list);
-          if (list.length > 0) {
-            setSelectedItemId(list[0].id);
-          } else {
-            setItemType("custom");
-          }
-        } else {
+      .then((profileData) => {
+        const hasInv = profileData.success && profileData.profile ? profileData.profile.hasInventory !== false : true;
+        
+        if (!hasInv) {
           setItemType("custom");
+          setProducts([]);
+          setLoadingProducts(false);
+          return;
         }
+
+        // If inventory is enabled, fetch tracked products
+        return fetch("/api/routes/item")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              const list = data.allProducts || [];
+              setProducts(list);
+              if (list.length > 0) {
+                setItemType("tracked");
+                setSelectedItemId(list[0].id);
+              } else {
+                setItemType("custom");
+              }
+            } else {
+              setItemType("custom");
+            }
+          });
       })
       .catch((err) => {
         console.error("Error loading products:", err);

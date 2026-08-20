@@ -19,6 +19,7 @@ export default async function ProfilePage() {
       buisnessName: true,
       email: true,
       image: true,
+      hasInventory: true,
       createdAt: true,
     },
   });
@@ -41,6 +42,7 @@ export default async function ProfilePage() {
             initialEmail={user.email}
             initialBuisnessName={user.buisnessName}
             initialImage={user.image || ""}
+            initialHasInventory={user.hasInventory}
             createdAt={user.createdAt.toISOString()}
           />
         </main>

@@ -1,26 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-
-import { CheckSquare, Mail, ChevronLeft, Store } from "lucide-react";
-
-/**
- * LedgerLite - Login Screen
- * Two-column layout on desktop (hero illustration + form),
- * form-only on mobile.
- */
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-hot-toast";
+import { CheckSquare, Mail, ChevronLeft, Store, Lock, Eye, EyeOff, KeyRound } from "lucide-react";
 
 function Logo() {
   return (
     <div className="flex items-center gap-2">
-      {/* logo */}
       <div>
         <Link href="/">
           <div>
             <svg
-              className="w-40 h-10 md:w-40 md:"
+              className="w-40 h-10"
               viewBox="0 0 167 33"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -63,18 +56,15 @@ function Logo() {
   );
 }
 
-// back icon button
 function BackIconButton() {
   const router = useRouter();
-
-  // Typed click handler function
   const handleBack = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
     router.back();
   };
   return (
     <button
-      className="bg-[#F4F8F8] py-2 md:py-3 rounded-lg text-teal-700 cursor-pointer"
+      className="bg-[#F4F8F8] py-2 md:py-3 rounded-lg text-teal-700 cursor-pointer animate-in fade-in slide-in-from-left duration-300"
       type="button"
       onClick={handleBack}
       aria-label="Go back"
@@ -86,7 +76,7 @@ function BackIconButton() {
 
 function HeroPanel() {
   return (
-    <div className="relative hidden h-full flex-col justify-center overflow-hidden  px-12 lg:flex">
+    <div className="relative hidden h-full flex-col justify-center overflow-hidden px-12 lg:flex">
       <h1 className="max-w-sm text-4xl font-bold leading-tight text-slate-900">
         Book keeping made simple for your business.
       </h1>
@@ -94,8 +84,7 @@ function HeroPanel() {
         Record sales, track expenses, manage inventory and stay on top of your
         business with ease.
       </p>
-
-      <div className="relative h-96 w-full  ">
+      <div className="relative h-96 w-full">
         <Image
           src="/signinImg.png"
           alt="Dashboard preview"
@@ -105,7 +94,6 @@ function HeroPanel() {
           sizes="(max-width: 568px) 100vw, 50vw"
         />
       </div>
-
       <div className="mt-10 flex items-center gap-2 text-sm text-slate-400">
         <Store className="h-4 w-4" />
         <span>Built for market sellers, shops, and small business owners</span>
@@ -124,13 +112,13 @@ function Field({
   error?: string;
 }) {
   return (
-    <div className="mb-5">
-      <label className="mb-1.5 block text-sm font-medium text-slate-700">
+    <div className="mb-4">
+      <label className="mb-1 block text-xs font-semibold text-slate-700">
         {label}
       </label>
       {children}
       {error && (
-        <p className="mt-1.5 text-xs font-medium leading-relaxed text-rose-600">
+        <p className="mt-1 text-xs font-medium text-rose-600">
           {error}
         </p>
       )}
@@ -146,7 +134,7 @@ function TextInput({
   onChange,
   rightAdornment,
   error,
-  autoComplete,
+  disabled,
 }: {
   icon?: React.ReactNode;
   placeholder: string;
@@ -155,7 +143,7 @@ function TextInput({
   onChange: (v: string) => void;
   rightAdornment?: React.ReactNode;
   error?: string;
-  autoComplete?: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="relative">
@@ -167,15 +155,15 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        autoComplete={autoComplete}
         aria-invalid={Boolean(error)}
-        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
+        disabled={disabled}
+        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-2 disabled:bg-slate-50 disabled:text-slate-400 ${
           error
             ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
-            : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
+            : "border-slate-200 focus:border-brand-primary focus:ring-teal-100"
         }`}
       />
-      <div className="absolute bottom-[15%] left-[90%] cursor-pointer">
+      <div className="absolute inset-y-0 right-4 flex items-center cursor-pointer">
         {rightAdornment}
       </div>
     </div>
@@ -186,192 +174,370 @@ function PrimaryButton({
   children,
   onClick,
   disabled,
+  type = "button",
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
+  type?: "button" | "submit";
 }) {
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
-      className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none cursor-pointer"
+      className="w-full rounded-full bg-teal-600 py-3 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none cursor-pointer flex justify-center items-center gap-2"
     >
+      {disabled && (
+        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+      )}
       {children}
     </button>
   );
 }
 
-interface ForgetPasswordFormState {
-  email: string;
-  phone: string;
-}
+function ForgotPasswordContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
-type ForgetPasswordErrors = Partial<
-  Record<keyof ForgetPasswordFormState, string>
->;
+  // State machine: "request" | "otp" | "reset" | "success"
+  const [mode, setMode] = useState<"request" | "otp" | "reset" | "success">("request");
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^\d{10,11}$/;
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-function validateForgotPasswordForm(
-  form: ForgetPasswordFormState,
-): ForgetPasswordErrors {
-  const errors: ForgetPasswordErrors = {};
-
-  if (form.email.trim() && !emailRegex.test(form.email.trim())) {
-    errors.email = "Enter a valid email address.";
-  }
-
-  if (form.phone.trim() && !phoneRegex.test(form.phone.trim())) {
-    errors.phone = "Enter a valid Nigerian phone number.";
-  }
-
-  if (!form.email.trim() && !form.phone.trim()) {
-    errors.email = "Enter either your email or phone number.";
-  }
-
-  return errors;
-}
-
-export default function ForgotPassword() {
-  const [form, setForm] = useState<ForgetPasswordFormState>({
-    email: "",
-    phone: "",
-  });
-
-  const [submitted, setSubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const errors = validateForgotPasswordForm(form);
+  useEffect(() => {
+    if (token) {
+      setMode("reset");
+    } else {
+      setMode("request");
+    }
+  }, [token]);
+
+  // Client side validation
+  const errors: { email?: string; phone?: string; otp?: string; password?: string; confirmPassword?: string } = {};
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\d{10,11}$/;
+
+  if (mode === "request") {
+    const hasEmail = Boolean(email.trim());
+    const hasPhone = Boolean(phone.trim());
+    if (!hasEmail && !hasPhone) {
+      errors.email = "Please enter either an email address or a phone number.";
+      errors.phone = "Please enter either an email address or a phone number.";
+    } else {
+      if (hasEmail && !emailRegex.test(email.trim())) {
+        errors.email = "Enter a valid email address.";
+      }
+      if (hasPhone && !phoneRegex.test(phone.trim())) {
+        errors.phone = "Enter a valid 10 or 11 digit phone number.";
+      }
+    }
+  } else if (mode === "otp") {
+    if (!otp.trim() || otp.trim().length !== 6) {
+      errors.otp = "Enter the 6-digit code.";
+    }
+    if (!password) {
+      errors.password = "Password is required.";
+    } else if (password.length < 8) {
+      errors.password = "Password must be at least 8 characters long.";
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+  } else if (mode === "reset") {
+    if (!password) {
+      errors.password = "Password is required.";
+    } else if (password.length < 8) {
+      errors.password = "Password must be at least 8 characters long.";
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+  }
+
   const isValid = Object.keys(errors).length === 0;
 
-  const handleLogin = () => {
+  const handleRequestReset = async (e: React.FormEvent) => {
+    e.preventDefault();
     setSubmitAttempted(true);
     if (!isValid) return;
-    setSubmitted(true);
+
+    setLoading(true);
+    try {
+      const payload: any = {};
+      if (email.trim()) {
+        payload.email = email.trim();
+      } else {
+        let phoneDigits = phone.trim();
+        if (phoneDigits.startsWith("0")) {
+          phoneDigits = phoneDigits.substring(1);
+        }
+        payload.phoneNumber = `+234${phoneDigits}`;
+      }
+
+      const res = await fetch("/api/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Something went wrong.");
+      }
+
+      toast.success(data.message || "Reset info sent!");
+      if (email.trim()) {
+        setMode("success");
+      } else {
+        setMode("otp");
+        setSubmitAttempted(false);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to process request.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (submitted) {
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitAttempted(true);
+    if (!isValid) return;
+
+    setLoading(true);
+    try {
+      const payload: any = { password };
+      if (mode === "reset" && token) {
+        payload.token = token;
+      } else if (mode === "otp") {
+        let phoneDigits = phone.trim();
+        if (phoneDigits.startsWith("0")) {
+          phoneDigits = phoneDigits.substring(1);
+        }
+        payload.phoneNumber = `+234${phoneDigits}`;
+        payload.otp = otp.trim();
+      }
+
+      const res = await fetch("/api/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to reset password.");
+      }
+
+      toast.success("Password reset successfully!");
+      setMode("success");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reset password.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (mode === "success") {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-6">
-        <div className="flex w-full max-w-sm flex-col items-center text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-            <CheckSquare className="h-8 w-8 text-teal-600" strokeWidth={2.5} />
-          </div>
-          <h2 className="mt-6 text-2xl font-bold text-slate-900">
-            Check your mail!
-          </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Reset link has been sent to{" "}
-            <span className="font-medium text-slate-700">{form.email}</span>
-          </p>
-          <Link
-            onClick={() => setSubmitted(false)}
-            href="/signin"
-            className="mt-6 text-sm font-medium text-teal-600 hover:underline"
-          >
-            Back to login
-          </Link>
+      <div className="flex flex-col items-center text-center py-10 animate-in fade-in zoom-in duration-300">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 mb-6">
+          <CheckSquare className="h-8 w-8 text-teal-600" strokeWidth={2.5} />
         </div>
+        <h2 className="text-2xl font-bold text-slate-900">Success!</h2>
+        <p className="mt-2 text-sm text-slate-500 max-w-xs">
+          {email.trim()
+            ? `We sent a password reset link to your email address: ${email}`
+            : "Your password has been successfully reset."}
+        </p>
+        <Link
+          href="/signin"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition"
+        >
+          Back to login
+        </Link>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* <HomeNav /> */}
-      <div className="min-h-screen w-full bg-slate-50">
-        <div className="mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 lg:grid-cols-2">
-          <HeroPanel />
+    <div className="w-full max-w-sm animate-in fade-in duration-300">
+      <Logo />
+      <BackIconButton />
 
-          <div className="flex items-center justify-center px-6 py-0 md:py-12 sm:px-10">
-            <div className="w-full max-w-sm">
-              <Logo />
-              <BackIconButton />
+      <h2 className="mt-4 text-2xl font-bold text-slate-900">
+        {mode === "request" ? "Reset Password" : "Create New Password"}
+      </h2>
+      <p className="mt-1.5 mb-6 text-sm text-slate-500">
+        {mode === "request"
+          ? "Enter your Phone number or Email to request a reset."
+          : mode === "otp"
+          ? `Enter the 6-digit code sent to +234${phone.startsWith("0") ? phone.substring(1) : phone} and choose a new password.`
+          : "Enter your secure new password below."}
+      </p>
 
-              <h2 className="md:mt-4 text-2xl font-bold text-slate-900">
-                Reset Password
-              </h2>
-              <p className="mt-1.5 mb-6 text-sm text-slate-500">
-                Enter your Phone number or Email to reset password.
-              </p>
+      {mode === "request" && (
+        <form onSubmit={handleRequestReset} className="space-y-4">
+          <Field label="Email Address" error={submitAttempted ? errors.email : undefined}>
+            <TextInput
+              icon={<Mail className="h-4 w-4" />}
+              placeholder="eg. you@mail.com"
+              type="email"
+              value={email}
+              error={submitAttempted ? errors.email : undefined}
+              disabled={loading}
+              onChange={(v) => {
+                setEmail(v);
+                if (v.trim()) setPhone("");
+              }}
+            />
+          </Field>
 
-              {submitAttempted && !isValid && (
-                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">
-                  Please enter a valid email or phone number to continue.
-                </div>
-              )}
-
-              <Field
-                label="Email"
-                error={submitAttempted ? errors.email : undefined}
-              >
-                <TextInput
-                  icon={<Mail className="h-4 w-4" />}
-                  placeholder="eg. you@mail.com"
-                  type="email"
-                  value={form.email}
-                  error={submitAttempted ? errors.email : undefined}
-                  autoComplete="email"
-                  onChange={(v) => setForm((f) => ({ ...f, email: v }))}
-                />
-              </Field>
-
-              <div className="flex items-center gap-4 py-2">
-                <div className="h-px flex-1 bg-slate-300" />{" "}
-                <span className="text-sm font-medium text-slate-500">OR</span>{" "}
-                <div className="h-px flex-1 bg-slate-300" />{" "}
-              </div>
-
-              <Field
-                label="Phone Number"
-                error={submitAttempted ? errors.phone : undefined}
-              >
-                <div className="relative">
-                  <span className="text-base leading-none pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">
-                    🇳🇬
-                  </span>
-                  <span className="pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-md">
-                    +234
-                  </span>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={form.phone}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        phone: e.target.value.replace(/\D/g, ""),
-                      }))
-                    }
-                    placeholder="8012345678"
-                    aria-invalid={Boolean(
-                      submitAttempted ? errors.phone : undefined,
-                    )}
-                    className={`w-full rounded-xl border bg-white px-20 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
-                      submitAttempted && errors.phone
-                        ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
-                        : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
-                    }`}
-                  />
-                </div>
-              </Field>
-
-              <div className="flex flex-col items-center gap-4">
-                <PrimaryButton onClick={handleLogin}>
-                  Reset Password
-                </PrimaryButton>
-
-                <Link
-                  href="/signin"
-                  className="font-medium text-sm  text-teal-700 hover:underline"
-                >
-                  Back to Login
-                </Link>
-              </div>
-            </div>
+          <div className="flex items-center gap-4 py-1">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-xs font-semibold text-slate-400">OR</span>
+            <div className="h-px flex-1 bg-slate-200" />
           </div>
+
+          <Field label="Phone Number" error={submitAttempted ? errors.phone : undefined}>
+            <div className="relative">
+              <span className="text-base leading-none pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">
+                🇳🇬
+              </span>
+              <span className="pointer-events-none absolute inset-y-0 left-9 flex items-center text-slate-400 text-sm">
+                +234
+              </span>
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={phone}
+                disabled={loading}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  setPhone(val);
+                  if (val.trim()) setEmail("");
+                }}
+                placeholder="8012345678"
+                aria-invalid={Boolean(submitAttempted ? errors.phone : undefined)}
+                className={`w-full rounded-xl border bg-white px-20 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-2 disabled:bg-slate-50 disabled:text-slate-400 ${
+                  submitAttempted && errors.phone
+                    ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
+                    : "border-slate-200 focus:border-brand-primary focus:ring-teal-100"
+                }`}
+              />
+            </div>
+          </Field>
+
+          <PrimaryButton type="submit" disabled={loading}>
+            Send Reset Code
+          </PrimaryButton>
+        </form>
+      )}
+
+      {(mode === "otp" || mode === "reset") && (
+        <form onSubmit={handleResetPassword} className="space-y-4">
+          {mode === "otp" && (
+            <Field label="6-Digit OTP Code" error={submitAttempted ? errors.otp : undefined}>
+              <TextInput
+                icon={<KeyRound className="h-4 w-4" />}
+                placeholder="Enter 6-digit code"
+                type="text"
+                value={otp}
+                error={submitAttempted ? errors.otp : undefined}
+                disabled={loading}
+                onChange={(v) => setOtp(v.replace(/\D/g, "").substring(0, 6))}
+              />
+            </Field>
+          )}
+
+          <Field label="New Password" error={submitAttempted ? errors.password : undefined}>
+            <TextInput
+              icon={<Lock className="h-4 w-4" />}
+              placeholder="Minimum 8 characters"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              error={submitAttempted ? errors.password : undefined}
+              disabled={loading}
+              onChange={setPassword}
+              rightAdornment={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              }
+            />
+          </Field>
+
+          <Field label="Confirm Password" error={submitAttempted ? errors.confirmPassword : undefined}>
+            <TextInput
+              icon={<Lock className="h-4 w-4" />}
+              placeholder="Re-enter password"
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              error={submitAttempted ? errors.confirmPassword : undefined}
+              disabled={loading}
+              onChange={setConfirmPassword}
+              rightAdornment={
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              }
+            />
+          </Field>
+
+          <PrimaryButton type="submit" disabled={loading}>
+            Save New Password
+          </PrimaryButton>
+        </form>
+      )}
+
+      <div className="mt-6 flex flex-col items-center">
+        <Link
+          href="/signin"
+          className="font-medium text-sm text-teal-700 hover:underline"
+        >
+          Back to Login
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default function ForgotPassword() {
+  return (
+    <div className="min-h-screen w-full bg-slate-50">
+      <div className="mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 lg:grid-cols-2">
+        <HeroPanel />
+        <div className="flex items-center justify-center px-6 py-8 md:py-12 sm:px-10">
+          <Suspense fallback={
+            <div className="flex items-center justify-center p-6">
+              <span className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600" />
+            </div>
+          }>
+            <ForgotPasswordContent />
+          </Suspense>
         </div>
       </div>
     </div>

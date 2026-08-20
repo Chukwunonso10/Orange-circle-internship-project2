@@ -282,12 +282,14 @@ function PersonalProfileSection({
 
 interface BusinessSectionProps {
   initialBuisnessName: string;
-  onSave: (payload: { buisnessName: string }) => Promise<void>;
+  initialHasInventory: boolean;
+  onSave: (payload: { buisnessName?: string; hasInventory?: boolean }) => Promise<void>;
   loading: boolean;
 }
 
 function BusinessProfileSection({
   initialBuisnessName,
+  initialHasInventory,
   onSave,
   loading,
 }: BusinessSectionProps) {
@@ -295,7 +297,7 @@ function BusinessProfileSection({
   const [businessType, setBusinessType] = useState("Services");
   const [typeOpen, setTypeOpen] = useState(false);
   const [typeQuery, setTypeQuery] = useState("");
-  const [inventoryEnabled, setInventoryEnabled] = useState(true);
+  const [inventoryEnabled, setInventoryEnabled] = useState(initialHasInventory);
 
   const filteredTypes = BUSINESS_TYPES.filter((t) =>
     t.toLowerCase().includes(typeQuery.toLowerCase())
@@ -306,7 +308,7 @@ function BusinessProfileSection({
       toast.error("Business name is required");
       return;
     }
-    await onSave({ buisnessName: businessName });
+    await onSave({ buisnessName: businessName, hasInventory: inventoryEnabled });
   };
 
   return (
@@ -414,6 +416,7 @@ interface LedgerLiteProfileProps {
   initialEmail: string;
   initialBuisnessName: string;
   initialImage: string;
+  initialHasInventory: boolean;
   createdAt: string;
 }
 
@@ -422,13 +425,14 @@ export default function LedgerLiteProfile({
   initialEmail,
   initialBuisnessName,
   initialImage,
+  initialHasInventory,
 }: LedgerLiteProfileProps) {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState<ProfileSection>("personal");
   const [loading, setLoading] = useState(false);
 
   // Handle profile update submits
-  const handleProfileSave = async (payload: { name?: string; buisnessName?: string; image?: string }) => {
+  const handleProfileSave = async (payload: { name?: string; buisnessName?: string; image?: string; hasInventory?: boolean }) => {
     setLoading(true);
     try {
       const res = await fetch("/api/protected/profile", {
@@ -439,13 +443,49 @@ export default function LedgerLiteProfile({
 
       const data = await res.json();
       if (res.ok && data.success) {
-        toast.success(data.message || "Profile updated successfully!");
+        // Build custom toast notification based on what fields actually changed
+        const updatedFields: string[] = [];
+        if (payload.name !== undefined && payload.name !== initialName) {
+          updatedFields.push("Full name");
+        }
+        if (payload.image !== undefined && payload.image !== initialImage) {
+          updatedFields.push("Profile picture");
+        }
+        if (payload.buisnessName !== undefined && payload.buisnessName !== initialBuisnessName) {
+          updatedFields.push("Business name");
+        }
+        if (payload.hasInventory !== undefined && payload.hasInventory !== initialHasInventory) {
+          updatedFields.push("Inventory settings");
+        }
+
+        let toastMsg = "Profile updated successfully!";
+        if (updatedFields.length === 1) {
+          toastMsg = `${updatedFields[0]} updated successfully!`;
+        } else if (updatedFields.length === 2) {
+          toastMsg = `${updatedFields[0]} and ${updatedFields[1]} updated successfully!`;
+        } else if (updatedFields.length === 3) {
+          toastMsg = `${updatedFields[0]}, ${updatedFields[1]}, and ${updatedFields[2]} updated successfully!`;
+        } else {
+          toastMsg = "No changes were made.";
+        }
+
+        toast.success(toastMsg);
 
         // Dispatch dynamic avatar update event
         if (payload.image) {
           const event = new CustomEvent("profile-avatar-update", { detail: payload.image });
           window.dispatchEvent(event);
         }
+
+        // Dispatch dynamic profile info updates
+        const infoEvent = new CustomEvent("profile-info-update", {
+          detail: {
+            name: payload.name,
+            buisnessName: payload.buisnessName,
+            image: payload.image
+          }
+        });
+        window.dispatchEvent(infoEvent);
 
         // Add custom profile update notification to client storage list
         try {
@@ -507,6 +547,7 @@ export default function LedgerLiteProfile({
           {activeSection === "business" && (
             <BusinessProfileSection
               initialBuisnessName={initialBuisnessName}
+              initialHasInventory={initialHasInventory}
               onSave={handleProfileSave}
               loading={loading}
             />
