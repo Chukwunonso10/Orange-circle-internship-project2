@@ -217,79 +217,40 @@ export default function LedgerLiteExportSummary() {
       const previewEl = document.getElementById("export-report-preview");
       if (!previewEl) return;
 
-      const printContent = previewEl.innerHTML;
-      const printWindow = window.open("", "_blank");
+      // Create a style element with print isolation CSS
+      const printStyle = document.createElement("style");
+      printStyle.id = "print-isolation-style";
+      printStyle.innerHTML = `
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          #export-report-preview, #export-report-preview * {
+            visibility: visible !important;
+          }
+          #export-report-preview {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            background: white !important;
+            padding: 20px !important;
+          }
+          .print\\:block {
+            display: block !important;
+          }
+        }
+      `;
+      document.head.appendChild(printStyle);
 
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>${businessName} - Summary Report</title>
-              <style>
-                body {
-                  font-family: system-ui, -apple-system, sans-serif;
-                  padding: 40px;
-                  color: #1e293b;
-                  background: white;
-                }
-                .flex { display: flex; }
-                .justify-between { justify-content: space-between; }
-                .items-center { align-items: center; }
-                .border-b { border-bottom: 1px solid #f1f5f9; }
-                .pb-4 { padding-bottom: 16px; }
-                .mt-6 { margin-top: 24px; }
-                .mb-5 { margin-bottom: 20px; }
-                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-                .rounded-2xl { border-radius: 16px; }
-                .border { border: 1px solid #f1f5f9; }
-                .bg-slate-50\\/60 { background-color: #f8fafc; }
-                .px-4 { padding-left: 16px; padding-right: 16px; }
-                .py-4 { padding-top: 16px; padding-bottom: 16px; }
-                .px-6 { padding-left: 24px; padding-right: 24px; }
-                .py-5 { padding-top: 20px; padding-bottom: 20px; }
-                .text-xs { font-size: 12px; }
-                .text-sm { font-size: 14px; }
-                .text-slate-500 { color: #64748b; }
-                .text-slate-900 { color: #0f172a; }
-                .text-teal-700 { color: #0f766e; }
-                .text-xl { font-size: 20px; }
-                .text-2xl { font-size: 24px; }
-                .font-bold { font-weight: 700; }
-                .font-semibold { font-weight: 600; }
-                .mt-1.5 { margin-top: 6px; }
-                .mt-16 { margin-top: 64px; }
-                .border-t { border-top: 1px solid #e2e8f0; }
-                .border-dashed { border-style: dashed; }
-                .pt-6 { padding-top: 24px; }
-                .text-slate-400 { color: #94a3b8; }
-                .print\\:block { display: block !important; }
-                .hidden { display: none; }
-                .col-span-2 { grid-column: span 2; }
-                .col-span-1 { grid-column: span 1; }
-                .inline-flex { display: inline-flex; }
-                .rounded-full { border-radius: 9999px; }
-                .bg-teal-50 { background-color: #f0fdfa; }
-                .px-3 { padding-left: 12px; padding-right: 12px; }
-                .py-1 { padding-top: 4px; padding-bottom: 4px; }
-                .font-semibold { font-weight: 600; }
-              </style>
-            </head>
-            <body>
-              <div style="max-width: 700px; margin: 0 auto;">
-                ${printContent}
-              </div>
-              <script>
-                // Execute printing once DOM rendering settles
-                setTimeout(() => {
-                  window.print();
-                  window.close();
-                }, 300);
-              </script>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-      }
+      // Trigger direct print dialog on the current window (prevents popup blockers)
+      window.print();
+
+      // Clean up the style element after printing
+      setTimeout(() => {
+        const el = document.getElementById("print-isolation-style");
+        if (el) el.remove();
+      }, 500);
     } else {
       alert(
         "To save as Image, you can use your device screenshot shortcut or choose standard PDF print export instead.",
@@ -337,13 +298,14 @@ export default function LedgerLiteExportSummary() {
           <div className="space-y-3">
             <button
               type="button"
-              onClick={() =>
+              onClick={() => {
                 sendGAEvent({
                   event: "exportSummary_clicked",
                   action: "user_exportedSummary",
                   label: "exportSummary_button",
-                })
-              }
+                });
+                handleExport();
+              }}
 
               disabled={isPending}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-teal-600/20 transition-colors hover:bg-teal-700 cursor-pointer disabled:opacity-50"

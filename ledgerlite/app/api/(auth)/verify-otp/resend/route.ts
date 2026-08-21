@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    
     // Daily limit check
     let dailyCount = user.dailySmsCount;
     let dailyReset = user.dailyPhoneSmsReset ?? new Date(Date.now() + 24 * 60 * 60 * 1000);
