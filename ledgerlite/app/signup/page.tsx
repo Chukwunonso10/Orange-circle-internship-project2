@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ import {
   Package,
   ClipboardList,
 } from "lucide-react";
+import { format } from "path";
 
 /**
  * LedgerLite Onboarding Flow
@@ -206,11 +208,10 @@ function TextInput({
         autoComplete={autoComplete}
         inputMode={inputMode}
         aria-invalid={Boolean(error)}
-        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${
-          error
+        className={`w-full rounded-xl border bg-white px-12 py-2.5 text-slate-900 outline-none transition focus:ring-2 ${error
             ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
             : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
-        }`}
+          }`}
       />
       <div className="absolute bottom-[15%] left-[90%] cursor-pointer">
         {rightAdornment}
@@ -340,6 +341,7 @@ function validateAccountForm(form: AccountForm): AccountFormErrors {
   return errors;
 }
 
+
 function PasswordStrengthMeter({ password }: { password: string }) {
   const rules = [
     { label: "8+ characters", ok: password.length >= 8 },
@@ -372,9 +374,8 @@ function PasswordStrengthMeter({ password }: { password: string }) {
         {rules.map((rule) => (
           <div key={rule.label} className="flex items-center gap-1.5">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                rule.ok ? "bg-teal-600" : "bg-slate-300"
-              }`}
+              className={`h-1.5 w-1.5 rounded-full ${rule.ok ? "bg-teal-600" : "bg-slate-300"
+                }`}
             />
             <span>{rule.label}</span>
           </div>
@@ -436,6 +437,7 @@ function CreateAccountScreen({
     handleSubmit();
   };
 
+  
   return (
     <div className="w-full max-w-sm">
       <Logo />
@@ -501,11 +503,10 @@ function CreateAccountScreen({
             }
             placeholder="8012345678"
             aria-invalid={Boolean(submitAttempted ? errors.phone : undefined)}
-            className={`w-full rounded-xl border bg-white px-18 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-2 ${
-              submitAttempted && errors.phone
+            className={`w-full rounded-xl border bg-white px-18 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-2 ${submitAttempted && errors.phone
                 ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-100"
                 : "border-slate-200 focus:border-brand-primary focus:ring-sky-200"
-            }`}
+              }`}
           />
         </div>
       </Field>
@@ -617,11 +618,13 @@ function VerifyAccountScreen({
   onBack,
   contact,
   loading,
+  email,
 }: {
   onVerify: (codeString: string) => void;
   onBack: () => void;
   contact: string;
   loading: boolean;
+  email: string;
 }) {
   const [code, setCode] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
@@ -648,7 +651,35 @@ function VerifyAccountScreen({
   );
 
   const isComplete = code.every((d) => d !== "");
+  const [resendTimer, setResendTimer] = useState(0);
 
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendTimer]);
+
+  const resend = async () => {
+    if (resendTimer > 0 || loading) return;
+    try {
+      const res = await fetch("/api/verify-otp/resend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to resend code.");
+      } 
+      toast.success(data.message || "Verification code resent successfully!");
+      setResendTimer(60);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to resend code.");
+    }
+  };
   return (
     <div className="w-full max-w-sm">
       <Logo />
@@ -679,9 +710,19 @@ function VerifyAccountScreen({
 
       <p className="mb-10 text-sm text-slate-500">
         Didn't receive code?{" "}
-        <button className="font-medium text-teal-600 hover:underline">
-          Resend
-        </button>
+        {resendTimer > 0 ? (
+          <span className="text-slate-400 font-medium ml-1">
+            Resend in <span className="font-bold">{resendTimer}s</span>
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => resend()}
+            className="font-medium text-teal-600 hover:underline cursor-pointer"
+          >
+            Resend
+          </button>
+        )}
       </p>
 
       <PrimaryButton
@@ -823,19 +864,17 @@ function BusinessSetupScreen({
           ].map((opt) => (
             <label
               key={opt.label}
-              className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3.5 text-sm transition-colors ${
-                hasInventory === opt.value
+              className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3.5 text-sm transition-colors ${hasInventory === opt.value
                   ? "border-teal-500 bg-teal-50 text-teal-700"
                   : "border-slate-200 text-slate-700 hover:bg-slate-50"
-              }`}
+                }`}
             >
               <span>{opt.label}</span>
               <span
-                className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${
-                  hasInventory === opt.value
+                className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${hasInventory === opt.value
                     ? "border-teal-600"
                     : "border-slate-300"
-                }`}
+                  }`}
               >
                 {hasInventory === opt.value && (
                   <span className="h-2 w-2 rounded-full bg-teal-600" />
@@ -1050,6 +1089,7 @@ export default function LedgerLiteOnboarding() {
                   onVerify={handleVerifyOtp}
                   onBack={() => setStep("create")}
                   loading={loading}
+                  email={account.email}
                 />
               )}
               {step === "business" && !finished && (
