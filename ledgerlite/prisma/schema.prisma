@@ -74,7 +74,7 @@ model User {
   lastPhoneSmsSent              DateTime?
   dailySmsCount                 Int       @default(0)
   dailyPhoneSmsSent             DateTime?
-  dailyPhoneSmsReset DateTime?
+  dailyPhoneSmsReset            DateTime?
 
   resetToken          String?   @unique
   resetTokenExpiresAt DateTime?
