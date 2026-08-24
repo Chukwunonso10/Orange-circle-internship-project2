@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
             }, { status: 400 });
         }
 
-        let user = null;
+        let user = null;  
 
         if (email) {
             const lowerEmail = email.toLowerCase().trim();
