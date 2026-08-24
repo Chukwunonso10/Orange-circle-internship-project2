@@ -9,6 +9,7 @@ export async function VerificationEmail(to: string, code: string) {
         from: "LedgerLite <no-reply@nduledger.xyz>",
         to,
         subject: "verify your email",
+        replyTo: "kuzuechinonsojude@gmail.com",
         react: EmailTemplate({ code })
     })
 
