@@ -1,5 +1,7 @@
 import { Verifypassword } from "@/app/lib/hashpassword";
 import prisma from "@/app/lib/prisma";
+import { LoginValidator } from "@/app/lib/validator";
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -108,3 +110,4 @@ export async function POST(req: NextRequest) {
 
 
 }
+

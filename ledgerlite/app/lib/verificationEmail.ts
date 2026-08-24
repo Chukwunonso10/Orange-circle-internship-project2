@@ -6,7 +6,7 @@ export async function VerificationEmail(to: string, code: string) {
     const resend = new Resend(process.env.RESEND_API_KEY)
 
     const { data, error } = await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "LedgerLite <no-reply@nduledger.xyz>",
         to,
         subject: "verify your email",
         react: EmailTemplate({ code })
@@ -20,3 +20,10 @@ export async function VerificationEmail(to: string, code: string) {
 
     return data;
 }
+
+// const { data, error } = await resend.emails.send({
+//     from: "onboarding@resend.dev",
+//     to,
+//     subject: "verify your email",
+//     react: EmailTemplate({ code })
+// })
