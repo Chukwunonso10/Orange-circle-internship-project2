@@ -1,76 +1,57 @@
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto"
+import crypto from "crypto";
 import { VerificationEmail } from "@/app/lib/verificationEmail";
+
 export async function POST(req: NextRequest) {
-    const { email } = await req.json()
+  try {
+    const { email } = await req.json();
 
     if (!email) {
-        return NextResponse.json({ success: false, message: "email is required" })
+      return NextResponse.json({ success: false, message: "Email is required" }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
     if (!user) {
-        return NextResponse.json({ success: false, message: "user not found!!" })
+      return NextResponse.json({ success: false, message: "User not found!" }, { status: 404 });
     }
 
     if (user.isVerified) {
-
-        await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                verificationToken: null,
-                expiresAt: null
-            }
-        })
-        return NextResponse.json({
-            success: false, message: "user is already verified"
-        }, { status: 200 })
+      return NextResponse.json({
+        success: false, 
+        message: "User is already verified"
+      }, { status: 400 });
     }
 
-    const verificationToken = crypto.randomInt(100000, 1000000).toString()
-    const sessionToken = crypto.randomUUID()
-    const expires = new Date(Date.now() + 3 * 60 * 1000)
-    const isProduction = process.env.NODE_ENV === "production"
+    // Generate new OTP (valid for 3 minutes)
+    const verificationToken = crypto.randomInt(100000, 1000000).toString();
+    const expires = new Date(Date.now() + 3 * 60 * 1000);
 
+    // Save the new OTP code and expiration to the database
     await prisma.user.update({
-        where: { id: user.id },
-        data: {
-            verificationToken,
-            expiresAt: expires
-        }
-    })
+      where: { id: user.id },
+      data: {
+        verificationToken,
+        expiresAt: expires
+      }
+    });
 
     let emailSent = false;
-
     try {
-        await VerificationEmail(email, verificationToken);
-        emailSent = true;
+      await VerificationEmail(email, verificationToken);
+      emailSent = true;
     } catch (err) {
-        console.error("Email sending failed:", err);
+      console.error("Email sending failed:", err);
     }
 
-    await prisma.session.create({
-        data: {
-            userId: user.id,
-            sessionToken,
-            expiresAt: expires
+    return NextResponse.json({
+      success: true, 
+      message: "Verification code successfully resent to email", 
+      emailSent
+    }, { status: 200 });
 
-        }
-    })
-
-    const response = NextResponse.json({
-        success: true, message: "code successfully resent to email", emailSent: emailSent
-    }, { status: 200 })
-
-    response.cookies.set(sessionToken, sessionToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 3 * 60
-
-    })
-
-    return response
+  } catch (error) {
+    console.error("Resend endpoint error:", error);
+    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+  }
 }
