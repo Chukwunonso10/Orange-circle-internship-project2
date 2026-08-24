@@ -948,6 +948,7 @@ export default function LedgerLiteOnboarding() {
   const handleCreateAccount = async () => {
     setLoading(true);
     setError(null);
+
     try {
       const normalizePhoneNumber = (phone: string) => {
         let clean = phone.trim().replace(/\s+/g, "");
@@ -995,7 +996,7 @@ export default function LedgerLiteOnboarding() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/verify-otp", {
+      const res = await fetch("/api/verifyEmail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
