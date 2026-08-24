@@ -663,7 +663,7 @@ function VerifyAccountScreen({
   const resend = async () => {
     if (resendTimer > 0 || loading) return;
     try {
-      const res = await fetch("/api/verify-otp/resend", {
+      const res = await fetch("/api/verify-otp/resendEmail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
