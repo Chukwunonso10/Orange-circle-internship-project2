@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ success: false, error: 'Unauthorized: User session or email identifier not found' }, { status: 401 });
     }
+    
 
     if (user.isVerified) {
       const sessionToken = crypto.randomUUID();

@@ -49,6 +49,15 @@ export async function POST(req: NextRequest) {
         const sessionToken = crypto.randomUUID()
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
+        // Create the session in the database
+        await prisma.session.create({
+            data: {
+                sessionToken,
+                userId: user.id,
+                expiresAt
+            }
+        })
+
         cookiesStore.set("sessionToken", sessionToken, {
             httpOnly: true,
             secure: isProduction,
