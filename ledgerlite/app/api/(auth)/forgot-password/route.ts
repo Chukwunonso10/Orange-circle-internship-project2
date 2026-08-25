@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
             });
 
             // Send password reset email
-            const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/forgotpassword?token=${token}`;
+            const resetLink = `${process.env.HOSTED_URL || "http://localhost:3000"}/forgotpassword?token=${token}`;
             const resend = new Resend(process.env.RESEND_API_KEY);
             
             await resend.emails.send({
