@@ -228,7 +228,7 @@ function ForgotPasswordContent() {
 
   // Client side validation
   const errors: { email?: string; phone?: string; otp?: string; password?: string; confirmPassword?: string } = {};
-
+ 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^\d{10,11}$/;
 
@@ -302,7 +302,8 @@ function ForgotPasswordContent() {
 
       toast.success(data.message || "Reset info sent!");
       if (email.trim()) {
-        setMode("success");
+        setMode("success")
+        
       } else {
         setMode("otp");
         setSubmitAttempted(false);

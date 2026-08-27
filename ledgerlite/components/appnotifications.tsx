@@ -57,7 +57,7 @@ function EmptyState() {
     <div className="flex flex-1 flex-col items-center justify-center py-24 text-center">
       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
         <Inbox className="h-6 w-6 text-slate-400" />
-      </div>
+      </div> 
       <h3 className="text-lg font-bold text-slate-900">No notifications</h3>
       <p className="mt-1 text-sm text-slate-400">
         Important updates and alerts will appear here
