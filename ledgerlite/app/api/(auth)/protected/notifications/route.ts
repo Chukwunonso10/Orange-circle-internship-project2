@@ -14,12 +14,15 @@ function getRelativeTime(date: Date): string {
   const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
   const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
 
+
   if (diffMins < 1) {
     return "Just now";
   }
+
   if (diffMins < 60) {
     return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
   }
+
   if (diffHours < 24) {
     return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
   }
@@ -42,11 +45,13 @@ export async function GET() {
       orderBy: { updatedAt: "desc" },
     });
 
+
     // Filter down below dynamic stock thresholds
     const lowStockItems = items.filter(
       (item) => item.currentStock <= item.lowStock
     );
 
+    
     // Format low stock inventory status as dynamic notifications with relative timestamps
     const lowStockNotifications = lowStockItems.map((item) => ({
       id: `low-stock-${item.id}`,
@@ -84,8 +89,9 @@ export async function GET() {
   } catch (error) {
     console.error("API error fetching notifications:", error);
     return NextResponse.json(
-      { error: "Failed to load notifications" },
+      { error: "Failed to load notifications"},
       { status: 500 }
     );
   }
 }
+

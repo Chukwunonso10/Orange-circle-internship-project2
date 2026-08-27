@@ -42,8 +42,9 @@ export async function POST(req: NextRequest) {
             const resend = new Resend(process.env.RESEND_API_KEY);
             
             await resend.emails.send({
-                from: "onboarding@resend.dev",
+                from: "LedgerLite <no-reply@nduledger.xyz>",
                 to: user.email,
+                replyTo: "kuzuechinonsojude@gmail.com",
                 subject: "Reset your LedgerLite password",
                 html: `<p>Hello ${user.name},</p>
                        <p>You requested a password reset. Please click the link below to set a new password. The link is valid for 1 hour.</p>

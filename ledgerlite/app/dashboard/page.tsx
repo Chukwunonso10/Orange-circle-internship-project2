@@ -19,6 +19,8 @@ import WelcomeGreeting from "../../components/welcomeGreeting";
 import SalesModalCard from "../../components/SalesModalCard";
 import ExpenseModalCard from "../../components/ExpenseModalCard";
 import InventoryModalCard from "../../components/InventoryModalCard";
+import TourManager from "../../components/TourManager";
+import { dashboardTourSteps } from "../../config/tourSteps";
 
 export default async function Dashboard() {
   const user = await getCurrentUser();
@@ -40,6 +42,9 @@ export default async function Dashboard() {
 
   return (
     <div>
+      {/* Onboarding Tour overlay component */}
+      <TourManager steps={dashboardTourSteps} />
+
       {/* Sidebar navigation */}
       <div>
         <SideNav />
@@ -50,7 +55,7 @@ export default async function Dashboard() {
 
       <main className="ml-0 md:ml-62 sm:ml-0 p-4">
         {/* Good morning heading */}
-        <section>
+        <section data-tour="welcome-banner">
           <div className="space-y-4">
             <div>
               <WelcomeGreeting name={name} initialGreeting={initialGreeting} />
@@ -62,7 +67,7 @@ export default async function Dashboard() {
         </section>
 
         {/* Dashboard boxes (insight metrics) - Streamed with Suspense */}
-        <section>
+        <section data-tour="dashboard-metrics">
           <Suspense fallback={<MetricsSkeleton />}>
             <DashboardMetrics />
           </Suspense>
@@ -72,7 +77,7 @@ export default async function Dashboard() {
         <section>
           <div className="lg:flex gap-6">
             {/* Quick Actions */}
-            <div className=" md:border md:border-gray-200 md:shadow-sm md:px-5 rounded-2xl bg-white flex-1 py-0 md:py-2">
+            <div data-tour="quick-actions" className=" md:border md:border-gray-200 md:shadow-sm md:px-5 rounded-2xl bg-white flex-1 py-0 md:py-2">
               <p className="p-3 font-semibold text-sm text-slate-700">
                 Quick Actions
               </p>
@@ -90,11 +95,11 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            <div>
+            <div data-tour="low-stock-alerts">
               <LowStockAlerts lowstock={lowstock} count={count} />
             </div>
           </div>
-          <div>
+          <div data-tour="sales-chart">
             <Suspense
               fallback={
                 <p className="mt-10 flex items-center justify-center animate-spin">
@@ -108,7 +113,7 @@ export default async function Dashboard() {
           </div>
         </section>
         {/* Transaction history - Streamed with Suspense */}
-        <section>
+        <section data-tour="recent-transactions">
           <div className="my-5">
             <h2 className="text-lg font-semibold text-slate-800 mb-3">
               Recent Transactions

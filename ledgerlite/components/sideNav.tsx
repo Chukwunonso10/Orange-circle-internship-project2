@@ -143,6 +143,7 @@ export default function SideNav() {
       />
       {/* Sidebar */}
       <aside
+        data-tour="sidebar-nav"
         className={`fixed inset-y-0 left-0 z-50 w-62 max-w-70 transform overflow-y-auto border-r border-slate-200 bg-white px-5 py-6 shadow-xl transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
