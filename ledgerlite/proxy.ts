@@ -19,7 +19,7 @@ export async function proxy(req: NextRequest) {
 
     ratelimit = new Ratelimit({
         redis: redis,
-        limiter: Ratelimit.slidingWindow(3, "2 m"),
+        limiter: Ratelimit.slidingWindow(1, "1 m"),
         analytics: true
     })
 
