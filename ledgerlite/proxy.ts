@@ -38,18 +38,18 @@ export async function proxy(req: NextRequest) {
     if (rateLimitRoute && ratelimit) {
         const { success, limit, remaining, reset } = await ratelimit.limit(ip)
         if (!success) {
-            return "wasnt successfull"
+        
+            return NextResponse.json({ success: true, message: "Too many attempts, try again in a mins" }, {
+                status: 429, headers: {
+                    "Content-Type": "application/json",
+                    "x-RateLimit-Limit": limit.toString(),
+                    "x-RateLimit-Remaining": remaining.toString(),
+                    "x-RateLimit-Reset": reset.toString(),
+    
+                }
+            })
         }
 
-        return NextResponse.json({ succes: true, message: "Too many attempts, try again in a mins" }, {
-            status: 429, headers: {
-                "Content-Type": "applicaton/json",
-                "x-RateLimit-Limit": limit.toString(),
-                "x-RateLimit-Remaining": remaining.toString(),
-                "x-RateLimit-Reset": reset.toString(),
-
-            }
-        })
     }
     if (!protectedRoute && !dashboardRoute && !expenseRoute && !summeryRoute && !itemRoute && !profileRoute && !salesRoute) {
         return NextResponse.next()
