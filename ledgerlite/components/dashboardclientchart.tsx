@@ -24,6 +24,7 @@ interface TransactionSale {
   createdAt: string;
 }
 
+
 interface TransactionExpense {
   amount: number;
   createdAt: string;
