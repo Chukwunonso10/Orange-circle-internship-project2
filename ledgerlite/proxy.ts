@@ -12,16 +12,19 @@ export async function proxy(req: NextRequest) {
     const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN
     let ratelimit: Ratelimit | null = null
 
-    const redis = new Redis({
-        url: upstashUrl,
-        token: upstashToken
-    })
+    if (upstashToken && upstashUrl) {
 
-    ratelimit = new Ratelimit({
-        redis: redis,
-        limiter: Ratelimit.slidingWindow(1, "1 m"),
-        analytics: true
-    })
+        const redis = new Redis({
+            url: upstashUrl,
+            token: upstashToken
+        })
+
+        ratelimit = new Ratelimit({
+            redis: redis,
+            limiter: Ratelimit.slidingWindow(1, "1 m"),
+            analytics: true
+        })
+    }
 
     const rateLimitRoute = pathname.startsWith("/api/sign-up")
     const protectedRoute = pathname.startsWith("/api/protected")
