@@ -21,7 +21,7 @@ export async function proxy(req: NextRequest) {
 
         ratelimit = new Ratelimit({
             redis: redis,
-            limiter: Ratelimit.slidingWindow(1, "1 m"),
+            limiter: Ratelimit.slidingWindow(5, "1 m"),
             analytics: true
         })
     }
@@ -39,7 +39,7 @@ export async function proxy(req: NextRequest) {
         const { success, limit, remaining, reset } = await ratelimit.limit(ip)
         if (!success) {
         
-            return NextResponse.json({ success: true, message: "Too many attempts, try again in a mins" }, {
+            return NextResponse.json({ success: true, message: "Too many attempts, try again in a minute" }, {
                 status: 429, headers: {
                     "Content-Type": "application/json",
                     "x-RateLimit-Limit": limit.toString(),
