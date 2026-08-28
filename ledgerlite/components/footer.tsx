@@ -160,6 +160,7 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 text-center text-xs md:text-sm text-slate-500 sm:flex-row sm:text-left">
           <p>© {new Date().getFullYear()} Ledgerlite. All rights reserved.</p>
           <p>Built for small businesses everywhere</p>
+          <Link href="https://status.nduledger.xyz" >system Status</Link>
         </div>
       </div>
     </section>

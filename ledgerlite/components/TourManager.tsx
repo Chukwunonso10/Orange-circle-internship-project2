@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { EventData, STATUS } from "react-joyride";
 
 // Dynamically import Joyride with SSR turned off to prevent Next.js server pre-rendering hydration failures
+// Next.js's dynamic function expects libraries to have a default export. Since React Joyride v3 only uses named exports, simply importing the package will return undefined for the default component and crash the browser. We must explicitly intercept the loaded module and return the named mod.Joyride component
 const Joyride = dynamic(
   () => import("react-joyride").then((mod) => mod.Joyride),
   { ssr: false }
@@ -36,6 +37,7 @@ export default function TourManager({ steps }: TourManagerProps) {
       setRun(true);
     };
     
+    
     window.addEventListener("ledgerlite-tour-restart", handleRestart);
     return () => {
       window.removeEventListener("ledgerlite-tour-restart", handleRestart);
@@ -55,6 +57,7 @@ export default function TourManager({ steps }: TourManagerProps) {
     }
   };
 
+  
   return (
     <Joyride
       steps={steps}
