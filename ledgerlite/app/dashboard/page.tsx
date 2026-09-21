@@ -21,6 +21,8 @@ import ExpenseModalCard from "../../components/ExpenseModalCard";
 import InventoryModalCard from "../../components/InventoryModalCard";
 import TourManager from "../../components/TourManager";
 import { dashboardTourSteps } from "../../config/tourSteps";
+import AiInsightsBanner from "../../components/AiInsightsBanner";
+import OgaBizSenseChat from "../../components/OgaBizSenseChat";
 
 export default async function Dashboard() {
   const user = await getCurrentUser();
@@ -64,6 +66,11 @@ export default async function Dashboard() {
               </p>
             </div>
           </div>
+        </section>
+
+        {/* AI Insights & Predictive Stockout/Loss Alerts */}
+        <section className="mt-4">
+          <AiInsightsBanner />
         </section>
 
         {/* Dashboard boxes (insight metrics) - Streamed with Suspense */}
@@ -124,6 +131,9 @@ export default async function Dashboard() {
           </div>
         </section>
       </main>
+
+      {/* Oga BizSense Floating AI Coach Widget */}
+      <OgaBizSenseChat />
     </div>
   );
 }
