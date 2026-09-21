@@ -113,13 +113,12 @@ export default function AiInsightsBanner() {
         {alerts.map((alert) => (
           <div
             key={alert.id}
-            className={`rounded-xl p-3.5 border transition flex items-start gap-3 ${
-              alert.severity === "high"
+            className={`rounded-xl p-3.5 border transition flex items-start gap-3 ${alert.severity === "high"
                 ? "bg-rose-950/40 border-rose-500/40 text-rose-100"
                 : alert.severity === "medium"
-                ? "bg-amber-950/40 border-amber-500/40 text-amber-100"
-                : "bg-slate-800/60 border-slate-700 text-slate-200"
-            }`}
+                  ? "bg-amber-950/40 border-amber-500/40 text-amber-100"
+                  : "bg-slate-800/60 border-slate-700 text-slate-200"
+              }`}
           >
             <div className="mt-0.5 shrink-0">
               {alert.type === "stockout" && (
@@ -140,13 +139,12 @@ export default function AiInsightsBanner() {
               <div className="flex items-center gap-2">
                 <h4 className="font-semibold text-sm">{alert.title}</h4>
                 <span
-                  className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
-                    alert.severity === "high"
+                  className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${alert.severity === "high"
                       ? "bg-rose-500/20 text-rose-300"
                       : alert.severity === "medium"
-                      ? "bg-amber-500/20 text-amber-300"
-                      : "bg-slate-700 text-slate-300"
-                  }`}
+                        ? "bg-amber-500/20 text-amber-300"
+                        : "bg-slate-700 text-slate-300"
+                    }`}
                 >
                   {alert.severity}
                 </span>
