@@ -154,35 +154,41 @@ Rules for Oga BizSense:
 4. Positivity: Always encourage the merchant at the end of your reply!
 `;
 
-// Offline Knowledge & Business Fallback Engine
+// Dynamic Intelligent Pidgin Engine
 function generateOfflinePidginAdvice(
   userQuestion: string,
   ctx: BusinessSummary
 ): string {
   const q = userQuestion.toLowerCase();
 
-  // Real-world knowledge fallbacks when offline
+  // 1. Real-world knowledge intents
   if (q.includes("governor") && q.includes("enugu")) {
-    return `Oga ${ctx.ownerName}, the governor of Enugu State na Dr. Peter Mbah! Hope market for Enugu state dey move sharp sharp for your shop!`;
+    return `Oga ${ctx.ownerName}, the governor of Enugu State na Dr. Peter Mbah! Hope market for Enugu state dey move sharp sharp for ${ctx.businessName}!`;
   }
 
   if (q.includes("governor") && q.includes("lagos")) {
-    return `Oga ${ctx.ownerName}, the governor of Lagos State na Babajide Sanwo-Olu! Market for Center of Excellence dey booming!`;
+    return `Oga ${ctx.ownerName}, the governor of Lagos State na Babajide Sanwo-Olu! Market for Center of Excellence dey booming for your shop!`;
+  }
+
+  if (q.includes("governor")) {
+    return `Oga ${ctx.ownerName}, specify which state governor you dey ask about (e.g. Enugu, Lagos, Anambra)! Meanwhile, make we check your shop market numbers sharp sharp!`;
   }
 
   if (q.includes("cac") || q.includes("register business")) {
-    return `Oga ${ctx.ownerName}, to register your business with CAC, visit cac.gov.ng, reserve your business name, and upload your ID document sharp sharp!`;
+    return `Oga ${ctx.ownerName}, to register ${ctx.businessName} with CAC, visit corporate affairs portal (cac.gov.ng), reserve your business name, and upload your ID document sharp sharp!`;
   }
 
-  if (q.includes("market") || q.includes("week") || q.includes("profit") || q.includes("sales") || q.includes("going")) {
+  // 2. Financial / Profit / Market intents
+  if (q.includes("market") || q.includes("week") || q.includes("profit") || q.includes("sales") || q.includes("money") || q.includes("gain")) {
     if (ctx.revenueThisWeek > 0) {
-      return `Oga ${ctx.ownerName}! Market for ${ctx.businessName} make ₦${ctx.revenueThisWeek.toLocaleString()} this week! After expenses of ₦${ctx.expensesThisWeek.toLocaleString()}, your net profit na ₦${ctx.netProfitThisWeek.toLocaleString()}. ${ctx.topSellingItems[0] ? `Your top seller na ${ctx.topSellingItems[0].name}!` : "Keep pushing your fast-moving items!"}`;
+      return `Oga ${ctx.ownerName}! Market for ${ctx.businessName} make ₦${ctx.revenueThisWeek.toLocaleString()} sales this week! After expenses of ₦${ctx.expensesThisWeek.toLocaleString()}, your net profit na ₦${ctx.netProfitThisWeek.toLocaleString()}. ${ctx.topSellingItems[0] ? `Your top seller na ${ctx.topSellingItems[0].name}!` : "Keep pushing your fast-moving items!"}`;
     } else {
       return `Oga ${ctx.ownerName}, market slow small this week — no sales recorded yet. Check your top items and make sure your price dey competitive!`;
     }
   }
 
-  if (q.includes("reorder") || q.includes("stock") || q.includes("product") || q.includes("buy")) {
+  // 3. Inventory / Reorder / Stock intents
+  if (q.includes("reorder") || q.includes("stock") || q.includes("product") || q.includes("buy") || q.includes("inventory")) {
     if (ctx.activeAlerts.length > 0) {
       return `Oga ${ctx.ownerName}, check your stock sharp sharp! ${ctx.activeAlerts[0]}. Reorder am fast before stock hit zero!`;
     } else if (ctx.topSellingItems.length > 0) {
@@ -192,7 +198,21 @@ function generateOfflinePidginAdvice(
     }
   }
 
-  return `Oga ${ctx.ownerName}! Business update for ${ctx.businessName}: You make ₦${ctx.revenueThisWeek.toLocaleString()} sales this week with ₦${ctx.netProfitThisWeek.toLocaleString()} net profit. Ask me any question about your shop or general business!`;
+  // 4. Expenses / Cost intents
+  if (q.includes("expense") || q.includes("cost") || q.includes("spend") || q.includes("transport")) {
+    return `Oga ${ctx.ownerName}, you spend total of ₦${ctx.expensesThisWeek.toLocaleString()} for expenses this week. ${ctx.expensesThisWeek > ctx.revenueThisWeek * 0.4 ? "Your expense high small compared to sales — check supplier and transport costs!" : "Your expense dey controlled well!"}`;
+  }
+
+  // 5. General intelligent response using real numbers
+  const topProductText = ctx.topSellingItems[0]
+    ? `Your best seller na ${ctx.topSellingItems[0].name}.`
+    : "Make sure you record all daily sales.";
+
+  const alertText = ctx.activeAlerts[0]
+    ? `Notice: ${ctx.activeAlerts[0]}.`
+    : "All stock levels look healthy!";
+
+  return `Oga ${ctx.ownerName}! For ${ctx.businessName}, you make ₦${ctx.revenueThisWeek.toLocaleString()} sales this week with ₦${ctx.netProfitThisWeek.toLocaleString()} net profit. ${topProductText} ${alertText} What else you go like know about your shop?`;
 }
 
 export async function askOgaBizSense(
@@ -242,6 +262,6 @@ export async function askOgaBizSense(
     }
   }
 
-  // 3. Dual-Domain Offline Engine (Store Analytics + Real-World Knowledge)
+  // 3. Dynamic Intelligent Pidgin Engine
   return generateOfflinePidginAdvice(userQuestion, businessContext);
 }

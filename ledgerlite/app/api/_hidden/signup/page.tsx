@@ -66,6 +66,7 @@ export default function SignUp() {
   const handleChange = (field: string, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: "" }));
+    
     if (status === "error") {
       setStatus("idle");
       setMessage("");

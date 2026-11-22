@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { Sendsms } from "@/app/lib/sendSms";
 import { Resend } from "resend";
 
+
 export async function POST(req: NextRequest) {
     try {
         const { email, phoneNumber } = await req.json();
