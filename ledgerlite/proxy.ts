@@ -7,13 +7,12 @@ export async function proxy(req: NextRequest) {
     const sessionToken = req.cookies.get("sessionToken")?.value
     const isProduction = process.env.NODE_ENV === "production"
     const ip = isProduction ? req.headers.get("x-forwarded-for") : (req as any).ip || "127.0.0.1"
-    console.log("My Ip address", ip)
+    
     const upstashUrl = process.env.UPSTASH_REDIS_REST_URL
     const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN
     let ratelimit: Ratelimit | null = null
 
     if (upstashToken && upstashUrl) {
-
         const redis = new Redis({
             url: upstashUrl,
             token: upstashToken
@@ -36,20 +35,21 @@ export async function proxy(req: NextRequest) {
     const salesRoute = pathname.startsWith("/sales")
 
     if (rateLimitRoute && ratelimit) {
-        const { success, limit, remaining, reset } = await ratelimit.limit(ip)
-        if (!success) {
-        
-            return NextResponse.json({ success: true, message: "Too many attempts, try again in a minute" }, {
-                status: 429, headers: {
-                    "Content-Type": "application/json",
-                    "x-RateLimit-Limit": limit.toString(),
-                    "x-RateLimit-Remaining": remaining.toString(),
-                    "x-RateLimit-Reset": reset.toString(),
-    
-                }
-            })
+        try {
+            const { success, limit, remaining, reset } = await ratelimit.limit(ip)
+            if (!success) {
+                return NextResponse.json({ success: false, message: "Too many attempts, try again in a minute" }, {
+                    status: 429, headers: {
+                        "Content-Type": "application/json",
+                        "x-RateLimit-Limit": limit.toString(),
+                        "x-RateLimit-Remaining": remaining.toString(),
+                        "x-RateLimit-Reset": reset.toString(),
+                    }
+                })
+            }
+        } catch (error) {
+            console.warn("Rate limiting check failed (Upstash unreachable), continuing request:", (error as any)?.message || error)
         }
-
     }
     if (!protectedRoute && !dashboardRoute && !expenseRoute && !summeryRoute && !itemRoute && !profileRoute && !salesRoute) {
         return NextResponse.next()

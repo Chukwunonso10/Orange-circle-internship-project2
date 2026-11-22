@@ -297,6 +297,38 @@ interface AccountForm {
 
 type AccountFormErrors = Partial<Record<keyof AccountForm, string>>;
 
+type ApiResponse = {
+  message?: string;
+  success?: boolean;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+async function readApiResponse(response: Response): Promise<ApiResponse> {
+  const responseText = await response.text();
+  let body: unknown;
+
+  try {
+    body = JSON.parse(responseText);
+  } catch {
+    const message = response.ok
+      ? `The server returned an unexpected response (HTTP ${response.status}). Please try again.`
+      : `The server couldn't complete the request (HTTP ${response.status}). Please try again later.`;
+    throw new Error(message);
+  }
+
+  if (!isRecord(body)) {
+    throw new Error(`The server returned an invalid response (HTTP ${response.status}).`);
+  }
+
+  return {
+    message: typeof body.message === "string" ? body.message : undefined,
+    success: typeof body.success === "boolean" ? body.success : undefined,
+  };
+}
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@%&*]).{8,}$/;
 
@@ -670,7 +702,7 @@ function VerifyAccountScreen({
         },
         body: JSON.stringify({ email })
       });
-      const data = await res.json();
+      const data = await readApiResponse(res);
       if (!res.ok || !data.success) {
         throw new Error(data.message || "Failed to resend code.");
       } 
@@ -977,7 +1009,7 @@ export default function LedgerLiteOnboarding() {
         }),
       });
 
-      const data = await res.json();
+      const data = await readApiResponse(res);
       if (!res.ok) {
         throw new Error(data.message || "Failed to create account.");
       }
@@ -1005,7 +1037,7 @@ export default function LedgerLiteOnboarding() {
         }),
       });
 
-      const data = await res.json();
+      const data = await readApiResponse(res);
       if (!res.ok) {
         throw new Error(data.message || "Invalid verification code.");
       }
@@ -1037,7 +1069,7 @@ export default function LedgerLiteOnboarding() {
         }),
       });
 
-      const result = await res.json();
+      const result = await readApiResponse(res);
       if (!res.ok) {
         throw new Error(result.message || "Failed to save business settings.");
       }
